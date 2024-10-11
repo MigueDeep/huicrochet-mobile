@@ -26,14 +26,14 @@ class _SplashScreenState extends State<SplashScreen> {
           children: [
             Image.asset(
               'assets/logo2.png',
-              width: 200,
+              width: 300,
               height: 200,
             ),
             const Text(
               'HUICROCHET',
               style: TextStyle(
                 fontFamily: 'Poppins',
-                fontSize: 32,
+                fontSize: 40,
                 color: Colors.white,
               ),
             ),
