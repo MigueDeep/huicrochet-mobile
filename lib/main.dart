@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/modules/auth/screens/login_screen.dart';
+import 'package:huicrochet_mobile/modules/auth/screens/register_screen.dart';
 import 'package:huicrochet_mobile/widgets/splash_screen.dart';
 
 void main() {
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const SplashScreen(),
         '/login': (context) => const LoginScreen(),
+        '/register': (context) => const RegisterScreen(),
       },
     );
   }
