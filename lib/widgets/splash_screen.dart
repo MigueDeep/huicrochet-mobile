@@ -8,9 +8,18 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  double _opacity = 0.0;
+
   @override
   void initState() {
     super.initState();
+
+    Future.delayed(const Duration(seconds: 1), () {
+      setState(() {
+        _opacity = 1.0;
+      });
+    });
+
     Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushReplacementNamed(context, '/login');
     });
@@ -29,12 +38,16 @@ class _SplashScreenState extends State<SplashScreen> {
               width: 300,
               height: 200,
             ),
-            const Text(
-              'HUICROCHET',
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                fontSize: 40,
-                color: Colors.white,
+            AnimatedOpacity(
+              opacity: _opacity,
+              duration: const Duration(seconds: 1),
+              child: const Text(
+                'HUICROCHET',
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 40,
+                  color: Colors.white,
+                ),
               ),
             ),
           ],

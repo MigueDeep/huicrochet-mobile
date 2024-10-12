@@ -36,8 +36,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   String? _validateEmail(String? value) {
-    if (!_emailTouched)
+    if (!_emailTouched) {
       return null; // Si el usuario no ha dado click en el campo, no se muestra el error
+    }
     if (value == null || value.isEmpty) {
       return 'Por favor ingresa tu correo';
     } else if (!emailRegExp.hasMatch(value)) {
@@ -180,7 +181,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/recoverpass1');
+                          },
                           child: const Text(
                             '¿Olvidaste la contraseña?',
                             style: TextStyle(
