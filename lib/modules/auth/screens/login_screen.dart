@@ -61,6 +61,24 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
+  void _showLoadingDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return const AlertDialog(
+          title: Text('Iniciando sesión'),
+          content: LinearProgressIndicator(),
+        );
+      },
+    );
+
+    Future.delayed(const Duration(seconds: 3), () {
+      Navigator.of(context).pop();
+      Navigator.pushReplacementNamed(context, '/home');
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -209,15 +227,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               _passwordTouched = true;
                             });
                             if (_formKey.currentState!.validate()) {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return const AlertDialog(
-                                    title: Text('Iniciando sesión'),
-                                    content: LinearProgressIndicator(),
-                                  );
-                                },
-                              );
+                              _showLoadingDialog();
                             }
                           },
                           child: const Text('Iniciar sesión',
