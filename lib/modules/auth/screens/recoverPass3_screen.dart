@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 
-class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+class Recoverpass3Screen extends StatefulWidget {
+  const Recoverpass3Screen({super.key});
 
   @override
-  _RegisterScreenState createState() => _RegisterScreenState();
+  _Recoverpass3ScreenState createState() => _Recoverpass3ScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
-  final TextEditingController _emailController = TextEditingController();
+class _Recoverpass3ScreenState extends State<Recoverpass3Screen> {
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _repeatPasswordController =
       TextEditingController();
 
@@ -18,33 +16,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   bool _isObscured = true;
   bool _isObscured2 = true;
-
-  bool _emailTouched = false;
-  bool _nameTouched = false;
   bool _passwordTouched = false;
   bool _repeatPasswordTouched = false;
 
   final RegExp emailRegExp = RegExp(
     r'^[a-zA-Z0-9.a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$',
   );
-
-  String? _validateEmail(String? value) {
-    if (!_emailTouched) return null;
-    if (value == null || value.isEmpty) {
-      return 'Por favor ingresa tu correo';
-    } else if (!emailRegExp.hasMatch(value)) {
-      return 'Por favor ingresa un correo válido';
-    }
-    return null;
-  }
-
-  String? _validateName(String? value) {
-    if (!_nameTouched) return null;
-    if (value == null || value.isEmpty) {
-      return 'Por favor ingresa tu nombre';
-    }
-    return null;
-  }
 
   String? _validatePassword(String? value) {
     if (!_passwordTouched) return null;
@@ -69,18 +46,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   void initState() {
     super.initState();
-    _emailController.addListener(_validateForm);
-    _passwordController.addListener(_validateForm);
-    _nameController.addListener(_validateForm);
     _repeatPasswordController.addListener(_validateForm);
+    _passwordController.addListener(_validateForm);
   }
 
   @override
   void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    _nameController.dispose();
     _repeatPasswordController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
@@ -137,67 +110,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        'Registrarse',
+                        'Restablece tu contraseña',
                         textAlign: TextAlign.left,
                         style: TextStyle(
                           fontFamily: 'Poppins',
-                          fontSize: 22,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: Color.fromRGBO(130, 48, 56, 1),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Calidad en cada puntada, arte en cada detalle.',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 14,
-                          color: Color.fromRGBO(130, 48, 56, 1),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                    TextFormField(
-                      controller: _nameController,
-                      decoration: InputDecoration(
-                        labelText: 'Nombre',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
-                      validator: _validateName,
-                      onTap: () {
-                        setState(() {
-                          _nameTouched = true;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 32),
-                    TextFormField(
-                      controller: _emailController,
-                      decoration: InputDecoration(
-                        labelText: 'Correo',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
-                      validator: _validateEmail,
-                      onTap: () {
-                        setState(() {
-                          _emailTouched = true;
-                        });
-                      },
                     ),
                     const SizedBox(height: 32),
                     TextFormField(
                       controller: _passwordController,
                       obscureText: _isObscured,
                       decoration: InputDecoration(
-                        labelText: 'Contraseña',
+                        labelText: 'Nueva contraseña',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
@@ -266,52 +194,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         onPressed: () {
                           setState(() {
-                            _nameTouched = true;
-                            _emailTouched = true;
                             _passwordTouched = true;
                             _repeatPasswordTouched = true;
                           });
                           if (_formKey.currentState!.validate()) {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return const AlertDialog(
-                                  title: Text('Creando cuenta'),
-                                  content: LinearProgressIndicator(),
-                                );
-                              },
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                    'Contraseña reestablecida, ya puedes iniciar sesión'),
+                                backgroundColor: Colors.blue,
+                              ),
                             );
                             Navigator.pushNamed(context, '/login');
                           }
                         },
-                        child: const Text('Registrarse',
+                        child: const Text('Restablecer contraseña',
                             style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.white,
                                 fontFamily: 'Poppins')),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          "¿Ya tienes cuenta? ",
-                          style: TextStyle(fontFamily: 'Poppins'),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pushNamed(context, '/login');
-                          },
-                          child: const Text(
-                            'Iniciar sesión',
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              color: Color.fromRGBO(130, 48, 56, 1),
-                            ),
-                          ),
-                        ),
-                      ],
                     ),
                     const SizedBox(height: 16),
                   ],
