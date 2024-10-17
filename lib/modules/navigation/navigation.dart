@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/modules/home/home_screen.dart';
+import 'package:huicrochet_mobile/modules/product/products_screen.dart';
 import 'package:huicrochet_mobile/modules/profile/adresses_screen.dart';
 import 'package:huicrochet_mobile/modules/profile/orders_screen.dart';
 import 'package:huicrochet_mobile/modules/profile/profile_screen.dart';
@@ -16,7 +17,7 @@ class _NavigationState extends State<Navigation> {
 
   static const List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
-    AddressesScreen(),
+    ProductsScreen(),
     OrdersScreen(),
     ProfileScreen()
   ];

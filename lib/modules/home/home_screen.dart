@@ -60,18 +60,6 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
           child: Column(children: [
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: [
-              categoryMenu('Todas'),
-              categoryMenu('Decoración'),
-              categoryMenu('Juguetes'),
-              categoryMenu('Figuras'),
-              categoryMenu('Interiores'),
-            ],
-          ),
-        ),
         Padding(
           padding: const EdgeInsets.only(top: 20),
           child: Stack(
@@ -123,37 +111,35 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         SizedBox(height: 20),
-      Padding(
-  padding: const EdgeInsets.symmetric(horizontal: 10), 
-  child: SizedBox(
-    width: MediaQuery.of(context).size.width * 0.9,
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,  
-      children: [
-        GestureDetector(
-          onTap: () {
-            Navigator.pushNamed(context, '/products');
-          },
-          child: Text(
-            'Nuevos productos',
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.9,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, '/products');
+                  },
+                  child: Text(
+                    'Nuevos productos',
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward,
+                  color: Colors.black,
+                ),
+              ],
             ),
           ),
         ),
-        Icon(
-          Icons.arrow_forward,
-          color: Colors.black,
-        ),
-      ],
-    ),
-  ),
-),
-
-
         SizedBox(height: 10),
         SizedBox(
           width: MediaQuery.of(context).size.width * 0.9,
