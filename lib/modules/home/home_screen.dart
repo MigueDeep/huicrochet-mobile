@@ -166,16 +166,15 @@ class _HomeScreenState extends State<HomeScreen> {
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
-  children: ProductsScreen.products.map((product) {
-    return productCard(
-      product['name']!,  // Nombre del producto
-      product['image']!, // URL de la imagen del producto
-      product['price']!, // Precio del producto
-      context,
-    );
-  }).toList(),
-),
-
+              children: ProductsScreen.products.map((product) {
+                return productCard(
+                  product['name']!, // Nombre del producto
+                  product['image']!, // URL de la imagen del producto
+                  product['price']!, // Precio del producto
+                  context,
+                );
+              }).toList(),
+            ),
           ),
         ),
       ])),
@@ -183,3 +182,73 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
+Widget _categoryItem(String categoryName) {
+  bool isSelected = categoryName == 'Todas';
+
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 5),
+    child: Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {},
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.transparent),
+          ),
+          child: Text(
+            categoryName,
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              fontSize: 16,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              color: Colors.black,
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+Widget _productCard(String productName, String imagePath, String price) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 5),
+    child: Container(
+      width: 150,
+      padding: const EdgeInsets.all(5),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Image.asset(
+              imagePath,
+              width: 150,
+              height: 180,
+              fit: BoxFit.cover,
+            ),
+          ),
+          SizedBox(height: 10),
+          Text(
+            productName,
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              fontSize: 14,
+              color: Colors.black,
+            ),
+          ),
+          Text(
+            '\$$price',
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              fontSize: 14,
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}

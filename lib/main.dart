@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/modules/auth/screens/login_screen.dart';
+import 'package:huicrochet_mobile/modules/profile/adresses_screen.dart';
+import 'package:huicrochet_mobile/modules/profile/info_screen.dart';
+import 'package:huicrochet_mobile/modules/profile/orders_screen.dart';
+import 'package:huicrochet_mobile/modules/profile/profile_screen.dart';
 import 'package:huicrochet_mobile/modules/auth/screens/recoverPass1_screen.dart';
 import 'package:huicrochet_mobile/modules/auth/screens/recoverPass2_screen.dart';
 import 'package:huicrochet_mobile/modules/auth/screens/recoverPass3_screen.dart';
@@ -31,7 +35,11 @@ class MyApp extends StatelessWidget {
         '/recoverpass3': (context) => const Recoverpass3Screen(),
         '/home': (context) => const HomeScreen(),
         '/product-detail': (context) => const ProductDetail(),
-        '/products': (context) => const ProductsScreen()
+        '/products': (context) => const ProductsScreen(),
+        '/profile': (context) => const ProfileScreen(),
+        '/info': (context) => const InfoScreen(),
+        '/adresses': (context) => const AddressesScreen(),
+        '/orders': (context) => const OrdersScreen(),
       },
     );
   }
