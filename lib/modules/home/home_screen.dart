@@ -54,9 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       backgroundColor: Colors.white,
-      body:
-       SingleChildScrollView(
-        
+      body: SingleChildScrollView(
           child: Column(children: [
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
@@ -149,7 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         SizedBox(height: 10),
-        Container(
+        SizedBox(
           width: MediaQuery.of(context).size.width * 0.9,
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -225,7 +223,7 @@ Widget _productCard(String productName, String imagePath, String price) {
             ),
           ),
           Text(
-            '\$' + price,
+            '\$$price',
             style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 14,
