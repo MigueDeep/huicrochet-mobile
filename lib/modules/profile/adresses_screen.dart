@@ -8,7 +8,6 @@ class AddressesScreen extends StatefulWidget {
 }
 
 class _AddressesScreenState extends State<AddressesScreen> {
-  // Arreglo de direcciones
   List<String> addresses = [
     '3910 Crim Lane, Houston, Texas',
     '21 Yew Street, New York, New York',
@@ -91,15 +90,12 @@ class _AddressesScreenState extends State<AddressesScreen> {
                               ),
                             ),
                             GestureDetector(
-                              onTap: () {
-                                // Acción para el botón "Editar"
-                              },
+                              onTap: () {},
                               child: Container(
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                 ),
                                 child: Icon(
-                                  // Icono de tres puntos
                                   Icons.more_horiz,
                                   color: Colors.grey,
                                 ),

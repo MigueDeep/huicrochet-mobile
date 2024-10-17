@@ -8,7 +8,6 @@ class OrdersScreen extends StatefulWidget {
 }
 
 class _OrdersScreenState extends State<OrdersScreen> {
-  // Objeto con las ordenes de la usuaria
   final orders = [
     {
       'id': 1,
@@ -106,11 +105,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                 children: [
                   for (var order in orders)
                     GestureDetector(
-                      onTap: () {
-                        // Aquí es donde agregarás el código para navegar a la vista de detalles de la orden
-                        // Por ejemplo:
-                        // Navigator.pushNamed(context, '/orderDetails', arguments: order);
-                      },
+                      onTap: () {},
                       child: Column(
                         children: [
                           Row(

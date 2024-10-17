@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/modules/auth/screens/login_screen.dart';
+import 'package:huicrochet_mobile/modules/navigation/navigation.dart';
 import 'package:huicrochet_mobile/modules/profile/adresses_screen.dart';
 import 'package:huicrochet_mobile/modules/profile/info_screen.dart';
 import 'package:huicrochet_mobile/modules/profile/orders_screen.dart';
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const SplashScreen(),
         '/login': (context) => const LoginScreen(),
+        '/navigation': (context) => const Navigation(),
         '/register': (context) => const RegisterScreen(),
         '/recoverpass1': (context) => const Recoverpass1Screen(),
         '/recoverpass2': (context) => const Recoverpass2Screen(),

@@ -154,9 +154,7 @@ class _InfoScreenState extends State<InfoScreen> {
                       right: 0,
                       child: GestureDetector(
                         onTap: () {
-                          // Aquí puedes agregar la acción para cambiar la imagen
-                          print(
-                              'Tap en el ícono de lápiz'); // Esto es solo un ejemplo
+                          print('Tap en el ícono de lápiz');
                           _pickImage();
                         },
                         child: Container(

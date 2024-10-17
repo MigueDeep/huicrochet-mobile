@@ -75,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     Future.delayed(const Duration(seconds: 3), () {
       Navigator.of(context).pop();
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushReplacementNamed(context, '/navigation');
     });
   }
 
