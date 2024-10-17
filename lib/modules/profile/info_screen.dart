@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
@@ -149,11 +147,8 @@ class _InfoScreenState extends State<InfoScreen> {
                 Stack(
                   children: [
                     CircleAvatar(
-                      radius: 50,
-                      backgroundImage: _imagePath != null
-                          ? FileImage(File(_imagePath))
-                          : AssetImage('assets/logo.png') as ImageProvider,
-                    ),
+                        radius: 50,
+                        backgroundImage: AssetImage('assets/logo.png')),
                     Positioned(
                       bottom: 0,
                       right: 0,
@@ -189,7 +184,6 @@ class _InfoScreenState extends State<InfoScreen> {
                   ),
                 ),
                 SizedBox(height: 20),
-                Divider(),
                 ListTile(
                   leading: Text('Información personal',
                       style: TextStyle(
@@ -197,6 +191,7 @@ class _InfoScreenState extends State<InfoScreen> {
                           fontSize: 16,
                           color: Color.fromRGBO(130, 48, 56, 1))),
                 ),
+                Divider(),
                 Container(
                     padding: const EdgeInsets.all(24.0),
                     child: Column(

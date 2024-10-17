@@ -51,7 +51,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             trailing: Icon(Icons.local_shipping,
                 color: Color.fromRGBO(130, 48, 56, 1)),
             onTap: () {
-              // Acción para el botón "Mis ordenes"
+              Navigator.pushReplacementNamed(context, '/orders');
             },
           ),
           Divider(),
@@ -77,7 +77,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     fontSize: 16,
                     color: Color.fromRGBO(130, 48, 56, 1))),
             onTap: () {
-              // Acción para el botón "Direcciones"
+              Navigator.pushReplacementNamed(context, '/adresses');
             },
           ),
           Divider(),
