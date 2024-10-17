@@ -6,6 +6,8 @@ import 'package:huicrochet_mobile/modules/auth/screens/recoverPass3_screen.dart'
 import 'package:huicrochet_mobile/modules/auth/screens/register_screen.dart';
 import 'package:huicrochet_mobile/widgets/splash_screen.dart';
 import 'package:huicrochet_mobile/modules/home/home_screen.dart';
+import 'package:huicrochet_mobile/modules/product/productDetail_screen.dart';
+import 'package:huicrochet_mobile/modules/product/products_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -28,6 +30,8 @@ class MyApp extends StatelessWidget {
         '/recoverpass2': (context) => const Recoverpass2Screen(),
         '/recoverpass3': (context) => const Recoverpass3Screen(),
         '/home': (context) => const HomeScreen(),
+        '/product-detail': (context) => const ProductDetail(),
+        '/products': (context) => const ProductsScreen()
       },
     );
   }

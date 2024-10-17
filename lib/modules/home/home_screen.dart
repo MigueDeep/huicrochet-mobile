@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:huicrochet_mobile/modules/product/products_screen.dart';
+import 'package:huicrochet_mobile/widgets/product_card.dart';
+import 'package:huicrochet_mobile/widgets/category_menu.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,6 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
+        automaticallyImplyLeading: false,
         title: Row(
           children: [
             Icon(
@@ -54,19 +58,17 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       backgroundColor: Colors.white,
-      body:
-       SingleChildScrollView(
-        
+      body: SingleChildScrollView(
           child: Column(children: [
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
             children: [
-              _categoryItem('Todas'),
-              _categoryItem('Decoración'),
-              _categoryItem('Juguetes'),
-              _categoryItem('Figuras'),
-              _categoryItem('Interiores'),
+              categoryMenu('Todas'),
+              categoryMenu('Decoración'),
+              categoryMenu('Juguetes'),
+              categoryMenu('Figuras'),
+              categoryMenu('Interiores'),
             ],
           ),
         ),
@@ -126,41 +128,54 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 10),
-                child: Text(
-                  'Nuevos productos',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 10),
-                child: Icon(
-                  Icons.arrow_forward,
-                  color: Colors.black,
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, '/products');
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: Text(
+                        'Nuevos productos',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 170),
+                      child: Icon(
+                        Icons.arrow_forward,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
         ),
         SizedBox(height: 10),
-        Container(
+        SizedBox(
           width: MediaQuery.of(context).size.width * 0.9,
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
-              children: [
-                _productCard('Producto 1', 'assets/product1.png', '99.50'),
-                _productCard('Producto 2', 'assets/product1.png', '99.50'),
-                _productCard('Producto 3', 'assets/product1.png', '99.50'),
-                _productCard('Producto 4', 'assets/product1.png', '99.50'),
-              ],
-            ),
+  children: ProductsScreen.products.map((product) {
+    return productCard(
+      product['name']!,  // Nombre del producto
+      product['image']!, // URL de la imagen del producto
+      product['price']!, // Precio del producto
+      context,
+    );
+  }).toList(),
+),
+
           ),
         ),
       ])),
@@ -168,73 +183,3 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-Widget _categoryItem(String categoryName) {
-  bool isSelected = categoryName == 'Todas';
-
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 5),
-    child: Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () {},
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.transparent),
-          ),
-          child: Text(
-            categoryName,
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              fontSize: 16,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              color: Colors.black,
-            ),
-          ),
-        ),
-      ),
-    ),
-  );
-}
-
-Widget _productCard(String productName, String imagePath, String price) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 5),
-    child: Container(
-      width: 150,
-      padding: const EdgeInsets.all(5),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Image.asset(
-              imagePath,
-              width: 150,
-              height: 180,
-              fit: BoxFit.cover,
-            ),
-          ),
-          SizedBox(height: 10),
-          Text(
-            productName,
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              fontSize: 14,
-              color: Colors.black,
-            ),
-          ),
-          Text(
-            '\$' + price,
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              fontSize: 14,
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
