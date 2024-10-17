@@ -123,43 +123,37 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         SizedBox(height: 20),
-        SizedBox(
-          width: MediaQuery.of(context).size.width * 0.9,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  Navigator.pushNamed(context, '/products');
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: Text(
-                        'Nuevos productos',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 170),
-                      child: Icon(
-                        Icons.arrow_forward,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+      Padding(
+  padding: const EdgeInsets.symmetric(horizontal: 10), 
+  child: SizedBox(
+    width: MediaQuery.of(context).size.width * 0.9,
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,  
+      children: [
+        GestureDetector(
+          onTap: () {
+            Navigator.pushNamed(context, '/products');
+          },
+          child: Text(
+            'Nuevos productos',
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
           ),
         ),
+        Icon(
+          Icons.arrow_forward,
+          color: Colors.black,
+        ),
+      ],
+    ),
+  ),
+),
+
+
         SizedBox(height: 10),
         SizedBox(
           width: MediaQuery.of(context).size.width * 0.9,
