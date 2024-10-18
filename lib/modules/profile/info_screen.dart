@@ -242,6 +242,7 @@ class _InfoScreenState extends State<InfoScreen> {
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: _phoneController,
+                          keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
