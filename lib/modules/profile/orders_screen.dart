@@ -60,7 +60,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pushReplacementNamed(context, '/profile');
+            Navigator.pushReplacementNamed(context, '/navigation');
           },
         ),
         title: Text('Órdenes'),
