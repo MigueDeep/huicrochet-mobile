@@ -8,11 +8,35 @@ class AddressesScreen extends StatefulWidget {
 }
 
 class _AddressesScreenState extends State<AddressesScreen> {
-  List<String> addresses = [
-    '3910 Crim Lane, Houston, Texas',
-    '21 Yew Street, New York, New York',
-    '24 Park Avenue, Los Angeles, California',
-  ];
+  final addresses = {
+    {
+      'id': 1,
+      'zipCode': '62742',
+      'street': 'Privet Drive',
+      'city': 'Little Whinging',
+      'number': '12',
+      'district': 'Surrey',
+      'state': 'England',
+    },
+    {
+      'id': 2,
+      'zipCode': '32455',
+      'street': 'Greendale',
+      'city': 'Colorado',
+      'number': '22',
+      'district': 'Greendale',
+      'state': 'USA',
+    },
+    {
+      'id': 3,
+      'zipCode': '32134',
+      'street': 'Gallaby',
+      'city': 'P. Sherman',
+      'number': '42',
+      'district': 'Wallaby',
+      'state': 'Australia',
+    },
+  };
 
   @override
   void initState() {
@@ -80,13 +104,27 @@ class _AddressesScreenState extends State<AddressesScreen> {
                         Row(
                           children: [
                             Expanded(
-                              child: Text(
-                                address,
-                                style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 16,
-                                  color: Colors.black,
-                                ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '${address['number']} ${address['street']}',
+                                    style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontSize: 16,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  Text(
+                                    '${address['zipCode']} ${address['city']} ${address['state']}',
+                                    style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontSize: 16,
+                                      color: Colors.blueGrey,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                             GestureDetector(
@@ -118,7 +156,7 @@ class _AddressesScreenState extends State<AddressesScreen> {
                         backgroundColor: Colors.white,
                       ),
                       onPressed: () {
-                        Navigator.pushNamed(context, '/profile');
+                        Navigator.pushNamed(context, '/addAddress');
                       },
                       child: const Text(
                         'Agregar dirección',

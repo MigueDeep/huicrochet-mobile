@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -13,6 +14,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _repeatPasswordController =
       TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _birthdayController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -23,6 +26,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _nameTouched = false;
   bool _passwordTouched = false;
   bool _repeatPasswordTouched = false;
+  bool _phoneTouched = false;
+  bool _birthdayTouched = false;
 
   final RegExp emailRegExp = RegExp(
     r'^[a-zA-Z0-9.a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$',
@@ -66,6 +71,44 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return null;
   }
 
+  String? _validatePhone(String? value) {
+    if (!_phoneTouched) return null;
+    if (value == null || value.isEmpty) {
+      return 'Por favor ingresa tu numero de telefono';
+    }
+    if (value.length != 10 || int.tryParse(value) == null) {
+      return 'Por favor ingresa un numero de telefono válido';
+    }
+    return null;
+  }
+
+  String? _validateBirthday(String? value) {
+    if (!_birthdayTouched) return null;
+    if (value == null || value.isEmpty) {
+      return 'Por favor selecciona tu fecha de nacimiento';
+    }
+    if (DateFormat('dd/MM/yyyy').parse(value).isAfter(DateTime.now())) {
+      return 'Por favor selecciona una fecha valida';
+    }
+
+    return null;
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) {
+      setState(() {
+        _birthdayController.text = DateFormat('dd/MM/yyyy').format(picked);
+        _birthdayTouched = true;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -73,6 +116,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _passwordController.addListener(_validateForm);
     _nameController.addListener(_validateForm);
     _repeatPasswordController.addListener(_validateForm);
+    _birthdayController.addListener(_validateForm);
+    _phoneController.addListener(_validateForm);
   }
 
   @override
@@ -81,6 +126,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _passwordController.dispose();
     _nameController.dispose();
     _repeatPasswordController.dispose();
+    _birthdayController.dispose();
+    _phoneController.dispose();
     super.dispose();
   }
 
@@ -166,7 +213,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     TextFormField(
                       controller: _nameController,
                       decoration: InputDecoration(
-                        labelText: 'Nombre',
+                        labelText: 'Nombre completo',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
@@ -180,9 +227,40 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     const SizedBox(height: 32),
                     TextFormField(
+                      controller: _phoneController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        labelText: 'Número de teléfono',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
+                      validator: _validatePhone,
+                      onTap: () {
+                        setState(() {
+                          _phoneTouched = true;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 32),
+                    TextFormField(
+                      controller: _birthdayController,
+                      readOnly: true,
+                      decoration: InputDecoration(
+                        labelText: 'Fecha de nacimiento',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        suffixIcon: Icon(Icons.calendar_today),
+                      ),
+                      onTap: () => _selectDate(context),
+                      validator: _validateBirthday,
+                    ),
+                    const SizedBox(height: 32),
+                    TextFormField(
                       controller: _emailController,
                       decoration: InputDecoration(
-                        labelText: 'Correo',
+                        labelText: 'Correo electrónico',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
@@ -272,6 +350,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             _emailTouched = true;
                             _passwordTouched = true;
                             _repeatPasswordTouched = true;
+                            _birthdayTouched = true;
+                            _phoneTouched = true;
                           });
                           if (_formKey.currentState!.validate()) {
                             showDialog(
