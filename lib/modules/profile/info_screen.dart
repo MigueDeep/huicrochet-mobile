@@ -71,10 +71,10 @@ class _InfoScreenState extends State<InfoScreen> {
   String? _validatePhone(String? value) {
     if (!_phoneTouched) return null;
     if (value == null || value.isEmpty) {
-      return 'Por favor ingresa tu numero de telefono';
+      return 'Por favor ingresa tu número de teléfono';
     }
-    if (value.length < 10 || value.length > 10 || int.tryParse(value) == null) {
-      return 'Por favor ingresa un numero de telefono valido';
+    if (value.length != 10 || int.tryParse(value) == null) {
+      return 'Por favor ingresa un número de teléfono válido';
     }
     return null;
   }
@@ -242,6 +242,7 @@ class _InfoScreenState extends State<InfoScreen> {
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: _phoneController,
+                          keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),

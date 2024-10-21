@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:huicrochet_mobile/widgets/select_colors.dart';
+import 'package:huicrochet_mobile/widgets/user_comment.dart';
 
 class ProductDetail extends StatefulWidget {
   const ProductDetail({super.key});
@@ -22,20 +24,55 @@ class _ProductDetailState extends State<ProductDetail> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: Image.asset(
-                    'assets/product1.png',
-                    width: 350,
-                    height: 400,
-                    fit: BoxFit.cover,
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Image.asset(
+                            'assets/product1.png', // Primera imagen hardcodeada
+                            width: 320,
+                            height: 400,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Image.asset(
+                            'assets/snoopyAzul.jpg', // Segunda imagen hardcodeada
+                            width: 320,
+                            height: 400,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Image.asset(
+                            'assets/hellokitty.jpg', // Tercera imagen hardcodeada
+                            width: 320,
+                            height: 400,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      // Puedes seguir añadiendo más imágenes de esta forma
+                    ],
                   ),
                 ),
                 const SizedBox(height: 10),
                 Icon(
                   Icons.maximize,
                   color: Colors.grey,
-                  size: 50,
+                  size: 30,
                 ),
                 Row(
                   children: [
@@ -77,10 +114,9 @@ class _ProductDetailState extends State<ProductDetail> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 50),
                       Text(
-                        'Colores',
-                        style: TextStyle(
+                        'Lorem ipsum dolor sit amet consectetur adipiscing elit velit, nullam cum litora aptent curabitur ultrices curae sollicitudin imperdiet, faucibus pulvinar potenti purus turpis massa varius. Ligula diam hac nunc sodales conubia hendrerit dictum.',
+                        style: const TextStyle(
                           fontFamily: 'Poppins',
                           fontSize: 16,
                           color: Colors.black,
@@ -90,28 +126,35 @@ class _ProductDetailState extends State<ProductDetail> {
                       Row(
                         children: [
                           Icon(
-                            Icons.circle,
+                            Icons.home,
                             color: Colors.black,
                           ),
-                          Icon(
-                            Icons.circle,
-                            color: Colors.blue,
-                          ),
-                          Icon(
-                            Icons.circle,
-                            color: Colors.brown,
-                          ),
-                          Icon(
-                            Icons.circle,
-                            color: Colors.deepOrange,
+                          Text(
+                            'Hogar',
+                            style: const TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           )
                         ],
-                      )
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        'Colores',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 18,
+                          color: Colors.black,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      ColorSelector(),
                     ],
                   ),
                 ),
                 SizedBox(
-                  height: 50,
+                  height: 20,
                 ),
                 SizedBox(
                   width: double.infinity,
@@ -129,6 +172,39 @@ class _ProductDetailState extends State<ProductDetail> {
                             fontSize: 16,
                             color: Colors.white,
                             fontFamily: 'Poppins')),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Comentarios (3)',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 16,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      CommentWidget(
+                        username: 'Usuario123',
+                        date: '20 de octubre, 2024',
+                        description:
+                            '¡Me encanta este producto! Es de excelente calidad.',
+                        rating: 4.5,
+                      ),
+                      CommentWidget(
+                        username: 'MariaLopez',
+                        date: '19 de octubre, 2024',
+                        description:
+                            'Muy bueno, pero podría mejorar en algunos aspectos.',
+                        rating: 3.0,
+                      ),
+                    ],
                   ),
                 )
               ],
