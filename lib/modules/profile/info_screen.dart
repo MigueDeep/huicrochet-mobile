@@ -130,7 +130,7 @@ class _InfoScreenState extends State<InfoScreen> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
-              Navigator.pushReplacementNamed(context, '/profile');
+              Navigator.pushReplacementNamed(context, '/navigation');
             },
           ),
           title: Text('Información personal'),
