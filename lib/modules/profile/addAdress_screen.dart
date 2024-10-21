@@ -315,7 +315,7 @@ class _AddadressScreenState extends State<AddadressScreen> {
                                 _stateTouched = true;
                               });
                               if (_formKey.currentState!.validate()) {
-                                Navigator.pushNamed(context, '/addresses');
+                                Navigator.pushNamed(context, '/navigation');
                               }
                             },
                             child: const Text('Guardar',

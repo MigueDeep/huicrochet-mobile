@@ -55,7 +55,7 @@ class _AddressesScreenState extends State<AddressesScreen> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pushReplacementNamed(context, '/profile');
+            Navigator.pushReplacementNamed(context, '/navigation');
           },
         ),
         title: Text('Direcciones'),
