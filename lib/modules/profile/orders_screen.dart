@@ -105,7 +105,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
                 children: [
                   for (var order in orders)
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.pushNamed(context, '/orderDetails');
+                      },
                       child: Column(
                         children: [
                           Row(

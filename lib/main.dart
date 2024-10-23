@@ -4,6 +4,7 @@ import 'package:huicrochet_mobile/modules/navigation/navigation.dart';
 import 'package:huicrochet_mobile/modules/profile/addAdress_screen.dart';
 import 'package:huicrochet_mobile/modules/profile/adresses_screen.dart';
 import 'package:huicrochet_mobile/modules/profile/info_screen.dart';
+import 'package:huicrochet_mobile/modules/profile/orderDetails_screen.dart';
 import 'package:huicrochet_mobile/modules/profile/orders_screen.dart';
 import 'package:huicrochet_mobile/modules/profile/profile_screen.dart';
 import 'package:huicrochet_mobile/modules/auth/screens/recoverPass1_screen.dart';
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
         '/addresses': (context) => const AddressesScreen(),
         '/orders': (context) => const OrdersScreen(),
         '/addAddress': (context) => const AddadressScreen(),
+        '/orderDetails': (context) => const OrderDetailsScreen(),
       },
     );
   }
