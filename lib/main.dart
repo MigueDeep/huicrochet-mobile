@@ -14,6 +14,7 @@ import 'package:huicrochet_mobile/widgets/splash_screen.dart';
 import 'package:huicrochet_mobile/modules/home/home_screen.dart';
 import 'package:huicrochet_mobile/modules/product/productDetail_screen.dart';
 import 'package:huicrochet_mobile/modules/product/products_screen.dart';
+import 'package:huicrochet_mobile/modules/shopping-cart/shoppingcart_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
         '/addresses': (context) => const AddressesScreen(),
         '/orders': (context) => const OrdersScreen(),
         '/addAddress': (context) => const AddadressScreen(),
+        '/shopping-cart': (context) => const ShoppingcartScreen()
       },
     );
   }

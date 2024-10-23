@@ -43,8 +43,8 @@ class _NavigationState extends State<Navigation> {
             label: 'Productos',
           ),
           const BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
-            label: 'Carrito',
+            icon: Icon(Icons.local_shipping),
+            label: 'Órdenes',
           ),
           const BottomNavigationBarItem(
             icon: Icon(Icons.person),

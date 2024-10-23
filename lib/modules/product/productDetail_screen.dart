@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/widgets/select_colors.dart';
 import 'package:huicrochet_mobile/widgets/user_comment.dart';
+import 'package:huicrochet_mobile/widgets/general_button.dart';
 
 class ProductDetail extends StatefulWidget {
   const ProductDetail({super.key});
@@ -156,23 +157,9 @@ class _ProductDetailState extends State<ProductDetail> {
                 SizedBox(
                   height: 20,
                 ),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.all(16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      backgroundColor: const Color.fromRGBO(242, 148, 165, 1),
-                    ),
-                    onPressed: () {},
-                    child: const Text('Agregar al carrito',
-                        style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.white,
-                            fontFamily: 'Poppins')),
-                  ),
+                GeneralButton(
+                  text: 'Agregar al carrito',
+                  onPressed: () {},
                 ),
                 const SizedBox(
                   height: 20,
