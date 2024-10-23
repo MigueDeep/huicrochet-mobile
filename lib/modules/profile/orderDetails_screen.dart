@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:huicrochet_mobile/widgets/progress_line.dart';
 
 class OrderDetailsScreen extends StatefulWidget {
   const OrderDetailsScreen({super.key});
@@ -47,6 +48,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
             ),
             const SizedBox(height: 32),
             const ProgressLine(),
+            const SizedBox(height: 32),
             // Sección de productos
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -139,7 +141,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 32),
             // Información del destinatario
             Row(
               children: const [
