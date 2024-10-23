@@ -46,7 +46,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               ],
             ),
             const SizedBox(height: 32),
-
+            const ProgressLine(),
             // Sección de productos
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
