@@ -53,10 +53,21 @@ class _ShoppingcartScreenState extends State<ShoppingcartScreen> {
               subColor: Colors.blue,
             ),
             Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Subtotal (IVA incluido)',style: TextStyle(fontSize: 18),),
+                    Text('\$99.50',style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
+                  ],
+                )),
+            Padding(
                 padding: const EdgeInsets.all(20),
                 child: GeneralButton(
                   text: 'Continuar al pago',
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/mailing-address');
+                  },
                 ))
           ],
         ),

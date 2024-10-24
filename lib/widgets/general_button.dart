@@ -20,7 +20,7 @@ class GeneralButton extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8.0),
           ),
-          backgroundColor: const Color.fromRGBO(242, 148, 165, 1), // Color personalizado
+          backgroundColor: const Color.fromRGBO(242, 148, 165, 1),
         ),
         onPressed: onPressed,
         child: Text(
