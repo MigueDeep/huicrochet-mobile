@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:huicrochet_mobile/widgets/custom_progress_line.dart';
 
-class OrderDetailsScreen extends StatefulWidget {
-  const OrderDetailsScreen({super.key});
+class PurchasedetailsScreen extends StatefulWidget {
+  const PurchasedetailsScreen({super.key});
 
   @override
-  _OrderDetailsScreenState createState() => _OrderDetailsScreenState();
+  _PurchasedetailsScreenState createState() => _PurchasedetailsScreenState();
 }
 
-class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
+class _PurchasedetailsScreenState extends State<PurchasedetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Detalles de la Orden'),
+        title: const Text('Detalles de la compra'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -24,48 +23,22 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                Text(
-                  'Estado del Pedido',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 18,
-                  ),
-                ),
-                Text(
-                  'Entregado',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.blueGrey,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 24),
-          ConstrainedBox(
-            constraints: BoxConstraints(
-              maxHeight: 80,
-            ),
-            child: CustomProgressLine(),
-          ),
-          const Divider(height: 32, thickness: 1),
-          // Sección de productos
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const SizedBox(height: 32),
+                  //aqui va el otro widget
+                  const SizedBox(height: 32),
+                  // Sección de productos
                   const Text(
                     'Productos',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 20,
                       fontFamily: 'Poppins',
+                      fontWeight: FontWeight.normal,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -91,7 +64,9 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                             Text(
                               'Peluche Hello Kitty',
                               style: TextStyle(
-                                  fontSize: 16, fontFamily: 'Poppins'),
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 16,
+                                  fontFamily: 'Poppins'),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -107,9 +82,10 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                             Text(
                               'MXN125.00',
                               style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey,
-                                  fontFamily: 'Poppins'),
+                                fontSize: 14,
+                                color: Colors.grey,
+                                fontFamily: 'Poppins',
+                              ),
                             ),
                           ],
                         ),
@@ -139,7 +115,10 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                             Text(
                               'Bolso de hombro con solapa de PU con compartimento',
                               style: TextStyle(
-                                  fontSize: 16, fontFamily: 'Poppins'),
+                                fontWeight: FontWeight.normal,
+                                fontSize: 16,
+                                fontFamily: 'Poppins',
+                              ),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -168,6 +147,59 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Divider(height: 32, thickness: 1),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: const [
+                    Text(
+                      'Total:',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                    Text(
+                      'MXN577.00',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.all(16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        backgroundColor: const Color.fromRGBO(242, 148, 165, 1),
+                      ),
+                      onPressed: () => {},
+                      child: const Text('Confirmar y pagar',
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                              fontFamily: 'Poppins')),
+                    )),
+                const SizedBox(height: 16),
+                const Divider(height: 32, thickness: 1),
+                const SizedBox(height: 16),
+                const Text(
+                  'Resúmen de la orden',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+                const SizedBox(height: 16),
                 Row(
                   children: const [
                     Icon(Icons.person, color: Colors.grey),
@@ -178,7 +210,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 16),
                 Row(
                   children: const [
                     Icon(Icons.location_on, color: Colors.grey),
@@ -193,61 +225,20 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                     ),
                   ],
                 ),
-                const Divider(height: 32, thickness: 1),
+                const SizedBox(height: 16),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: const [
-                    Text(
-                      'Total:',
-                      style: TextStyle(fontSize: 16, fontFamily: 'Poppins'),
-                    ),
-                    Text(
-                      'MXN577.00',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                    Icon(Icons.credit_card, color: Colors.grey),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Método de pago: Mastercard con terminación 578',
+                        style: TextStyle(fontSize: 14, fontFamily: 'Poppins'),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
-                ),
-                const Divider(height: 32, thickness: 1),
-                const Text(
-                  'Otra Información',
-                  style: TextStyle(fontSize: 16, fontFamily: 'Poppins'),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Número de Pedido',
-                      style: TextStyle(fontFamily: 'Poppins'),
-                    ),
-                    Row(
-                      children: [
-                        const Text(
-                          'GSHNVV15A00MUN1',
-                          style: TextStyle(fontFamily: 'Poppins'),
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            Clipboard.setData(
-                                const ClipboardData(text: 'GSHNVV15A00MUN1'));
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text('Copiado al portapapeles')),
-                            );
-                          },
-                          icon: const Icon(Icons.copy),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Fecha del Pedido: 02 sept 2024 07:14:10',
-                  style: TextStyle(fontFamily: 'Poppins'),
                 ),
               ],
             ),
