@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/widgets/category_menu.dart';
 import 'package:huicrochet_mobile/widgets/product_card.dart';
+import 'package:huicrochet_mobile/widgets/app_bar.dart';
 
 class ProductsScreen extends StatefulWidget {
   const ProductsScreen({super.key});
@@ -37,49 +38,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        title: Row(
-          children: [
-            Icon(
-              Icons.local_shipping,
-              color: Colors.black,
-            ),
-            const SizedBox(width: 15),
-            Expanded(
-              child: TextField(
-                style: const TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 15,
-                  color: Colors.black,
-                ),
-                decoration: InputDecoration(
-                  hintText: 'Buscar',
-                  hintStyle: const TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 15,
-                    color: Colors.grey,
-                  ),
-                  suffixIcon: const Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide.none,
-                  ),
-                  filled: true,
-                  fillColor: Colors.grey[100],
-                ),
-              ),
-            ),
-            const SizedBox(width: 15),
-            Icon(
-              Icons.format_bold,
-              color: Colors.black,
-            ),
-          ],
-        ),
-      ),
+      appBar: CustomAppBar(),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
