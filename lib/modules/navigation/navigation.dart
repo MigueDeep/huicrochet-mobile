@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/modules/home/home_screen.dart';
 import 'package:huicrochet_mobile/modules/product/products_screen.dart';
-import 'package:huicrochet_mobile/modules/profile/adresses_screen.dart';
-import 'package:huicrochet_mobile/modules/profile/orders_screen.dart';
+import 'package:huicrochet_mobile/modules/shopping-cart/shoppingCart_screen.dart';
 import 'package:huicrochet_mobile/modules/profile/profile_screen.dart';
 
 class Navigation extends StatefulWidget {
@@ -18,23 +17,26 @@ class _NavigationState extends State<Navigation> {
   static const List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
     ProductsScreen(),
-    OrdersScreen(),
+    ShoppingcartScreen(),
     ProfileScreen()
   ];
   void _onItemTapped(int index) {
-    //Indicar un cambio en el estado de la aplicación
     setState(() {
       _selectedIndex = index;
     });
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: _widgetOptions.elementAt(_selectedIndex),
-      bottomNavigationBar: BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
-          const BottomNavigationBarItem(
+Widget build(BuildContext context) {
+  return Scaffold(
+    body: _widgetOptions.elementAt(_selectedIndex), 
+    bottomNavigationBar: Theme(
+      data: Theme.of(context).copyWith(
+        canvasColor: Colors.white, 
+      ),
+      child: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Inicio',
           ),
@@ -42,11 +44,11 @@ class _NavigationState extends State<Navigation> {
             icon: Icon(Icons.ac_unit_outlined),
             label: 'Productos',
           ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.local_shipping),
-            label: 'Órdenes',
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart),
+            label: 'Carrito',
           ),
-          const BottomNavigationBarItem(
+          BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Perfil',
           ),
@@ -57,6 +59,8 @@ class _NavigationState extends State<Navigation> {
         showSelectedLabels: true,
         onTap: _onItemTapped,
       ),
-    );
-  }
+    ),
+  );
+}
+
 }

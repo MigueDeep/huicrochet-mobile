@@ -11,10 +11,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         children: [
           GestureDetector(
             onTap: () {
-              Navigator.pushNamed(context, '/shopping-cart');
+              Navigator.pushNamed(context, '/orders');
             },
             child: Icon(
-              Icons.shopping_cart,
+              Icons.local_shipping,
               color: Colors.black,
             ),
           ),
