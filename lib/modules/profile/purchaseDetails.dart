@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:huicrochet_mobile/widgets/purchase_progress_bar.dart';
 
 class PurchasedetailsScreen extends StatefulWidget {
   const PurchasedetailsScreen({super.key});
@@ -12,15 +13,8 @@ class _PurchasedetailsScreenState extends State<PurchasedetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Detalles de la compra'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pushReplacementNamed(context, '/navigation');
-          },
-        ),
-      ),
+      backgroundColor: Colors.white,
+      appBar: const PurchaseProgressBar(currentStep: '3'),
       body: Column(
         children: [
           Expanded(
@@ -29,9 +23,6 @@ class _PurchasedetailsScreenState extends State<PurchasedetailsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 32),
-                  //aqui va el otro widget
-                  const SizedBox(height: 32),
                   // Sección de productos
                   const Text(
                     'Productos',
