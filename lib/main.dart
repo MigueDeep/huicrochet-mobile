@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:huicrochet_mobile/config/error_state.dart';
 import 'package:huicrochet_mobile/modules/auth/screens/login_screen.dart';
 import 'package:huicrochet_mobile/modules/navigation/navigation.dart';
 import 'package:huicrochet_mobile/modules/profile/addAdress_screen.dart';
@@ -18,6 +19,7 @@ import 'package:huicrochet_mobile/modules/product/productDetail_screen.dart';
 import 'package:huicrochet_mobile/modules/product/products_screen.dart';
 import 'package:huicrochet_mobile/modules/shopping-cart/shoppingcart_screen.dart';
 import 'package:huicrochet_mobile/modules/shopping-cart/mailing_address_cart.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -26,33 +28,35 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const SplashScreen(),
-        '/login': (context) => const LoginScreen(),
-        '/navigation': (context) => const Navigation(),
-        '/register': (context) => const RegisterScreen(),
-        '/recoverpass1': (context) => const Recoverpass1Screen(),
-        '/recoverpass2': (context) => const Recoverpass2Screen(),
-        '/recoverpass3': (context) => const Recoverpass3Screen(),
-        '/home': (context) => const HomeScreen(),
-        '/product-detail': (context) => const ProductDetail(),
-        '/products': (context) => const ProductsScreen(),
-        '/profile': (context) => const ProfileScreen(),
-        '/info': (context) => const InfoScreen(),
-        '/addresses': (context) => const AddressesScreen(),
-        '/orders': (context) => const OrdersScreen(),
-        '/addAddress': (context) => const AddadressScreen(),
-        '/shopping-cart': (context) => const ShoppingcartScreen(),
-        '/mailing-address': (context) => const MailingAddressCart(),
-        '/orderDetails': (context) => const OrderDetailsScreen(),
-        '/purchaseDetails': (context) => const PurchasedetailsScreen(),
-      },
+    return ChangeNotifierProvider(
+      create: (context) => ErrorState(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        initialRoute: '/',
+        routes: {
+          '/': (context) => const SplashScreen(),
+          '/login': (context) => const LoginScreen(),
+          '/navigation': (context) => const Navigation(),
+          '/register': (context) => const RegisterScreen(),
+          '/recoverpass1': (context) => const Recoverpass1Screen(),
+          '/recoverpass2': (context) => const Recoverpass2Screen(),
+          '/recoverpass3': (context) => const Recoverpass3Screen(),
+          '/home': (context) => const HomeScreen(),
+          '/product-detail': (context) => const ProductDetail(),
+          '/products': (context) => const ProductsScreen(),
+          '/profile': (context) => const ProfileScreen(),
+          '/info': (context) => const InfoScreen(),
+          '/addresses': (context) => const AddressesScreen(),
+          '/orders': (context) => const OrdersScreen(),
+          '/addAddress': (context) => const AddadressScreen(),
+          '/shopping-cart': (context) => const ShoppingcartScreen(),
+          '/mailing-address': (context) => const MailingAddressCart(),
+          '/orderDetails': (context) => const OrderDetailsScreen(),
+          '/purchaseDetails': (context) => const PurchasedetailsScreen(),
+        },
+      ),
     );
   }
 }

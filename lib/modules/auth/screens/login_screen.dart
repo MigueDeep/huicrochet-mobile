@@ -1,4 +1,10 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:huicrochet_mobile/config/dio_client.dart';
+import 'package:huicrochet_mobile/config/error_state.dart';
+import 'package:huicrochet_mobile/widgets/error_dialog.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -58,24 +64,6 @@ class _LoginScreenState extends State<LoginScreen> {
   void _validateForm() {
     setState(() {
       _isValid = _formKey.currentState?.validate() ?? false;
-    });
-  }
-
-  void _showLoadingDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return const AlertDialog(
-          title: Text('Iniciando sesión'),
-          content: LinearProgressIndicator(),
-        );
-      },
-    );
-
-    Future.delayed(const Duration(seconds: 3), () {
-      Navigator.of(context).pop();
-      Navigator.pushReplacementNamed(context, '/navigation');
     });
   }
 
@@ -227,7 +215,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               _passwordTouched = true;
                             });
                             if (_formKey.currentState!.validate()) {
-                              _showLoadingDialog();
+                              _login(_emailController, _passwordController,
+                                  context);
                             }
                           },
                           child: const Text('Iniciar sesión',
@@ -269,5 +258,45 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+}
+
+void _login(dynamic _emailController, dynamic _passwordController,
+    BuildContext context) async {
+  final dio = DioClient(context).dio;
+
+  try {
+    final response = await dio.post(
+      '/auth/signIn',
+      data: {
+        'email': _emailController.text,
+        'password': _passwordController.text,
+      },
+    );
+
+    print(response.data);
+
+    if (response.statusCode == 200) {
+      String token = response.data['data']['token'];
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', token);
+      Navigator.pushReplacementNamed(context, '/home');
+    }
+  } catch (e) {
+    final errorState = Provider.of<ErrorState>(context, listen: false);
+
+    if (e is DioException) {
+      if (e.response?.statusCode == 400) {
+        String errorMessage =
+            e.response?.data['message'] ?? 'Error desconocido';
+        errorState.setError(errorMessage);
+      } else {
+        errorState.setError('Error de conexión');
+      }
+    } else {
+      errorState.setError('Error inesperado: $e');
+    }
+
+    errorState.showErrorDialog(context);
   }
 }
