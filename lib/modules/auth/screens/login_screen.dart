@@ -70,6 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Center(
@@ -280,7 +281,7 @@ void _login(dynamic _emailController, dynamic _passwordController,
       String token = response.data['data']['token'];
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('token', token);
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushReplacementNamed(context, '/navigation');
     }
   } catch (e) {
     final errorState = Provider.of<ErrorState>(context, listen: false);

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -11,6 +12,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
@@ -81,6 +83,47 @@ class _ProfileScreenState extends State<ProfileScreen> {
             },
           ),
           Divider(),
+          ListTile(
+            trailing:
+                Icon(Icons.credit_card, color: Color.fromRGBO(130, 48, 56, 1)),
+            leading: Text('Métodos de pago',
+                style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 16,
+                    color: Color.fromRGBO(130, 48, 56, 1))),
+            onTap: () {
+              Navigator.pushReplacementNamed(context, '/addresses');
+            },
+          ),
+          Divider(),
+          Spacer(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.all(16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    backgroundColor: const Color.fromRGBO(242, 148, 165, 1),
+                  ),
+                  onPressed: () async {
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    prefs.remove('token');
+                    Navigator.pushReplacementNamed(context, '/login');
+                  },
+                  child: const Text('Cerrar sesión',
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                          fontFamily: 'Poppins')),
+                )),
+          ),
+          const SizedBox(height: 16),
         ],
       ),
     );
