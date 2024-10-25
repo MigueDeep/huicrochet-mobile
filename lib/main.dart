@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
         '/orders': (context) => const OrdersScreen(),
         '/addAddress': (context) => const AddadressScreen(),
         '/shopping-cart': (context) => const ShoppingcartScreen(),
-        '/mailing-address': (context) => const MailingAddressCart()
+        '/mailing-address': (context) => const MailingAddressCart(),
         '/orderDetails': (context) => const OrderDetailsScreen(),
         '/purchaseDetails': (context) => const PurchasedetailsScreen(),
       },

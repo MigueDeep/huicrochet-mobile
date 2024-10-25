@@ -36,7 +36,7 @@ Widget build(BuildContext context) {
         canvasColor: Colors.white, 
       ),
       child: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        items:  <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Inicio',
