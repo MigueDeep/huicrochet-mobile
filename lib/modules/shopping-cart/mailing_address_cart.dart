@@ -124,7 +124,7 @@ class _MailingAddressCartState extends State<MailingAddressCart> {
               child: GeneralButton(
                 text: 'Continuar',
                 onPressed: () {
-                  // Navigator.pushNamed(context, '/mailing-address');
+                  Navigator.pushNamed(context, '/payment-methods');
                 },
               ))
         ],

@@ -18,6 +18,7 @@ import 'package:huicrochet_mobile/modules/product/productDetail_screen.dart';
 import 'package:huicrochet_mobile/modules/product/products_screen.dart';
 import 'package:huicrochet_mobile/modules/shopping-cart/shoppingcart_screen.dart';
 import 'package:huicrochet_mobile/modules/shopping-cart/mailing_address_cart.dart';
+import 'package:huicrochet_mobile/modules/shopping-cart/payment_methods.dart';
 
 void main() {
   runApp(const MyApp());
@@ -52,6 +53,7 @@ class MyApp extends StatelessWidget {
         '/mailing-address': (context) => const MailingAddressCart(),
         '/orderDetails': (context) => const OrderDetailsScreen(),
         '/purchaseDetails': (context) => const PurchasedetailsScreen(),
+        '/payment-methods': (context) => const PaymentMethods(),
       },
     );
   }

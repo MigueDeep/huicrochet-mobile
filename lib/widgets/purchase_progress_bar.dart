@@ -27,25 +27,25 @@ class PurchaseProgressBar extends StatelessWidget implements PreferredSizeWidget
                 children: [
                   Icon(
                     Icons.shopping_cart,
-                   color: currentStep == '1' || currentStep == '2' || currentStep == '3' ? activeColor : inactiveColor,
+                   color: currentStep == '1' || currentStep == '2' || currentStep == '3' || currentStep == 'payment' ? activeColor : inactiveColor,
                     size: 30,
                   ),
                   Expanded(
                     child: Container(
                       height: 2,
-                      color: currentStep == '1' || currentStep=='2' || currentStep == '3' ? activeColorBrown : inactiveColor,
+                      color: currentStep == '1' || currentStep=='2' || currentStep == '3' || currentStep == 'payment' ? activeColorBrown : inactiveColor,
                       margin: const EdgeInsets.symmetric(horizontal: 4),
                     ),
                   ),
                   Icon(
                     Icons.location_on,
-                    color: currentStep == '2' || currentStep == '3' ? activeColor : inactiveColor,
+                    color: currentStep == '2' || currentStep == '3' || currentStep == 'payment' ? activeColor : inactiveColor,
                     size: 30,
                   ),
                   Expanded(
                     child: Container(
                       height: 2,
-                      color: currentStep == '2' || currentStep == '3' ? activeColorBrown : inactiveColor,
+                      color: currentStep == '2' || currentStep == '3' || currentStep == 'payment'  ? activeColorBrown : inactiveColor,
                       margin: const EdgeInsets.symmetric(horizontal: 4),
                     ),
                   ),
