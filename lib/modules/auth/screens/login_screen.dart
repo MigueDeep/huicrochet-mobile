@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/config/dio_client.dart';
 import 'package:huicrochet_mobile/config/error_state.dart';
-import 'package:huicrochet_mobile/widgets/error_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -279,8 +278,11 @@ void _login(dynamic _emailController, dynamic _passwordController,
 
     if (response.statusCode == 200) {
       String token = response.data['data']['token'];
+      String fullName = response.data['data']['user']['fullName'];
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('token', token);
+      await prefs.setString('fullName', fullName);
+      await prefs.setString('userId', response.data['data']['user']['id']);
       Navigator.pushReplacementNamed(context, '/navigation');
     }
   } catch (e) {

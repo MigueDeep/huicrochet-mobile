@@ -77,7 +77,7 @@ class CustomProgressLine extends StatelessWidget {
           ),
         ),
         endChild: Container(
-          padding: const EdgeInsets.only(top: 8), // Espaciado vertical
+          padding: const EdgeInsets.only(top: 8),
           child: Text(
             label,
             style: TextStyle(

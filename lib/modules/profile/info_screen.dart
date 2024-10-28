@@ -1,6 +1,11 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:huicrochet_mobile/config/dio_client.dart';
+import 'package:huicrochet_mobile/config/error_state.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class InfoScreen extends StatefulWidget {
   const InfoScreen({super.key});
@@ -11,19 +16,52 @@ class InfoScreen extends StatefulWidget {
 
 class _InfoScreenState extends State<InfoScreen> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _birthdayController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _nameController = TextEditingController();
+  TextEditingController _phoneController = TextEditingController();
+  TextEditingController _birthdayController = TextEditingController();
   String _imagePath = '';
+
+  Future<void> getProfile() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final dio = DioClient(context).dio;
+    try {
+      final response =
+          await dio.get('/auth/findById/${prefs.getString('userId')}');
+      print(response.data);
+
+      if (response.statusCode == 200) {
+        setState(() {
+          _nameController.text = response.data['data']['fullName'];
+          _emailController.text = response.data['data']['email'];
+          _phoneController.text = response.data['data']['phone'];
+          _birthdayController.text = DateFormat('dd/MM/yyyy')
+              .format(DateTime.parse(response.data['data']['birthday']));
+        });
+      }
+    } catch (e) {
+      final errorState = Provider.of<ErrorState>(context, listen: false);
+
+      if (e is DioException) {
+        if (e.response?.statusCode == 400) {
+          String errorMessage =
+              e.response?.data['message'] ?? 'Error desconocido';
+          errorState.setError(errorMessage);
+        } else {
+          errorState.setError('Error de conexión');
+        }
+      } else {
+        errorState.setError('Error inesperado: $e');
+      }
+
+      errorState.showErrorDialog(context);
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    _emailController.text = 'ava@gmail.com';
-    _nameController.text = 'Ava Johnson';
-    _phoneController.text = '1234567890';
-    _birthdayController.text = '01/01/1990';
+    getProfile();
     _emailController.addListener(_validateForm);
     _nameController.addListener(_validateForm);
     _phoneController.addListener(_validateForm);
@@ -174,7 +212,7 @@ class _InfoScreenState extends State<InfoScreen> {
                 ),
                 SizedBox(height: 10),
                 Text(
-                  'Ava Johnson',
+                  _nameController.text,
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
