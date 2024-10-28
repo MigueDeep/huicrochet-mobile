@@ -140,269 +140,270 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.white,
         body: Center(
             child: SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Center(
-            child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                'HUICROCHET',
-                style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromRGBO(130, 48, 56, 1),
-                ),
-              ),
-              const SizedBox(height: 24),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                      color: const Color.fromRGBO(135, 135, 135, 1),
-                      width: 1.0),
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        '¡Bienvenido!',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 16,
-                          color: Color.fromRGBO(130, 48, 56, 1),
-                        ),
-                      ),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Center(
+                child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'HUICROCHET',
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromRGBO(130, 48, 56, 1),
                     ),
-                    const SizedBox(height: 16),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Registrarse',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Color.fromRGBO(130, 48, 56, 1),
-                        ),
-                      ),
+                  ),
+                  const SizedBox(height: 24),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                          color: const Color.fromRGBO(135, 135, 135, 1),
+                          width: 1.0),
+                      borderRadius: BorderRadius.circular(8.0),
                     ),
-                    const SizedBox(height: 8),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Calidad en cada puntada, arte en cada detalle.',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 14,
-                          color: Color.fromRGBO(130, 48, 56, 1),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                    TextFormField(
-                      controller: _nameController,
-                      decoration: InputDecoration(
-                        labelText: 'Nombre completo',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
-                      validator: _validateName,
-                      onTap: () {
-                        setState(() {
-                          _nameTouched = true;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 32),
-                    TextFormField(
-                      controller: _phoneController,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        labelText: 'Número de teléfono',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
-                      validator: _validatePhone,
-                      onTap: () {
-                        setState(() {
-                          _phoneTouched = true;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 32),
-                    TextFormField(
-                      controller: _birthdayController,
-                      readOnly: true,
-                      decoration: InputDecoration(
-                        labelText: 'Fecha de nacimiento',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        suffixIcon: Icon(Icons.calendar_today),
-                      ),
-                      onTap: () => _selectDate(context),
-                      validator: _validateBirthday,
-                    ),
-                    const SizedBox(height: 32),
-                    TextFormField(
-                      controller: _emailController,
-                      decoration: InputDecoration(
-                        labelText: 'Correo electrónico',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
-                      validator: _validateEmail,
-                      onTap: () {
-                        setState(() {
-                          _emailTouched = true;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 32),
-                    TextFormField(
-                      controller: _passwordController,
-                      obscureText: _isObscured,
-                      decoration: InputDecoration(
-                        labelText: 'Contraseña',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            color: const Color.fromRGBO(130, 48, 56, 1),
-                            _isObscured
-                                ? Icons.visibility_off
-                                : Icons.visibility,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _isObscured = !_isObscured;
-                            });
-                          },
-                        ),
-                      ),
-                      validator: _validatePassword,
-                      onTap: () {
-                        setState(() {
-                          _passwordTouched = true;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 32),
-                    TextFormField(
-                      controller: _repeatPasswordController,
-                      obscureText: _isObscured2,
-                      decoration: InputDecoration(
-                        labelText: 'Confirmar contraseña',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            color: const Color.fromRGBO(130, 48, 56, 1),
-                            _isObscured2
-                                ? Icons.visibility_off
-                                : Icons.visibility,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _isObscured2 = !_isObscured2;
-                            });
-                          },
-                        ),
-                      ),
-                      validator: _validateRepeatPassword,
-                      onTap: () {
-                        setState(() {
-                          _repeatPasswordTouched = true;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 32),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.all(16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          backgroundColor:
-                              const Color.fromRGBO(242, 148, 165, 1),
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _nameTouched = true;
-                            _emailTouched = true;
-                            _passwordTouched = true;
-                            _repeatPasswordTouched = true;
-                            _birthdayTouched = true;
-                            _phoneTouched = true;
-                          });
-                          if (_formKey.currentState!.validate()) {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return const AlertDialog(
-                                  title: Text('Creando cuenta'),
-                                  content: LinearProgressIndicator(),
-                                );
-                              },
-                            );
-                            Navigator.pushNamed(context, '/login');
-                          }
-                        },
-                        child: const Text('Registrarse',
-                            style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.white,
-                                fontFamily: 'Poppins')),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
                       children: [
-                        const Text(
-                          "¿Ya tienes cuenta? ",
-                          style: TextStyle(fontFamily: 'Poppins'),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pushNamed(context, '/login');
-                          },
-                          child: const Text(
-                            'Iniciar sesión',
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '¡Bienvenido!',
+                            textAlign: TextAlign.left,
                             style: TextStyle(
                               fontFamily: 'Poppins',
+                              fontSize: 16,
                               color: Color.fromRGBO(130, 48, 56, 1),
                             ),
                           ),
                         ),
+                        const SizedBox(height: 16),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Registrarse',
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromRGBO(130, 48, 56, 1),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Calidad en cada puntada, arte en cada detalle.',
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 14,
+                              color: Color.fromRGBO(130, 48, 56, 1),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 32),
+                        TextFormField(
+                          controller: _nameController,
+                          decoration: InputDecoration(
+                            labelText: 'Nombre completo',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                          ),
+                          validator: _validateName,
+                          onTap: () {
+                            setState(() {
+                              _nameTouched = true;
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 32),
+                        TextFormField(
+                          controller: _phoneController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            labelText: 'Número de teléfono',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                          ),
+                          validator: _validatePhone,
+                          onTap: () {
+                            setState(() {
+                              _phoneTouched = true;
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 32),
+                        TextFormField(
+                          controller: _birthdayController,
+                          readOnly: true,
+                          decoration: InputDecoration(
+                            labelText: 'Fecha de nacimiento',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            suffixIcon: Icon(Icons.calendar_today),
+                          ),
+                          onTap: () => _selectDate(context),
+                          validator: _validateBirthday,
+                        ),
+                        const SizedBox(height: 32),
+                        TextFormField(
+                          controller: _emailController,
+                          decoration: InputDecoration(
+                            labelText: 'Correo electrónico',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                          ),
+                          validator: _validateEmail,
+                          onTap: () {
+                            setState(() {
+                              _emailTouched = true;
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 32),
+                        TextFormField(
+                          controller: _passwordController,
+                          obscureText: _isObscured,
+                          decoration: InputDecoration(
+                            labelText: 'Contraseña',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                color: const Color.fromRGBO(130, 48, 56, 1),
+                                _isObscured
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _isObscured = !_isObscured;
+                                });
+                              },
+                            ),
+                          ),
+                          validator: _validatePassword,
+                          onTap: () {
+                            setState(() {
+                              _passwordTouched = true;
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 32),
+                        TextFormField(
+                          controller: _repeatPasswordController,
+                          obscureText: _isObscured2,
+                          decoration: InputDecoration(
+                            labelText: 'Confirmar contraseña',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                color: const Color.fromRGBO(130, 48, 56, 1),
+                                _isObscured2
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _isObscured2 = !_isObscured2;
+                                });
+                              },
+                            ),
+                          ),
+                          validator: _validateRepeatPassword,
+                          onTap: () {
+                            setState(() {
+                              _repeatPasswordTouched = true;
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 32),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.all(16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              backgroundColor:
+                                  const Color.fromRGBO(242, 148, 165, 1),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _nameTouched = true;
+                                _emailTouched = true;
+                                _passwordTouched = true;
+                                _repeatPasswordTouched = true;
+                                _birthdayTouched = true;
+                                _phoneTouched = true;
+                              });
+                              if (_formKey.currentState!.validate()) {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return const AlertDialog(
+                                      title: Text('Creando cuenta'),
+                                      content: LinearProgressIndicator(),
+                                    );
+                                  },
+                                );
+                                Navigator.pushNamed(context, '/login');
+                              }
+                            },
+                            child: const Text('Registrarse',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.white,
+                                    fontFamily: 'Poppins')),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "¿Ya tienes cuenta? ",
+                              style: TextStyle(fontFamily: 'Poppins'),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(context, '/login');
+                              },
+                              child: const Text(
+                                'Iniciar sesión',
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  color: Color.fromRGBO(130, 48, 56, 1),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
                       ],
                     ),
-                    const SizedBox(height: 16),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
+            )),
           ),
-        )),
-      ),
-    )));
+        )));
   }
 }
