@@ -1,4 +1,8 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:huicrochet_mobile/config/dio_client.dart';
+import 'package:huicrochet_mobile/config/error_state.dart';
+import 'package:provider/provider.dart';
 
 class Recoverpass1Screen extends StatefulWidget {
   const Recoverpass1Screen({super.key});
@@ -137,17 +141,14 @@ class _Recoverpass1ScreenState extends State<Recoverpass1Screen> {
                                 _emailTouched = true;
                               });
                               if (_formKey.currentState!.validate()) {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return const AlertDialog(
-                                      title: Text(
-                                          'Enviando código de recuperación'),
-                                      content: LinearProgressIndicator(),
-                                    );
-                                  },
+                                _sendEmail(_emailController, context);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                        'Revisa tu correo para obtener el código de recuperación'),
+                                    backgroundColor: Colors.blue,
+                                  ),
                                 );
-                                Navigator.pushNamed(context, '/recoverpass2');
                               }
                             },
                             child: const Text('Enviar código',
@@ -166,5 +167,39 @@ class _Recoverpass1ScreenState extends State<Recoverpass1Screen> {
             ),
           ),
         ));
+  }
+}
+
+void _sendEmail(dynamic emailController, BuildContext context) async {
+  final dio = DioClient(context).dio;
+  String email = emailController.text;
+
+  try {
+    final response = await dio.post(
+      '/auth/recoverPassword',
+      queryParameters: {'email': email},
+    );
+
+    print(response.data);
+
+    if (response.statusCode == 200) {
+      Navigator.pushReplacementNamed(context, '/recoverpass2');
+    }
+  } catch (e) {
+    final errorState = Provider.of<ErrorState>(context, listen: false);
+
+    if (e is DioException) {
+      if (e.response?.statusCode == 400) {
+        String errorMessage =
+            e.response?.data['message'] ?? 'Error desconocido';
+        errorState.setError(errorMessage);
+      } else {
+        errorState.setError('Error de conexión');
+      }
+    } else {
+      errorState.setError('Error inesperado: $e');
+    }
+
+    errorState.showErrorDialog(context);
   }
 }
