@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/modules/product/products_screen.dart';
-import 'package:huicrochet_mobile/widgets/product_card.dart';
+import 'package:huicrochet_mobile/widgets/product/product_card.dart';
 import 'package:huicrochet_mobile/widgets/app_bar.dart';
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

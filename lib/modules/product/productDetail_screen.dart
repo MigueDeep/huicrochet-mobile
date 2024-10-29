@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:huicrochet_mobile/widgets/select_colors.dart';
-import 'package:huicrochet_mobile/widgets/user_comment.dart';
+import 'package:huicrochet_mobile/widgets/product/select_colors.dart';
+import 'package:huicrochet_mobile/widgets/product/user_comment.dart';
 import 'package:huicrochet_mobile/widgets/general_button.dart';
 
 class ProductDetail extends StatefulWidget {
