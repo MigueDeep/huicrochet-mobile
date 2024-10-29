@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:huicrochet_mobile/widgets/purchase_progress_bar.dart';
+import 'package:huicrochet_mobile/widgets/payment/purchase_progress_bar.dart';
 
 class PurchasedetailsScreen extends StatefulWidget {
   const PurchasedetailsScreen({super.key});
