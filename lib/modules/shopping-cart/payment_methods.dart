@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/widgets/payment/credit_card.dart';
 import 'package:huicrochet_mobile/widgets/general_button.dart';
-import 'package:huicrochet_mobile/widgets/purchase_progress_bar.dart';
+import 'package:huicrochet_mobile/widgets/payment/purchase_progress_bar.dart';
 
 class PaymentMethods extends StatefulWidget {
   const PaymentMethods({super.key});
@@ -111,7 +111,7 @@ class _PaymentMethodsState extends State<PaymentMethods> {
                       ),
                     ),
                     onPressed: () {
-                      Navigator.pushNamed(context, '/addAddress');
+                      Navigator.pushNamed(context, '/add-payment-method');
                     }),
               )),
           const Divider(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/widgets/category_menu.dart';
-import 'package:huicrochet_mobile/widgets/product_card.dart';
+import 'package:huicrochet_mobile/widgets/product/product_card.dart';
 import 'package:huicrochet_mobile/widgets/app_bar.dart';
 
 class ProductsScreen extends StatefulWidget {

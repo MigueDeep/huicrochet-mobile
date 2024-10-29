@@ -37,8 +37,9 @@ class CreditCard extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
         border: isSelected
-            ? Border.all(color: const Color.fromRGBO(64, 47, 47, 1), width: 3) 
+            ? Border.all(color: const Color.fromRGBO(242, 148, 165, 1), width: 5) 
             : null,
+      
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
