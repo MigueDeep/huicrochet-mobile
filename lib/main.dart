@@ -41,8 +41,6 @@ class MyApp extends StatelessWidget {
           '/navigation': (context) => const Navigation(),
           '/register': (context) => const RegisterScreen(),
           '/recoverpass1': (context) => const Recoverpass1Screen(),
-          '/recoverpass2': (context) => const Recoverpass2Screen(),
-          '/recoverpass3': (context) => const Recoverpass3Screen(),
           '/home': (context) => const HomeScreen(),
           '/product-detail': (context) => const ProductDetail(),
           '/products': (context) => const ProductsScreen(),

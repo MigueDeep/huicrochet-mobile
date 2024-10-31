@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/config/dio_client.dart';
 import 'package:huicrochet_mobile/config/error_state.dart';
+import 'package:huicrochet_mobile/modules/auth/screens/recoverPass2_screen.dart';
 import 'package:provider/provider.dart';
 
 class Recoverpass1Screen extends StatefulWidget {
@@ -142,13 +143,6 @@ class _Recoverpass1ScreenState extends State<Recoverpass1Screen> {
                               });
                               if (_formKey.currentState!.validate()) {
                                 _sendEmail(_emailController, context);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                        'Revisa tu correo para obtener el código de recuperación'),
-                                    backgroundColor: Colors.blue,
-                                  ),
-                                );
                               }
                             },
                             child: const Text('Enviar código',
@@ -183,7 +177,19 @@ void _sendEmail(dynamic emailController, BuildContext context) async {
     print(response.data);
 
     if (response.statusCode == 200) {
-      Navigator.pushReplacementNamed(context, '/recoverpass2');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content:
+              Text('Revisa tu correo para obtener el código de recuperación'),
+          backgroundColor: Colors.blue,
+        ),
+      );
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Recoverpass2Screen(email: email),
+        ),
+      );
     }
   } catch (e) {
     final errorState = Provider.of<ErrorState>(context, listen: false);
