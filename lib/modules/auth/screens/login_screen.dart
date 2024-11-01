@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/config/dio_client.dart';
@@ -274,15 +275,15 @@ void _login(dynamic _emailController, dynamic _passwordController,
       },
     );
 
-    print(response.data);
-
     if (response.statusCode == 200) {
-      String token = response.data['data']['token'];
-      String fullName = response.data['data']['user']['fullName'];
+      String jsonsDataString = response.toString();
+      final jsonData = jsonDecode(jsonsDataString);
+      String token = jsonData['data']['token'];
+      String fullName = jsonData['data']['user']['fullName'];
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('token', token);
       await prefs.setString('fullName', fullName);
-      await prefs.setString('userId', response.data['data']['user']['id']);
+      await prefs.setString('userId', jsonData['data']['user']['id']);
       Navigator.pushReplacementNamed(context, '/navigation');
     }
   } catch (e) {
