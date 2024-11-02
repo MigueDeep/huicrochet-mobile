@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:huicrochet_mobile/widgets/product_added_to_cart.dart';
+import 'package:huicrochet_mobile/widgets/product/product_added_to_cart.dart';
 import 'package:huicrochet_mobile/widgets/general_button.dart';
 class ShoppingcartScreen extends StatefulWidget {
   const ShoppingcartScreen({super.key});
