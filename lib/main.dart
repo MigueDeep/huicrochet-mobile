@@ -22,6 +22,7 @@ import 'package:huicrochet_mobile/modules/shopping-cart/mailing_address_cart.dar
 import 'package:huicrochet_mobile/modules/shopping-cart/payment_methods.dart';
 import 'package:huicrochet_mobile/modules/shopping-cart/add_payment_method.dart';
 import 'package:provider/provider.dart';
+import 'package:huicrochet_mobile/modules/profile/my_payment_methods.dart';
 
 void main() {
   runApp(const MyApp());
@@ -58,7 +59,8 @@ class MyApp extends StatelessWidget {
           '/orderDetails': (context) => const OrderDetailsScreen(),
           '/purchaseDetails': (context) => const PurchasedetailsScreen(),
           '/payment-methods': (context) => const PaymentMethods(),
-          '/add-payment-method': (context) => const AddPaymentMethod()
+          '/add-payment-method': (context) => const AddPaymentMethod(),
+          '/my-payment-methods': (context)=>const MyPaymentMethods()
         },
       ),
     );

@@ -107,7 +107,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     fontSize: 16,
                     color: Color.fromRGBO(130, 48, 56, 1))),
             onTap: () {
-              Navigator.pushReplacementNamed(context, '/addresses');
+              Navigator.pushNamed(context, '/my-payment-methods');
             },
           ),
           const Divider(),
