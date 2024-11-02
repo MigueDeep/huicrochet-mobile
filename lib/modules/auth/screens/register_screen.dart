@@ -1,5 +1,14 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:huicrochet_mobile/config/dio_client.dart';
+import 'package:huicrochet_mobile/config/error_state.dart';
+import 'package:huicrochet_mobile/widgets/general_button.dart';
+import 'package:huicrochet_mobile/widgets/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -14,10 +23,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _repeatPasswordController =
       TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _birthdayController = TextEditingController();
-
   final _formKey = GlobalKey<FormState>();
+  File? image_profile;
 
   bool _isObscured = true;
   bool _isObscured2 = true;
@@ -26,7 +34,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _nameTouched = false;
   bool _passwordTouched = false;
   bool _repeatPasswordTouched = false;
-  bool _phoneTouched = false;
   bool _birthdayTouched = false;
 
   final RegExp emailRegExp = RegExp(
@@ -55,8 +62,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (!_passwordTouched) return null;
     if (value == null || value.isEmpty) {
       return 'Por favor ingresa tu contraseña';
-    } else if (value.length < 6) {
-      return 'La contraseña debe tener al menos 6 caracteres';
+    } else if (value.length < 8) {
+      return 'La contraseña debe tener al menos 8 caracteres';
     }
     return null;
   }
@@ -67,17 +74,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return 'Por favor confirma tu contraseña';
     } else if (value != _passwordController.text) {
       return 'Las contraseñas no coinciden';
-    }
-    return null;
-  }
-
-  String? _validatePhone(String? value) {
-    if (!_phoneTouched) return null;
-    if (value == null || value.isEmpty) {
-      return 'Por favor ingresa tu numero de telefono';
-    }
-    if (value.length != 10 || int.tryParse(value) == null) {
-      return 'Por favor ingresa un numero de telefono válido';
     }
     return null;
   }
@@ -117,7 +113,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _nameController.addListener(_validateForm);
     _repeatPasswordController.addListener(_validateForm);
     _birthdayController.addListener(_validateForm);
-    _phoneController.addListener(_validateForm);
   }
 
   @override
@@ -127,7 +122,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _nameController.dispose();
     _repeatPasswordController.dispose();
     _birthdayController.dispose();
-    _phoneController.dispose();
     super.dispose();
   }
 
@@ -140,6 +134,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          automaticallyImplyLeading: false,
+        ),
         backgroundColor: Colors.white,
         body: Center(
             child: SingleChildScrollView(
@@ -223,23 +221,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           onTap: () {
                             setState(() {
                               _nameTouched = true;
-                            });
-                          },
-                        ),
-                        const SizedBox(height: 32),
-                        TextFormField(
-                          controller: _phoneController,
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            labelText: 'Número de teléfono',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                          ),
-                          validator: _validatePhone,
-                          onTap: () {
-                            setState(() {
-                              _phoneTouched = true;
                             });
                           },
                         ),
@@ -333,18 +314,61 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             });
                           },
                         ),
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 20),
+                        Container(
+                          width: 120,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                          ),
+                          child: ClipOval(
+                            child: image_profile != null
+                                ? Image.file(
+                                    image_profile!,
+                                    fit: BoxFit.cover,
+                                  )
+                                : Container(
+                                    color: Colors.grey[200],
+                                    child: Icon(
+                                      Icons.image,
+                                      size: 50,
+                                      color: Colors.grey[400],
+                                    ),
+                                  ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.all(16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.all(16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  side: const BorderSide(
+                                      color: Color.fromARGB(63, 142, 119, 119),
+                                      width: 0.5),
+                                ),
+                                backgroundColor: Colors.white,
                               ),
-                              backgroundColor:
-                                  const Color.fromRGBO(242, 148, 165, 1),
-                            ),
+                              child: const Text(
+                                'Subir imagen de perfil',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                  fontFamily: 'Poppins',
+                                ),
+                              ),
+                              onPressed: () async {
+                                final image = await getImage();
+                                setState(() {
+                                  image_profile = File(image!.path);
+                                });
+                              }),
+                        ),
+                        const SizedBox(height: 32),
+                        GeneralButton(
+                            text: 'Registrarse',
                             onPressed: () {
                               setState(() {
                                 _nameTouched = true;
@@ -352,28 +376,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 _passwordTouched = true;
                                 _repeatPasswordTouched = true;
                                 _birthdayTouched = true;
-                                _phoneTouched = true;
                               });
                               if (_formKey.currentState!.validate()) {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return const AlertDialog(
-                                      title: Text('Creando cuenta'),
-                                      content: LinearProgressIndicator(),
-                                    );
-                                  },
-                                );
-                                Navigator.pushNamed(context, '/login');
+                                _register(_emailController, _passwordController, _nameController, _birthdayController, context, image_profile);
                               }
-                            },
-                            child: const Text('Registrarse',
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.white,
-                                    fontFamily: 'Poppins')),
-                          ),
-                        ),
+                            }),
                         const SizedBox(height: 16),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -406,4 +413,78 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         )));
   }
+}
+void _register(
+  TextEditingController _emailController,
+  TextEditingController _passwordController,
+  TextEditingController _nameController,
+  TextEditingController _birthdayController,
+  BuildContext context,
+  File? profileImage,
+) async {
+  final dio = DioClient(context).dio;
+
+  try {
+    String birthday = _birthdayController.text; 
+    List<String> parts = birthday.split('/'); 
+    String formattedBirthday = '${parts[2]}-${parts[1]}-${parts[0]}'; 
+
+    FormData formData = FormData.fromMap({
+      'user': jsonEncode({
+        'fullName': _nameController.text,
+        'email': _emailController.text,
+        'password': _passwordController.text,
+        'birthday': formattedBirthday,
+        "status": true,
+        "blocked": true,
+      }),
+      if (profileImage != null)
+        'profileImage': await MultipartFile.fromFile(
+          profileImage.path,
+          filename: 'profileImage.jpg',
+        ),
+    });
+
+    // Enviar la petición
+    final response = await dio.post(
+      '/auth/createClient',
+      data: formData,
+    );
+
+    if (response.statusCode == 200) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Registro Exitoso"),
+            content: Text("El usuario ha sido registrado correctamente."),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.pushReplacementNamed(context, '/login');
+                },
+                child: Text("Aceptar"),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  } catch (e) {
+  final errorState = Provider.of<ErrorState>(context, listen: false);
+
+  if (e is DioException) {
+    if (e.response?.statusCode == 400) {
+      String errorMessage = e.response?.data['message'] ?? 'Error desconocido';
+      errorState.setError(errorMessage); 
+    } else {
+      errorState.setError('Error de conexión');
+    }
+  } else {
+    errorState.setError('Error inesperado: $e');
+  }
+  errorState.showErrorDialog(context);
+}
+
 }
