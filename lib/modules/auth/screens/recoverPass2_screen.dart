@@ -1,7 +1,13 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:huicrochet_mobile/config/dio_client.dart';
+import 'package:huicrochet_mobile/config/error_state.dart';
+import 'package:huicrochet_mobile/modules/auth/screens/recoverPass3_screen.dart';
+import 'package:provider/provider.dart';
 
 class Recoverpass2Screen extends StatefulWidget {
-  const Recoverpass2Screen({super.key});
+  const Recoverpass2Screen({super.key, required this.email});
+  final String email;
 
   @override
   _Recoverpass2ScreenState createState() => _Recoverpass2ScreenState();
@@ -9,9 +15,7 @@ class Recoverpass2Screen extends StatefulWidget {
 
 class _Recoverpass2ScreenState extends State<Recoverpass2Screen> {
   final TextEditingController _codeController = TextEditingController();
-
   final _formKey = GlobalKey<FormState>();
-
   bool _nameTouched = false;
 
   String? _validateName(String? value) {
@@ -131,7 +135,7 @@ class _Recoverpass2ScreenState extends State<Recoverpass2Screen> {
                                 _nameTouched = true;
                               });
                               if (_formKey.currentState!.validate()) {
-                                Navigator.pushNamed(context, '/recoverpass3');
+                                _verifyCode(_codeController.text, context);
                               }
                             },
                             child: const Text('Validar código',
@@ -150,5 +154,56 @@ class _Recoverpass2ScreenState extends State<Recoverpass2Screen> {
             ),
           ),
         ));
+  }
+
+  void _verifyCode(String code, BuildContext context) async {
+    print('Si no sales, hazme una llamada y yo cambio los planes: ');
+    print(widget.email);
+    print(code);
+    final dio = DioClient(context).dio;
+
+    try {
+      final response = await dio.post(
+        '/auth/validateToken',
+        queryParameters: {'email': widget.email, 'token': code},
+      );
+
+      print(response.data);
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content:
+                Text('Código verificado, ya puedes actualizar tu contraseña'),
+            backgroundColor: Colors.blue,
+          ),
+        );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Recoverpass3Screen(
+              email: widget.email,
+              code: code,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      final errorState = Provider.of<ErrorState>(context, listen: false);
+
+      if (e is DioException) {
+        if (e.response?.statusCode == 400) {
+          String errorMessage =
+              e.response?.data['message'] ?? 'Error desconocido';
+          errorState.setError(errorMessage);
+        } else {
+          errorState.setError('Error de conexión');
+        }
+      } else {
+        errorState.setError('Error inesperado: $e');
+      }
+
+      errorState.showErrorDialog(context);
+    }
   }
 }

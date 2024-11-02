@@ -1,7 +1,14 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:huicrochet_mobile/config/dio_client.dart';
+import 'package:huicrochet_mobile/config/error_state.dart';
+import 'package:provider/provider.dart';
 
 class Recoverpass3Screen extends StatefulWidget {
-  const Recoverpass3Screen({super.key});
+  const Recoverpass3Screen(
+      {super.key, required this.email, required this.code});
+  final String email;
+  final String code;
 
   @override
   _Recoverpass3ScreenState createState() => _Recoverpass3ScreenState();
@@ -199,13 +206,8 @@ class _Recoverpass3ScreenState extends State<Recoverpass3Screen> {
                                 _repeatPasswordTouched = true;
                               });
                               if (_formKey.currentState!.validate()) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                        'Contraseña reestablecida, ya puedes iniciar sesión'),
-                                    backgroundColor: Colors.blue,
-                                  ),
-                                );
+                                _changePass(widget.code, context, widget.email,
+                                    _passwordController.text);
                                 Navigator.pushNamed(context, '/login');
                               }
                             },
@@ -225,5 +227,49 @@ class _Recoverpass3ScreenState extends State<Recoverpass3Screen> {
             ),
           ),
         ));
+  }
+}
+
+void _changePass(
+    String code, BuildContext context, String email, String password) async {
+  print('Si no sales, hazme una llamada y yo cambio los planes: ');
+  print(email);
+  print(code);
+  final dio = DioClient(context).dio;
+
+  try {
+    final response = await dio.post(
+      '/auth/changePassword',
+      queryParameters: {'token': code, 'email': email, 'password': password},
+    );
+
+    print(response.data);
+
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content:
+              Text('Código verificado, ya puedes actualizar tu contraseña'),
+          backgroundColor: Colors.blue,
+        ),
+      );
+      Navigator.pushReplacementNamed(context, '/login');
+    }
+  } catch (e) {
+    final errorState = Provider.of<ErrorState>(context, listen: false);
+
+    if (e is DioException) {
+      if (e.response?.statusCode == 400) {
+        String errorMessage =
+            e.response?.data['message'] ?? 'Error desconocido';
+        errorState.setError(errorMessage);
+      } else {
+        errorState.setError('Error de conexión');
+      }
+    } else {
+      errorState.setError('Error inesperado: $e');
+    }
+
+    errorState.showErrorDialog(context);
   }
 }
