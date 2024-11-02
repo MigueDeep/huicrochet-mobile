@@ -253,7 +253,7 @@ void _changePass(
           backgroundColor: Colors.blue,
         ),
       );
-      Navigator.pushReplacementNamed(context, 'login');
+      Navigator.pushReplacementNamed(context, '/login');
     }
   } catch (e) {
     final errorState = Provider.of<ErrorState>(context, listen: false);
