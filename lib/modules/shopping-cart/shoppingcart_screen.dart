@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/widgets/product/product_added_to_cart.dart';
 import 'package:huicrochet_mobile/widgets/general_button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 class ShoppingcartScreen extends StatefulWidget {
   const ShoppingcartScreen({super.key});
 
@@ -9,6 +11,43 @@ class ShoppingcartScreen extends StatefulWidget {
 }
 
 class _ShoppingcartScreenState extends State<ShoppingcartScreen> {
+  Future<void> checkLoginStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.getString('token') == null) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('No tienes sesión iniciada'),
+            content: const Text('¿Quieres iniciar sesión?'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Cancelar'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.pushReplacementNamed(context, '/navigation');
+                },
+              ),
+              TextButton(
+                child: const Text('Iniciar sesión'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.pushReplacementNamed(context, '/login');
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    checkLoginStatus();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,12 +66,13 @@ class _ShoppingcartScreenState extends State<ShoppingcartScreen> {
               child: Column(
                 children: const [
                   Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              'Carrito de compras',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-          ),
+                    padding: EdgeInsets.all(16.0),
+                    child: Text(
+                      'Carrito de compras',
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                  ),
                   ProductAddedToCart(
                     image: 'assets/hellokitty.jpg',
                     productName: 'Hello Kitty Plush',
