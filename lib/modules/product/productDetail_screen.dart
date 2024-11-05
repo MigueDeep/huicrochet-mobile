@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/widgets/product/select_colors.dart';
 import 'package:huicrochet_mobile/widgets/product/user_comment.dart';
 import 'package:huicrochet_mobile/widgets/general_button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductDetail extends StatefulWidget {
   const ProductDetail({super.key});
@@ -11,6 +12,38 @@ class ProductDetail extends StatefulWidget {
 }
 
 class _ProductDetailState extends State<ProductDetail> {
+  Future<void> checkLoginStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.getString('token') == null) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('No tienes sesión iniciada'),
+            content: const Text('¿Quieres iniciar sesión?'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Cancelar'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: const Text('Iniciar sesión'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.pushReplacementNamed(context, '/login');
+                },
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      // Aquí mandas a llamar al metodo que agrega el producto al carrito
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -159,7 +192,9 @@ class _ProductDetailState extends State<ProductDetail> {
                 ),
                 GeneralButton(
                   text: 'Agregar al carrito',
-                  onPressed: () {},
+                  onPressed: () {
+                    checkLoginStatus();
+                  },
                 ),
                 const SizedBox(
                   height: 20,

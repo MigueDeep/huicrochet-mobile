@@ -18,10 +18,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
+  Future<void> checkLoginStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.getString('token') == null) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('No tienes sesión iniciada'),
+            content: const Text('¿Quieres iniciar sesión'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Cancelar'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.pushReplacementNamed(context, '/navigation');
+                },
+              ),
+              TextButton(
+                child: const Text('Iniciar sesión'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.pushReplacementNamed(context, '/login');
+                },
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      getProfile();
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    getProfile();
+    checkLoginStatus();
   }
 
   @override
