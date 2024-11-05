@@ -8,15 +8,14 @@ class ProductAddedToCart extends StatefulWidget {
   final int quantity;
   final double price;
 
-  const ProductAddedToCart({
-    super.key,
-    required this.image,
-    required this.productName,
-    required this.color,
-    required this.quantity,
-    required this.price,
-    required this.subColor
-  });
+  const ProductAddedToCart(
+      {super.key,
+      required this.image,
+      required this.productName,
+      required this.color,
+      required this.quantity,
+      required this.price,
+      required this.subColor});
 
   @override
   State<ProductAddedToCart> createState() => _ProductAddedToCartState();
@@ -46,7 +45,7 @@ class _ProductAddedToCartState extends State<ProductAddedToCart> {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: Image.asset(
-                          widget.image, 
+                          widget.image,
                           width: 120,
                           height: 120,
                           fit: BoxFit.cover,
@@ -54,25 +53,25 @@ class _ProductAddedToCartState extends State<ProductAddedToCart> {
                       ),
                     ],
                   ),
-                  Column(
+                  Expanded(child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 200),
-                        child: Icon(Icons.delete_outline),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 25, horizontal: 10),
-                        child: Text(
-                          widget.productName, 
-                          style: const TextStyle(
-                            fontSize: 18,
-                          ),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Icon(Icons.delete_outline),
+                          ],
                         ),
-                      ),
+                         Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 10),
+                          child: Text(
+                            widget.productName,
+                            style: const TextStyle(
+                              fontSize: 18,
+                            ),
+                          ),)
                     ],
-                  )
+                  )),
                 ],
               ),
               const SizedBox(height: 8),
@@ -82,14 +81,14 @@ class _ProductAddedToCartState extends State<ProductAddedToCart> {
                   Row(
                     children: [
                       Text(
-                        widget.color, 
+                        widget.color,
                         style: const TextStyle(
                           fontSize: 14,
                         ),
                       ),
                       const SizedBox(width: 5),
                       CircleAvatar(
-                        backgroundColor: widget.subColor, 
+                        backgroundColor: widget.subColor,
                         radius: 10,
                       ),
                       const Padding(
@@ -110,7 +109,7 @@ class _ProductAddedToCartState extends State<ProductAddedToCart> {
                     ],
                   ),
                   Text(
-                    '\$${widget.price}', 
+                    '\$${widget.price}',
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,

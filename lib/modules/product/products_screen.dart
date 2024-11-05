@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:huicrochet_mobile/widgets/category_menu.dart';
+import 'package:huicrochet_mobile/widgets/general/category_menu.dart';
 import 'package:huicrochet_mobile/widgets/product/product_card.dart';
-import 'package:huicrochet_mobile/widgets/app_bar.dart';
+import 'package:huicrochet_mobile/widgets/general/app_bar.dart';
 
 class ProductsScreen extends StatefulWidget {
   const ProductsScreen({super.key});
   static const List<Map<String, String>> products = [
     {
-      'name': 'Pájaro tejido a mano',
+      'name': 'Pájaro tejido a mano bala sjjsjjdjdjdjjdsj',
       'price': '99.50',
       'image': 'assets/product1.png',
     },
@@ -58,20 +58,21 @@ class _ProductsScreenState extends State<ProductsScreen> {
               ),
             ),
             const SizedBox(height: 10),
+            // Usar Expanded alrededor de GridView.builder
             Expanded(
               child: GridView.builder(
-                itemCount: 4,
+                itemCount: ProductsScreen.products.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   childAspectRatio: 0.8,
                 ),
                 itemBuilder: (context, index) {
-                  final product = ProductsScreen.products[index];  // Obtenemos el producto correspondiente
+                  final product = ProductsScreen.products[index];
                   return Center(
                     child: productCard(
-                      product['name']!, // Nombre del producto
-                      product['image']!, // URL de la imagen del producto
-                      product['price']!, // Precio del producto
+                      product['name']!,
+                      product['image']!,
+                      product['price']!,
                       context,
                     ),
                   );
