@@ -451,7 +451,6 @@ Future _register(
         ),
     });
 
-    // Enviar la petición
     final response = await dio.post(
       '/auth/createClient',
       data: formData,

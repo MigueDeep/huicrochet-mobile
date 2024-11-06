@@ -13,7 +13,13 @@ class _LoaderState extends State<Loader> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(103, 0, 0, 0),
-      body: Center(child: Lottie.asset('assets/loader.json')),
+      body: Center(
+        child: SizedBox(
+          width: 100,
+          height: 100,
+          child: Lottie.asset('assets/loader.json'),
+        ),
+      ),
     );
   }
 }

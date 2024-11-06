@@ -1,4 +1,7 @@
+import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:huicrochet_mobile/config/dio_client.dart';
 import 'package:huicrochet_mobile/widgets/general/category_menu.dart';
 import 'package:huicrochet_mobile/widgets/product/product_card.dart';
 import 'package:huicrochet_mobile/widgets/general/app_bar.dart';
@@ -15,7 +18,6 @@ class ProductsScreen extends StatefulWidget {
       'name': 'Producto 2',
       'price': '79.99',
       'image': 'assets/bolsa.jpg',
-      
     },
     {
       'name': 'Producto 3',
@@ -34,6 +36,49 @@ class ProductsScreen extends StatefulWidget {
 }
 
 class _ProductsScreenState extends State<ProductsScreen> {
+  List<String> categories = ['Todas'];
+
+  @override
+  void initState() {
+    super.initState();
+    _getCategories();
+  }
+
+  Future<void> _getCategories() async {
+    final dioClient = DioClient(context);
+
+    try {
+      final response = await dioClient.dio.get('/category/getAllTrue');
+
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.toString());
+        
+        final List<dynamic> categoryData = jsonData['data'];
+        setState(() {
+          categories = ['Todas'];
+          categories.addAll(
+            categoryData.map((category) => category['name'] as String).toList(),
+          );
+        });
+      } else {
+        print('Error al obtener categorías ${response.statusCode}');
+      }
+    } on DioException catch (e) {
+      String errorMessage = 'Error al obtener categorías';
+      if (e.response != null && e.response?.data != null) {
+        try {
+          final errorData = jsonDecode(e.response!.data);
+          errorMessage = errorData['message'] ?? errorMessage;
+        } catch (_) {
+          errorMessage = e.message ?? 'Error desconocido';
+        }
+      }
+      print('Error de red ${errorMessage}');
+    } catch (e) {
+      print('Error desconocido ${e.toString()}');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,18 +92,14 @@ class _ProductsScreenState extends State<ProductsScreen> {
             // Menú de categorías
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  categoryMenu('Todas'),
-                  categoryMenu('Decoración'),
-                  categoryMenu('Juguetes'),
-                  categoryMenu('Figuras'),
-                  categoryMenu('Interiores'),
-                ],
-              ),
+              child: Row(children: [
+                CategoryMenu(
+                  categories: categories,
+                  onCategorySelected: (selectedCategory) {},
+                )
+              ]),
             ),
             const SizedBox(height: 10),
-            // Usar Expanded alrededor de GridView.builder
             Expanded(
               child: GridView.builder(
                 itemCount: ProductsScreen.products.length,

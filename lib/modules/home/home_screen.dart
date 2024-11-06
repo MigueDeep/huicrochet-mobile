@@ -16,7 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: CustomAppBar(),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
-        child: Center( // Centra todo el contenido horizontalmente
+        child: Center( 
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center, 
             children: [
