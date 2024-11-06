@@ -4,8 +4,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/config/dio_client.dart';
 import 'package:huicrochet_mobile/config/error_state.dart';
-import 'package:huicrochet_mobile/widgets/general_button.dart';
-import 'package:huicrochet_mobile/widgets/image_picker.dart';
+import 'package:huicrochet_mobile/widgets/general/general_button.dart';
+import 'package:huicrochet_mobile/widgets/general/image_picker.dart';
+import 'package:huicrochet_mobile/widgets/general/loader.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,6 +19,7 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  final LoaderController _loaderController = LoaderController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
@@ -369,7 +371,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         const SizedBox(height: 32),
                         GeneralButton(
                             text: 'Registrarse',
-                            onPressed: () {
+                            onPressed: () async {
+                               _loaderController.show(context);
                               setState(() {
                                 _nameTouched = true;
                                 _emailTouched = true;
@@ -378,7 +381,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 _birthdayTouched = true;
                               });
                               if (_formKey.currentState!.validate()) {
-                                _register(_emailController, _passwordController, _nameController, _birthdayController, context, image_profile);
+                                await _register(_emailController, _passwordController, _nameController, _birthdayController, context, image_profile);
+                                _loaderController.hide();
+                              }else{
+                                _loaderController.hide();
                               }
                             }),
                         const SizedBox(height: 16),
@@ -414,7 +420,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         )));
   }
 }
-void _register(
+Future _register(
   TextEditingController _emailController,
   TextEditingController _passwordController,
   TextEditingController _nameController,
@@ -445,7 +451,6 @@ void _register(
         ),
     });
 
-    // Enviar la petición
     final response = await dio.post(
       '/auth/createClient',
       data: formData,

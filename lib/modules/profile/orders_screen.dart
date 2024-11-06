@@ -58,12 +58,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pushReplacementNamed(context, '/navigation');
-          },
-        ),
+        automaticallyImplyLeading: true,
         title: Text('Órdenes'),
         backgroundColor: Colors.white,
         elevation: 0,

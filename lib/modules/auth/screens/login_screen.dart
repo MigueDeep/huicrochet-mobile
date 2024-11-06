@@ -5,6 +5,7 @@ import 'package:huicrochet_mobile/config/dio_client.dart';
 import 'package:huicrochet_mobile/config/error_state.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:huicrochet_mobile/widgets/general/loader.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,6 +15,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final LoaderController _loaderController = LoaderController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -210,14 +212,20 @@ class _LoginScreenState extends State<LoginScreen> {
                             backgroundColor:
                                 const Color.fromRGBO(242, 148, 165, 1),
                           ),
-                          onPressed: () {
+                          onPressed: () async {
+                            _loaderController.show(context);
                             setState(() {
                               _emailTouched = true;
                               _passwordTouched = true;
                             });
+
                             if (_formKey.currentState!.validate()) {
-                              _login(_emailController, _passwordController,
-                                  context);
+                              await _login(_emailController,
+                                  _passwordController, context);
+                              _loaderController.hide();
+                            } else {
+                              // Oculta el loader si la validación falla
+                              _loaderController.hide();
                             }
                           },
                           child: const Text('Iniciar sesión',
@@ -262,7 +270,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-void _login(dynamic _emailController, dynamic _passwordController,
+Future _login(dynamic _emailController, dynamic _passwordController,
     BuildContext context) async {
   final dio = DioClient(context).dio;
 

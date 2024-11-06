@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/widgets/payment/credit_card.dart';
-import 'package:huicrochet_mobile/widgets/general_button.dart';
+import 'package:huicrochet_mobile/widgets/general/general_button.dart';
 import 'package:huicrochet_mobile/widgets/payment/purchase_progress_bar.dart';
 
 class PaymentMethods extends StatefulWidget {

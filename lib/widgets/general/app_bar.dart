@@ -18,7 +18,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               color: Colors.black,
             ),
           ),
-          const SizedBox(width: 15),
+          const SizedBox(width: 10),
           Expanded(
             child: TextField(
               style: const TextStyle(
@@ -43,11 +43,15 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ),
           ),
-          const SizedBox(width: 15),
-          Icon(
-            Icons.format_bold,
-            color: Colors.black,
-          ),
+          const SizedBox(width: 5),
+          ClipRRect(
+              borderRadius: BorderRadius.circular(40),
+              child: Image.asset(
+                'assets/snoopyAzul.jpg',
+                width: 40,
+                height: 40,
+              ),
+            ),
         ],
       ),
     );
