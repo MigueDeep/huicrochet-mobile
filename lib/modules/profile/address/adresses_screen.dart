@@ -104,9 +104,6 @@ class _AddressesScreenState extends State<AddressesScreen> {
                 ),
               );
             }).toList();
-
-            print('Direcciones cargadas:');
-            print(addresses);
             isLoading = false;
           } catch (e) {
             print('Error específico al mapear los datos: $e');
@@ -312,7 +309,7 @@ class _AddressesScreenState extends State<AddressesScreen> {
                               const SizedBox(height: 24),
                             ],
                           ),
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 30),
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(

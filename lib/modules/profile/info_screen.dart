@@ -25,6 +25,7 @@ class _InfoScreenState extends State<InfoScreen> {
   String? initialBirthday;
   bool _isEdited = false;
   bool _isValid = false;
+  bool isLoading = true;
 
   Future<void> getProfile() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -45,6 +46,7 @@ class _InfoScreenState extends State<InfoScreen> {
           _birthdayController.text =
               DateFormat('dd/MM/yyyy').format(parsedDate);
         });
+        isLoading = false;
       }
     } catch (e) {
       final errorState = Provider.of<ErrorState>(context, listen: false);
@@ -52,6 +54,7 @@ class _InfoScreenState extends State<InfoScreen> {
           ? e.response?.data['message'] ?? 'Error desconocido'
           : 'Error de conexión');
       errorState.showErrorDialog(context);
+      isLoading = false;
     }
   }
 
@@ -219,110 +222,114 @@ class _InfoScreenState extends State<InfoScreen> {
           elevation: 0,
           iconTheme: IconThemeData(color: Colors.black),
         ),
-        body: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                SizedBox(height: 32),
-                CircleAvatar(
-                    radius: 50, backgroundImage: AssetImage('assets/logo.png')),
-                SizedBox(height: 10),
-                Text(
-                  name,
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Poppins',
-                    color: Colors.black,
+        body: isLoading
+            ? Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      SizedBox(height: 32),
+                      CircleAvatar(
+                          radius: 50,
+                          backgroundImage: AssetImage('assets/logo.png')),
+                      SizedBox(height: 10),
+                      Text(
+                        name,
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Poppins',
+                          color: Colors.black,
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      ListTile(
+                        leading: Text('Información personal',
+                            style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontSize: 16,
+                                color: Color.fromRGBO(130, 48, 56, 1))),
+                      ),
+                      Divider(),
+                      Container(
+                          padding: const EdgeInsets.all(24.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Nombre:',
+                                  style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      color: Color.fromRGBO(130, 48, 56, 1))),
+                              const SizedBox(height: 8),
+                              TextFormField(
+                                controller: _nameController,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                ),
+                                validator: _validateName,
+                              ),
+                              const SizedBox(height: 24),
+                              Text('Correo:',
+                                  style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      color: Color.fromRGBO(130, 48, 56, 1))),
+                              const SizedBox(height: 8),
+                              TextFormField(
+                                controller: _emailController,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                ),
+                                validator: _validateEmail,
+                              ),
+                              const SizedBox(height: 24),
+                              Text('Fecha de nacimiento:',
+                                  style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      color: Color.fromRGBO(130, 48, 56, 1))),
+                              const SizedBox(height: 8),
+                              TextFormField(
+                                controller: _birthdayController,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  suffixIcon: Icon(Icons.calendar_today),
+                                ),
+                                onTap: () => _selectDate(context),
+                                validator: _validateBirthday,
+                              ),
+                              const SizedBox(height: 32),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    padding: const EdgeInsets.all(16),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                    backgroundColor:
+                                        const Color.fromRGBO(242, 148, 165, 1),
+                                  ),
+                                  onPressed: _isEdited && _isValid
+                                      ? updateProfile
+                                      : null,
+                                  child: const Text('Guardar cambios',
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.white,
+                                          fontFamily: 'Poppins')),
+                                ),
+                              ),
+                            ],
+                          ))
+                    ],
                   ),
                 ),
-                SizedBox(height: 20),
-                ListTile(
-                  leading: Text('Información personal',
-                      style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 16,
-                          color: Color.fromRGBO(130, 48, 56, 1))),
-                ),
-                Divider(),
-                Container(
-                    padding: const EdgeInsets.all(24.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Nombre:',
-                            style: TextStyle(
-                                fontFamily: 'Poppins',
-                                color: Color.fromRGBO(130, 48, 56, 1))),
-                        const SizedBox(height: 8),
-                        TextFormField(
-                          controller: _nameController,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                          ),
-                          validator: _validateName,
-                        ),
-                        const SizedBox(height: 24),
-                        Text('Correo:',
-                            style: TextStyle(
-                                fontFamily: 'Poppins',
-                                color: Color.fromRGBO(130, 48, 56, 1))),
-                        const SizedBox(height: 8),
-                        TextFormField(
-                          controller: _emailController,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                          ),
-                          validator: _validateEmail,
-                        ),
-                        const SizedBox(height: 24),
-                        Text('Fecha de nacimiento:',
-                            style: TextStyle(
-                                fontFamily: 'Poppins',
-                                color: Color.fromRGBO(130, 48, 56, 1))),
-                        const SizedBox(height: 8),
-                        TextFormField(
-                          controller: _birthdayController,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            suffixIcon: Icon(Icons.calendar_today),
-                          ),
-                          onTap: () => _selectDate(context),
-                          validator: _validateBirthday,
-                        ),
-                        const SizedBox(height: 32),
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.all(16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              backgroundColor:
-                                  const Color.fromRGBO(242, 148, 165, 1),
-                            ),
-                            onPressed:
-                                _isEdited && _isValid ? updateProfile : null,
-                            child: const Text('Guardar cambios',
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.white,
-                                    fontFamily: 'Poppins')),
-                          ),
-                        ),
-                      ],
-                    ))
-              ],
-            ),
-          ),
-        ));
+              ));
   }
 }

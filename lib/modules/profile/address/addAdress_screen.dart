@@ -144,7 +144,7 @@ class _AddadressScreenState extends State<AddadressScreen> {
           'status': true
         },
       );
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Dirección de envío registrada'),
@@ -233,6 +233,7 @@ class _AddadressScreenState extends State<AddadressScreen> {
                                   TextFormField(
                                     keyboardType: TextInputType.number,
                                     controller: _numberController,
+                                    maxLength: 4,
                                     decoration: InputDecoration(
                                       border: OutlineInputBorder(
                                         borderRadius:
@@ -390,7 +391,7 @@ class _AddadressScreenState extends State<AddadressScreen> {
                                 createAddress();
                               }
                             },
-                            child: const Text('Guardar',
+                            child: const Text('Registrar dirección',
                                 style: TextStyle(
                                     fontSize: 16,
                                     color: Colors.white,

@@ -1,4 +1,11 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:huicrochet_mobile/config/dio_client.dart';
+import 'package:huicrochet_mobile/config/error_state.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EditadressScreen extends StatefulWidget {
   const EditadressScreen({super.key, required this.address});
@@ -16,27 +23,56 @@ class _EditadressScreenState extends State<EditadressScreen> {
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _disctrictController = TextEditingController();
   final TextEditingController _stateController = TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
+  bool isLoading = true;
 
-  final addressExample = {
-    'id': 1,
-    'zipCode': 62742,
-    'street': 'Privet Drive',
-    'city': 'Little Whinging',
-    'number': 12,
-    'district': 'Surrey',
-    'state': 'England',
-  };
+  String? initialStreet;
+  String? initialNumber;
+  String? initialZipCode;
+  String? initialCity;
+  String? initialDistrict;
+  String? initialState;
+  String? initialPhoneNumber;
+  bool isButtonEnabled = false;
+
   Future<void> getAddress() async {
-    print('Obteniendo dirección...');
-    print(widget.address);
-    setState(() {
-      _streetController.text = addressExample['street'] as String;
-      _numberController.text = (addressExample['number'] ?? '').toString();
-      _cityController.text = addressExample['city'] as String;
-      _stateController.text = addressExample['state'] as String;
-      _disctrictController.text = addressExample['district'] as String;
-      _zipCodeController.text = (addressExample['zipCode'] ?? '').toString();
-    });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final dio = DioClient(context).dio;
+    try {
+      final response = await dio.get('/shipping-address/${widget.address}');
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.data);
+        setState(() {
+          _streetController.text = jsonData['data']['street'] as String;
+          _numberController.text =
+              (jsonData['data']['number'] ?? '').toString();
+          _cityController.text = jsonData['data']['city'] as String;
+          _stateController.text = jsonData['data']['state'] as String;
+          _phoneNumberController.text =
+              (jsonData['data']['phoneNumber'] ?? '').toString();
+          _disctrictController.text = jsonData['data']['district'] as String;
+          _zipCodeController.text =
+              (jsonData['data']['zipCode'] ?? '').toString();
+          initialStreet = _streetController.text;
+          initialNumber = _numberController.text;
+          initialZipCode = _zipCodeController.text;
+          initialCity = _cityController.text;
+          initialDistrict = _disctrictController.text;
+          initialState = _stateController.text;
+          initialPhoneNumber = _phoneNumberController.text;
+          isButtonEnabled = false;
+        });
+
+        isLoading = false;
+      }
+    } catch (e) {
+      final errorState = Provider.of<ErrorState>(context, listen: false);
+      errorState.setError(e is DioException && e.response?.statusCode == 400
+          ? e.response?.data['message'] ?? 'Error desconocido'
+          : 'Error de conexión');
+      errorState.showErrorDialog(context);
+      isLoading = false;
+    }
   }
 
   @override
@@ -48,13 +84,16 @@ class _EditadressScreenState extends State<EditadressScreen> {
     _zipCodeController.addListener(_validateForm);
     _disctrictController.addListener(_validateForm);
     _stateController.addListener(_validateForm);
-    _streetController.text = 'Cargando...';
-    _numberController.text = 'Cargando...';
-    _cityController.text = 'Cargando...';
-    _stateController.text = 'Cargando...';
-    _disctrictController.text = 'Cargando...';
-    _zipCodeController.text = 'Cargando...';
+    _phoneNumberController.addListener(_validateForm);
     getAddress();
+    _streetController.addListener(_checkForChanges);
+    _numberController.addListener(_checkForChanges);
+    _zipCodeController.addListener(_checkForChanges);
+    _cityController.addListener(_checkForChanges);
+    _disctrictController.addListener(_checkForChanges);
+    _stateController.addListener(_checkForChanges);
+    _phoneNumberController.addListener(_checkForChanges);
+    isButtonEnabled = false;
   }
 
   @override
@@ -65,6 +104,7 @@ class _EditadressScreenState extends State<EditadressScreen> {
     _stateController.dispose();
     _numberController.dispose();
     _streetController.dispose();
+    _phoneNumberController.dispose();
     super.dispose();
   }
 
@@ -74,6 +114,7 @@ class _EditadressScreenState extends State<EditadressScreen> {
   bool _districtTouched = false;
   bool _zipCodeTouched = false;
   bool _stateTouched = false;
+  bool _phoneNumberTouched = false;
   bool _isValid = false;
 
   String? _validateStreet(String? value) {
@@ -119,6 +160,17 @@ class _EditadressScreenState extends State<EditadressScreen> {
     return null;
   }
 
+  String? _validatePhoneNumber(String? value) {
+    if (!_phoneNumberTouched) return null;
+    if (value == null || value.isEmpty) {
+      return 'Por favor ingresa número de teléfono';
+    }
+    if (int.tryParse(value) == null) {
+      return 'Por favor ingresa un número válido';
+    }
+    return null;
+  }
+
   String? _validateZipCode(String? value) {
     if (!_zipCodeTouched) return null;
     if (value == null || value.isEmpty) {
@@ -137,9 +189,72 @@ class _EditadressScreenState extends State<EditadressScreen> {
   }
 
   Future<void> updateAddress() async {
-    if (_isValid) {
-      // Actualizar la dirección
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final dio = DioClient(context).dio;
+
+    try {
+      final data = {
+        'id': widget.address,
+        'userId': prefs.getString('userId'),
+        'state': _stateController.text,
+        'city': _cityController.text,
+        'zipCode': _zipCodeController.text,
+        'district': _disctrictController.text,
+        'street': _streetController.text,
+        'number': _numberController.text,
+        'phoneNumber': _phoneNumberController.text,
+        'defaultAddress': false,
+        'status': true
+      };
+
+      final response = await dio.put(
+        '/shipping-address/${widget.address}',
+        data: jsonEncode(data),
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'accept': 'application/json',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Dirección de envío actualizada'),
+            backgroundColor: Colors.blue,
+          ),
+        );
+        Navigator.pushReplacementNamed(context, '/addresses');
+      }
+    } catch (e) {
+      final errorState = Provider.of<ErrorState>(context, listen: false);
+
+      if (e is DioException) {
+        if (e.response?.statusCode == 400) {
+          String errorMessage =
+              e.response?.data['message'] ?? 'Error desconocido';
+          errorState.setError(errorMessage);
+        } else {
+          errorState.setError('Error de conexión');
+        }
+      } else {
+        errorState.setError('Error inesperado: $e');
+      }
+      errorState.showErrorDialog(context);
     }
+  }
+
+  void _checkForChanges() {
+    setState(() {
+      isButtonEnabled = _streetController.text != initialStreet ||
+          _numberController.text != initialNumber ||
+          _zipCodeController.text != initialZipCode ||
+          _cityController.text != initialCity ||
+          _disctrictController.text != initialDistrict ||
+          _stateController.text != initialState ||
+          _phoneNumberController.text != initialPhoneNumber;
+    });
   }
 
   @override
@@ -158,197 +273,228 @@ class _EditadressScreenState extends State<EditadressScreen> {
           elevation: 0,
           iconTheme: IconThemeData(color: Colors.black),
         ),
-        body: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                Container(
-                    padding: const EdgeInsets.all(24.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Calle:',
-                            style: TextStyle(
-                                fontFamily: 'Poppins',
-                                color: Color.fromRGBO(130, 48, 56, 1))),
-                        const SizedBox(height: 8),
-                        TextFormField(
-                          controller: _streetController,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                          ),
-                          validator: _validateStreet,
-                          onTap: () {
-                            setState(() {
-                              _streetTouched = true;
-                            });
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+        body: isLoading
+            ? Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      Container(
+                          padding: const EdgeInsets.all(24.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Calle:',
+                                  style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      color: Color.fromRGBO(130, 48, 56, 1))),
+                              const SizedBox(height: 8),
+                              TextFormField(
+                                controller: _streetController,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                ),
+                                validator: _validateStreet,
+                                onTap: () {
+                                  setState(() {
+                                    _streetTouched = true;
+                                  });
+                                },
+                              ),
+                              const SizedBox(height: 16),
+                              Row(
                                 children: [
-                                  Text('Número de casa:',
-                                      style: TextStyle(
-                                          fontFamily: 'Poppins',
-                                          color:
-                                              Color.fromRGBO(130, 48, 56, 1))),
-                                  const SizedBox(height: 8),
-                                  TextFormField(
-                                    keyboardType: TextInputType.number,
-                                    controller: _numberController,
-                                    decoration: InputDecoration(
-                                      border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                      ),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text('Número de casa:',
+                                            style: TextStyle(
+                                                fontFamily: 'Poppins',
+                                                color: Color.fromRGBO(
+                                                    130, 48, 56, 1))),
+                                        const SizedBox(height: 8),
+                                        TextFormField(
+                                          keyboardType: TextInputType.number,
+                                          controller: _numberController,
+                                          maxLength: 4,
+                                          decoration: InputDecoration(
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                            ),
+                                          ),
+                                          validator: _validateNumber,
+                                          onTap: () {
+                                            setState(() {
+                                              _numberTouched = true;
+                                            });
+                                          },
+                                        ),
+                                      ],
                                     ),
-                                    validator: _validateNumber,
-                                    onTap: () {
-                                      setState(() {
-                                        _numberTouched = true;
-                                      });
-                                    },
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text('Código postal:',
+                                            style: TextStyle(
+                                                fontFamily: 'Poppins',
+                                                color: Color.fromRGBO(
+                                                    130, 48, 56, 1))),
+                                        const SizedBox(height: 8),
+                                        TextFormField(
+                                          keyboardType: TextInputType.number,
+                                          controller: _zipCodeController,
+                                          maxLength: 5,
+                                          decoration: InputDecoration(
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                            ),
+                                          ),
+                                          validator: _validateZipCode,
+                                          onTap: () {
+                                            setState(() {
+                                              _zipCodeTouched = true;
+                                            });
+                                          },
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),
-                            ),
-                            const SizedBox(
-                                width: 16), // Espaciado entre los campos
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('Código postal:',
-                                      style: TextStyle(
-                                          fontFamily: 'Poppins',
-                                          color:
-                                              Color.fromRGBO(130, 48, 56, 1))),
-                                  const SizedBox(height: 8),
-                                  TextFormField(
-                                    keyboardType: TextInputType.number,
-                                    controller: _zipCodeController,
-                                    decoration: InputDecoration(
-                                      border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                      ),
-                                    ),
-                                    validator: _validateZipCode,
-                                    onTap: () {
-                                      setState(() {
-                                        _zipCodeTouched = true;
-                                      });
-                                    },
+                              const SizedBox(height: 16),
+                              Text('Ciudad:',
+                                  style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      color: Color.fromRGBO(130, 48, 56, 1))),
+                              const SizedBox(height: 8),
+                              TextFormField(
+                                controller: _cityController,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
                                   ),
-                                ],
+                                ),
+                                validator: _validateCity,
+                                onTap: () {
+                                  setState(() {
+                                    _cityTouched = true;
+                                  });
+                                },
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        Text('Ciudad:',
-                            style: TextStyle(
-                                fontFamily: 'Poppins',
-                                color: Color.fromRGBO(130, 48, 56, 1))),
-                        const SizedBox(height: 8),
-                        TextFormField(
-                          controller: _cityController,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                          ),
-                          validator: _validateCity,
-                          onTap: () {
-                            setState(() {
-                              _cityTouched = true;
-                            });
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                        Text('Distrito:',
-                            style: TextStyle(
-                                fontFamily: 'Poppins',
-                                color: Color.fromRGBO(130, 48, 56, 1))),
-                        const SizedBox(height: 8),
-                        TextFormField(
-                          controller: _disctrictController,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                          ),
-                          validator: _validateDistrict,
-                          onTap: () {
-                            setState(() {
-                              _districtTouched = true;
-                            });
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                        Text('Estado:',
-                            style: TextStyle(
-                                fontFamily: 'Poppins',
-                                color: Color.fromRGBO(130, 48, 56, 1))),
-                        const SizedBox(height: 8),
-                        TextFormField(
-                          controller: _stateController,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                          ),
-                          validator: _validateState,
-                          onTap: () {
-                            setState(() {
-                              _stateTouched = true;
-                            });
-                          },
-                        ),
-                        SizedBox(height: 40),
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.all(16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
+                              const SizedBox(height: 16),
+                              Text('Distrito:',
+                                  style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      color: Color.fromRGBO(130, 48, 56, 1))),
+                              const SizedBox(height: 8),
+                              TextFormField(
+                                controller: _disctrictController,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                ),
+                                validator: _validateDistrict,
+                                onTap: () {
+                                  setState(() {
+                                    _districtTouched = true;
+                                  });
+                                },
                               ),
-                              backgroundColor:
-                                  const Color.fromRGBO(242, 148, 165, 1),
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _streetTouched = true;
-                                _numberTouched = true;
-                                _cityTouched = true;
-                                _districtTouched = true;
-                                _zipCodeTouched = true;
-                                _stateTouched = true;
-                              });
-                              if (_formKey.currentState!.validate()) {
-                                updateAddress();
-                              }
-                            },
-                            child: const Text('Guardar cambios',
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.white,
-                                    fontFamily: 'Poppins')),
-                          ),
-                        ),
-                      ],
-                    ))
-              ],
-            ),
-          ),
-        ));
+                              const SizedBox(height: 16),
+                              Text('Estado:',
+                                  style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      color: Color.fromRGBO(130, 48, 56, 1))),
+                              const SizedBox(height: 8),
+                              TextFormField(
+                                controller: _stateController,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                ),
+                                validator: _validateState,
+                                onTap: () {
+                                  setState(() {
+                                    _stateTouched = true;
+                                  });
+                                },
+                              ),
+                              SizedBox(height: 16),
+                              Text('Número de teléfono:',
+                                  style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      color: Color.fromRGBO(130, 48, 56, 1))),
+                              const SizedBox(height: 8),
+                              TextFormField(
+                                keyboardType: TextInputType.number,
+                                controller: _phoneNumberController,
+                                maxLength: 10,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                ),
+                                validator: _validatePhoneNumber,
+                                onTap: () {
+                                  setState(() {
+                                    _phoneNumberTouched = true;
+                                  });
+                                },
+                              ),
+                              SizedBox(height: 40),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    padding: const EdgeInsets.all(16),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                    backgroundColor:
+                                        const Color.fromRGBO(242, 148, 165, 1),
+                                  ),
+                                  onPressed: isButtonEnabled
+                                      ? () {
+                                          setState(() {
+                                            _streetTouched = true;
+                                            _numberTouched = true;
+                                            _cityTouched = true;
+                                            _districtTouched = true;
+                                            _zipCodeTouched = true;
+                                            _stateTouched = true;
+                                            _phoneNumberTouched = true;
+                                          });
+                                          if (_formKey.currentState!
+                                              .validate()) {
+                                            updateAddress();
+                                          }
+                                        }
+                                      : null,
+                                  child: const Text('Guardar cambios',
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.white,
+                                          fontFamily: 'Poppins')),
+                                ),
+                              ),
+                            ],
+                          ))
+                    ],
+                  ),
+                ),
+              ));
   }
 }
