@@ -20,13 +20,11 @@ class DioClient {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {
-          print('Enviando petición a: ${options.path}');
-          print('Datos de la solicitud: ${options.data}');
           return handler.next(options);
         },
         onResponse: (response, handler) {
           print('Respuesta recibida: ${response.data}');
-          if (response.statusCode == 200) {
+          if (response.statusCode == 200 || response.statusCode == 201) {
             print('Solicitud exitosa.');
           } else {
             print('Código de estado inesperado: ${response.statusCode}');

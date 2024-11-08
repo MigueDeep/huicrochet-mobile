@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
-class AddadressScreen extends StatefulWidget {
-  const AddadressScreen({super.key});
+class EditadressScreen extends StatefulWidget {
+  const EditadressScreen({super.key, required this.address});
+  final String address;
 
   @override
-  _AddadressScreenState createState() => _AddadressScreenState();
+  _EditadressScreenState createState() => _EditadressScreenState();
 }
 
-class _AddadressScreenState extends State<AddadressScreen> {
+class _EditadressScreenState extends State<EditadressScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _streetController = TextEditingController();
   final TextEditingController _numberController = TextEditingController();
@@ -16,15 +17,27 @@ class _AddadressScreenState extends State<AddadressScreen> {
   final TextEditingController _disctrictController = TextEditingController();
   final TextEditingController _stateController = TextEditingController();
 
-  /* {
-      'id': 1,
-      'zipCode': '62742',
-      'street': 'Privet Drive',
-      'city': 'Little Whinging',
-      'number': '12',
-      'district': 'Surrey',
-      'state': 'England',
-    } */
+  final addressExample = {
+    'id': 1,
+    'zipCode': 62742,
+    'street': 'Privet Drive',
+    'city': 'Little Whinging',
+    'number': 12,
+    'district': 'Surrey',
+    'state': 'England',
+  };
+  Future<void> getAddress() async {
+    print('Obteniendo dirección...');
+    print(widget.address);
+    setState(() {
+      _streetController.text = addressExample['street'] as String;
+      _numberController.text = (addressExample['number'] ?? '').toString();
+      _cityController.text = addressExample['city'] as String;
+      _stateController.text = addressExample['state'] as String;
+      _disctrictController.text = addressExample['district'] as String;
+      _zipCodeController.text = (addressExample['zipCode'] ?? '').toString();
+    });
+  }
 
   @override
   void initState() {
@@ -35,6 +48,13 @@ class _AddadressScreenState extends State<AddadressScreen> {
     _zipCodeController.addListener(_validateForm);
     _disctrictController.addListener(_validateForm);
     _stateController.addListener(_validateForm);
+    _streetController.text = 'Cargando...';
+    _numberController.text = 'Cargando...';
+    _cityController.text = 'Cargando...';
+    _stateController.text = 'Cargando...';
+    _disctrictController.text = 'Cargando...';
+    _zipCodeController.text = 'Cargando...';
+    getAddress();
   }
 
   @override
@@ -116,11 +136,18 @@ class _AddadressScreenState extends State<AddadressScreen> {
     });
   }
 
+  Future<void> updateAddress() async {
+    if (_isValid) {
+      // Actualizar la dirección
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
+          title: Text('Editar dirección'),
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
@@ -136,15 +163,6 @@ class _AddadressScreenState extends State<AddadressScreen> {
             key: _formKey,
             child: Column(
               children: [
-                SizedBox(height: 8),
-                ListTile(
-                  leading: Text('Agregar dirección',
-                      style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 16,
-                          color: Color.fromRGBO(130, 48, 56, 1))),
-                ),
-                Divider(),
                 Container(
                     padding: const EdgeInsets.all(24.0),
                     child: Column(
@@ -316,10 +334,10 @@ class _AddadressScreenState extends State<AddadressScreen> {
                                 _stateTouched = true;
                               });
                               if (_formKey.currentState!.validate()) {
-                                Navigator.pushNamed(context, '/navigation');
+                                updateAddress();
                               }
                             },
-                            child: const Text('Guardar',
+                            child: const Text('Guardar cambios',
                                 style: TextStyle(
                                     fontSize: 16,
                                     color: Colors.white,

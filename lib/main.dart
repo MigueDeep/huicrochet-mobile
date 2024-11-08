@@ -2,15 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/config/error_state.dart';
 import 'package:huicrochet_mobile/modules/auth/screens/login_screen.dart';
 import 'package:huicrochet_mobile/modules/navigation/navigation.dart';
-import 'package:huicrochet_mobile/modules/profile/addAdress_screen.dart';
-import 'package:huicrochet_mobile/modules/profile/adresses_screen.dart';
+import 'package:huicrochet_mobile/modules/profile/address/addAdress_screen.dart';
+import 'package:huicrochet_mobile/modules/profile/address/adresses_screen.dart';
 import 'package:huicrochet_mobile/modules/profile/info_screen.dart';
 import 'package:huicrochet_mobile/modules/profile/orderDetails_screen.dart';
 import 'package:huicrochet_mobile/modules/profile/orders_screen.dart';
 import 'package:huicrochet_mobile/modules/profile/profile_screen.dart';
 import 'package:huicrochet_mobile/modules/auth/screens/recoverPass1_screen.dart';
-import 'package:huicrochet_mobile/modules/auth/screens/recoverPass2_screen.dart';
-import 'package:huicrochet_mobile/modules/auth/screens/recoverPass3_screen.dart';
 import 'package:huicrochet_mobile/modules/auth/screens/register_screen.dart';
 import 'package:huicrochet_mobile/modules/profile/purchaseDetails.dart';
 import 'package:huicrochet_mobile/widgets/splash_screen.dart';
@@ -58,7 +56,7 @@ class MyApp extends StatelessWidget {
           '/purchaseDetails': (context) => const PurchasedetailsScreen(),
           '/payment-methods': (context) => const PaymentMethods(),
           '/add-payment-method': (context) => const AddPaymentMethod(),
-          '/my-payment-methods': (context)=>const MyPaymentMethods()
+          '/my-payment-methods': (context) => const MyPaymentMethods()
         },
       ),
     );
