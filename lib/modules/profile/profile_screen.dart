@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -10,11 +13,13 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   String? fullName;
+  String? userImg;
 
   Future<void> getProfile() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       fullName = prefs.getString('fullName');
+      userImg = prefs.getString('userImg');
     });
   }
 
@@ -51,6 +56,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  Widget _buildProfileImage() {
+    if (userImg != null && userImg!.startsWith('data:image')) {
+      String base64Image = userImg!.split(',').last;
+      Uint8List imageBytes = base64Decode(base64Image);
+      return CircleAvatar(
+        radius: 50,
+        backgroundImage: MemoryImage(imageBytes),
+      );
+    } else {
+      return const CircleAvatar(
+        radius: 50,
+        backgroundImage: AssetImage('assets/logo.png'),
+      );
+    }
+  }
   @override
   void initState() {
     super.initState();
@@ -71,10 +91,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: Column(
         children: [
           const SizedBox(height: 32),
-          const CircleAvatar(
-            radius: 50,
-            backgroundImage: AssetImage('assets/logo.png'),
-          ),
+          _buildProfileImage(), 
           const SizedBox(height: 10),
           Text(
             fullName ?? 'Cargando...',
