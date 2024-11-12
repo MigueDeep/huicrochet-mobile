@@ -85,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
         await prefs.setString('fullName', result.fullName ??'');
         Navigator.pushReplacementNamed(context, '/navigation');
       } else {
-        print(result.message);
+        _showErrorDialog(result.message);
       }
     } catch (e) {
       _showErrorDialog(
