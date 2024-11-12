@@ -6,6 +6,10 @@ import 'package:huicrochet_mobile/widgets/payment/purchase_progress_bar.dart';
 class PaymentMethods extends StatefulWidget {
   const PaymentMethods({super.key});
 
+  get cardType => null;
+
+  get cardNumber => null;
+
   @override
   State<PaymentMethods> createState() => _PaymentMethodsState();
 }
