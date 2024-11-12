@@ -1,6 +1,10 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/config/error_state.dart';
+import 'package:huicrochet_mobile/modules/auth/datasource/user_auth_remote_data_source.dart';
+import 'package:huicrochet_mobile/modules/auth/repositories/user_auth_repository.dart';
 import 'package:huicrochet_mobile/modules/auth/screens/login_screen.dart';
+import 'package:huicrochet_mobile/modules/auth/use_cases/login_use_case.dart';
 import 'package:huicrochet_mobile/modules/navigation/navigation.dart';
 import 'package:huicrochet_mobile/modules/profile/addAdress_screen.dart';
 import 'package:huicrochet_mobile/modules/profile/adresses_screen.dart';
@@ -33,6 +37,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+       final dioClient = Dio(BaseOptions(baseUrl: 'http://192.168.0.2:8080/api-crochet'));
+    final userRemoteDataSource = UserRemoteDataSourceImpl(dioClient: dioClient);
+    final userRepository = UserRepositoryImpl(remoteDataSource: userRemoteDataSource);
+    final loginUseCase = LoginUseCase(userRepository: userRepository);
     return ChangeNotifierProvider(
       create: (context) => ErrorState(),
       child: MaterialApp(
@@ -40,7 +48,7 @@ class MyApp extends StatelessWidget {
         initialRoute: '/',
         routes: {
           '/': (context) => const SplashScreen(),
-          '/login': (context) => const LoginScreen(),
+           '/login': (context) => LoginScreen(loginUseCase: loginUseCase),
           '/navigation': (context) => const Navigation(),
           '/register': (context) => const RegisterScreen(),
           '/recoverpass1': (context) => const Recoverpass1Screen(),
