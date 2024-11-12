@@ -135,7 +135,8 @@ class _AddressesScreenState extends State<AddressesScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Confirmar eliminación'),
-          content: Text('¿Está seguro de que desea eliminar esta dirección?'),
+          content: Text(
+              '¿Está seguro de que desea eliminar esta dirección de envío?'),
           actions: <Widget>[
             TextButton(
               child: Text('Cancelar'),
@@ -154,6 +155,69 @@ class _AddressesScreenState extends State<AddressesScreen> {
         );
       },
     );
+  }
+
+  Future<void> alertConfirmDefault(String address) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirmar'),
+          content: Text(
+              '¿Está seguro de que desea hacer esta dirección predeterminada?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Aceptar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                defaultAddress(address);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> defaultAddress(String address) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    final dio = DioClient(context).dio;
+    try {
+      final response = await dio.put(
+          '/shipping-address/default/${prefs.getString('userId')}/$address');
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Dirección de envío predeterminada'),
+            backgroundColor: Colors.blue,
+          ),
+        );
+        getShippingAddresses();
+      }
+    } catch (e) {
+      final errorState = Provider.of<ErrorState>(context, listen: false);
+
+      if (e is DioException) {
+        if (e.response?.statusCode == 400) {
+          String errorMessage =
+              e.response?.data['message'] ?? 'Error desconocido';
+          errorState.setError(errorMessage);
+        } else {
+          errorState.setError('Error de conexión');
+        }
+      } else {
+        errorState.setError('Error inesperado: $e');
+      }
+
+      errorState.showErrorDialog(context);
+    }
   }
 
   Future<void> deleteAddress(String address) async {
@@ -244,69 +308,110 @@ class _AddressesScreenState extends State<AddressesScreen> {
                         for (var address in addresses)
                           Column(
                             children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          '${address.number} ${address.street}',
-                                          style: TextStyle(
-                                            fontFamily: 'Poppins',
-                                            fontSize: 16,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                        Text(
-                                          '${address.zipCode} ${address.city} ${address.state}',
-                                          style: TextStyle(
-                                            fontFamily: 'Poppins',
-                                            fontSize: 16,
-                                            color: Colors.blueGrey,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  PopupMenuButton<String>(
-                                    onSelected: (value) {
-                                      if (value == 'edit') {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                EditadressScreen(
-                                              address: address.id ?? '',
+                              Container(
+                                decoration: BoxDecoration(
+                                  border: address.defaultAddress
+                                      ? Border.all(
+                                          color: const Color.fromRGBO(
+                                              242, 148, 165, 1),
+                                          width: 2.0)
+                                      : null,
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          if (address.defaultAddress)
+                                            Container(
+                                              padding: EdgeInsets.all(4.0),
+                                              decoration: BoxDecoration(
+                                                  color: Color.fromRGBO(
+                                                      242, 148, 165, 1),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          4.0)),
+                                              child: Text(
+                                                'Default',
+                                                style: TextStyle(
+                                                  fontFamily: 'Poppins',
+                                                  fontSize: 12,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                          const SizedBox(height: 2),
+                                          Text(
+                                            '${address.number} ${address.street}',
+                                            style: TextStyle(
+                                              fontFamily: 'Poppins',
+                                              fontSize: 16,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w600,
                                             ),
                                           ),
-                                        );
-                                      } else if (value == 'delete') {
-                                        setState(() {
-                                          alertConfirm(address.id ?? '');
-                                        });
-                                      }
-                                    },
-                                    itemBuilder: (BuildContext context) {
-                                      return [
-                                        PopupMenuItem(
-                                          value: 'edit',
-                                          child: Text('Editar'),
-                                        ),
-                                        PopupMenuItem(
-                                          value: 'delete',
-                                          child: Text('Eliminar'),
-                                        ),
-                                      ];
-                                    },
-                                    icon: Icon(Icons.more_horiz,
-                                        color: Colors.grey),
-                                  ),
-                                ],
+                                          Text(
+                                            '${address.zipCode} ${address.city} ${address.state}',
+                                            style: TextStyle(
+                                              fontFamily: 'Poppins',
+                                              fontSize: 16,
+                                              color: Colors.blueGrey,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    PopupMenuButton<String>(
+                                      onSelected: (value) {
+                                        if (value == 'edit') {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  EditadressScreen(
+                                                address: address.id ?? '',
+                                              ),
+                                            ),
+                                          );
+                                        } else if (value == 'delete') {
+                                          setState(() {
+                                            alertConfirm(address.id ?? '');
+                                          });
+                                        } else if (value == 'default') {
+                                          setState(() {
+                                            alertConfirmDefault(
+                                                address.id ?? '');
+                                          });
+                                        }
+                                      },
+                                      itemBuilder: (BuildContext context) {
+                                        return [
+                                          PopupMenuItem(
+                                            value: 'edit',
+                                            child: Text('Editar'),
+                                          ),
+                                          PopupMenuItem(
+                                            value: 'delete',
+                                            child: Text('Eliminar'),
+                                          ),
+                                          if (!address.defaultAddress)
+                                            PopupMenuItem(
+                                              value: 'default',
+                                              child:
+                                                  Text('Hacer predeterminada'),
+                                            ),
+                                        ];
+                                      },
+                                      icon: Icon(Icons.more_horiz,
+                                          color: Colors.grey),
+                                    ),
+                                  ],
+                                ),
                               ),
-                              const SizedBox(height: 24),
+                              const SizedBox(height: 12),
                             ],
                           ),
                         const SizedBox(height: 30),
