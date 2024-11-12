@@ -31,7 +31,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text('No tienes sesión iniciada'),
-            content: const Text('¿Quieres iniciar sesión'),
+            content: const Text('¿Quieres iniciar sesión?'),
             actions: <Widget>[
               TextButton(
                 child: const Text('Cancelar'),
