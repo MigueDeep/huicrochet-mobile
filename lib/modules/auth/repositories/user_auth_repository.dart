@@ -15,15 +15,16 @@ class UserRepositoryImpl implements UserAuthRepository {
   Future<LoginResult> login(UserAuthModel user) async {
     final result = await remoteDataSource.login(user);
 
-    if (result.success == 'success') {
-      // Si el login es exitoso, devolvemos un LoginResult con los datos correspondientes
+    if (result.success) {
       return LoginResult(
         success: true,
         message: result.message,
-        token: result.token,  // Si tu respuesta incluye un token // Mapea el objeto usuario desde el Map si es necesario
+        token: result.token,
+        userId: result.userId,
+        userImg: result.userImg,
+        fullName: result.fullName
       );
     } else {
-      // Si el login falla, devolvemos un LoginResult indicando el fallo
       return LoginResult(
         success: false,
         message: result.message,

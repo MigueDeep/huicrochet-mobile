@@ -1,13 +1,8 @@
-import 'dart:convert';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:huicrochet_mobile/config/dio_client.dart';
-import 'package:huicrochet_mobile/config/error_state.dart';
-import 'package:huicrochet_mobile/modules/auth/entities/login_result.dart';
 import 'package:huicrochet_mobile/modules/auth/use_cases/login_use_case.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:huicrochet_mobile/widgets/general/general_button.dart';
 import 'package:huicrochet_mobile/widgets/general/loader.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   final LoginUseCase loginUseCase;
@@ -23,7 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  
+
   bool _isObscured = true;
   bool _isValid = false; // Para saber si los campos son válidos
   bool _emailTouched = false;
@@ -74,29 +69,29 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
-Future<void> _login(TextEditingController emailController, TextEditingController passwordController, BuildContext context) async {
-  try {
-    final result = await widget.loginUseCase.execute(
-      emailController.text,
-      passwordController.text,
-    );
-    
-    if (result.success) {
-      // Si el login fue exitoso, puedes acceder al token o usuario
-      print('Token: ${result.token}');
-      Navigator.pushReplacementNamed(context, '/home');
-    } else {
-      // Si el login falló, muestra el mensaje de error
-      _showErrorDialog(result.message);
+  Future<void> _login(TextEditingController emailController,
+      TextEditingController passwordController, BuildContext context) async {
+    try {
+      final result = await widget.loginUseCase.execute(
+        emailController.text,
+        passwordController.text,
+      );
+
+      if (result.success) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', result.token ?? '');
+        await prefs.setString('userId', result.userId ?? '');
+        await prefs.setString('userImg', result.userImg ??'');
+        await prefs.setString('fullName', result.fullName ??'');
+        Navigator.pushReplacementNamed(context, '/navigation');
+      } else {
+        print(result.message);
+      }
+    } catch (e) {
+      _showErrorDialog(
+          'Error al iniciar sesión, por favor intente nuevamente.');
     }
-  } catch (e) {
-    _showErrorDialog('Error al iniciar sesión, por favor intente nuevamente.');
   }
-}
-
-
-
-
 
   // Mostrar un diálogo de error
   void _showErrorDialog(String message) {
@@ -249,17 +244,8 @@ Future<void> _login(TextEditingController emailController, TextEditingController
                         ),
                       ),
                       const SizedBox(height: 16),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.all(16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            backgroundColor:
-                                const Color.fromRGBO(242, 148, 165, 1),
-                          ),
+                      GeneralButton(
+                          text: 'Iniciar sesión',
                           onPressed: () async {
                             _loaderController.show(context);
                             setState(() {
@@ -275,14 +261,7 @@ Future<void> _login(TextEditingController emailController, TextEditingController
                               // Oculta el loader si la validación falla
                               _loaderController.hide();
                             }
-                          },
-                          child: const Text('Iniciar sesión',
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.white,
-                                  fontFamily: 'Poppins')),
-                        ),
-                      ),
+                          }),
                       const SizedBox(height: 16),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -315,48 +294,3 @@ Future<void> _login(TextEditingController emailController, TextEditingController
     );
   }
 }
-
-
-
-// Future _login(dynamic _emailController, dynamic _passwordController,
-//     BuildContext context) async {
-//   final dio = DioClient(context).dio;
-
-//   try {
-//     final response = await dio.post(
-//       '/auth/signIn',
-//       data: {
-//         'email': _emailController.text,
-//         'password': _passwordController.text,
-//       },
-//     );
-
-//     if (response.statusCode == 200) {
-//       String jsonsDataString = response.toString();
-//       final jsonData = jsonDecode(jsonsDataString);
-//       String token = jsonData['data']['token'];
-//       String fullName = jsonData['data']['user']['fullName'];
-//       SharedPreferences prefs = await SharedPreferences.getInstance();
-//       await prefs.setString('token', token);
-//       await prefs.setString('fullName', fullName);
-//       await prefs.setString('userId', jsonData['data']['user']['id']);
-//       Navigator.pushReplacementNamed(context, '/navigation');
-//     }
-//   } catch (e) {
-//     final errorState = Provider.of<ErrorState>(context, listen: false);
-
-//     if (e is DioException) {
-//       if (e.response?.statusCode == 400) {
-//         String errorMessage =
-//             e.response?.data['message'] ?? 'Error desconocido';
-//         errorState.setError(errorMessage);
-//       } else {
-//         errorState.setError('Error de conexión');
-//       }
-//     } else {
-//       errorState.setError('Error inesperado: $e');
-//     }
-
-//     errorState.showErrorDialog(context);
-//   }
-// }
