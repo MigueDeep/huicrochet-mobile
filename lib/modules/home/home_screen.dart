@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/modules/product/products_screen.dart';
 import 'package:huicrochet_mobile/widgets/product/product_card.dart';
-import 'package:huicrochet_mobile/widgets/app_bar.dart';
+import 'package:huicrochet_mobile/widgets/general/app_bar.dart';
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -16,12 +16,12 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: CustomAppBar(),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
-        child: Center( // Centra todo el contenido horizontalmente
+        child: Center( 
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center, // Alinea los hijos horizontalmente
+            crossAxisAlignment: CrossAxisAlignment.center, 
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 20),
+                padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
                 child: Stack(
                   children: [
                     ClipRRect(
@@ -58,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       bottom: 110,
                       left: 15,
                       child: Text(
-                        'CALIDAD EN CADA DETALLE.',
+                        'CALIDAD EN CADA DETALLE',
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontSize: 24,

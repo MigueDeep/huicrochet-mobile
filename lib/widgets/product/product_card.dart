@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 
 Widget productCard(
     String productName, String imagePath, String price, BuildContext context) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 5),
-    child: GestureDetector(
+  return  GestureDetector(
       onTap: () {
         Navigator.pushNamed(context, '/product-detail');
       },
@@ -18,14 +16,16 @@ Widget productCard(
               borderRadius: BorderRadius.circular(10),
               child: Image.asset(
                 imagePath,
-                width: 165,
-                height: 180,
+                width: 155,
+                height: 170,
                 fit: BoxFit.cover,
               ),
             ),
             const SizedBox(height: 10),
             Text(
-              productName,
+              productName.length > 17
+                  ? '${productName.substring(0, 19)}...'
+                  : productName,
               style: const TextStyle(
                 fontFamily: 'Poppins',
                 fontSize: 14,
@@ -44,6 +44,6 @@ Widget productCard(
           ],
         ),
       ),
-    ),
-  );
+    );
+
 }

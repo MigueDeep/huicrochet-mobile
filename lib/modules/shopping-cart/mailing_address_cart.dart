@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/widgets/payment/purchase_progress_bar.dart';
 import 'package:huicrochet_mobile/widgets/payment/select_address_card.dart';
-import 'package:huicrochet_mobile/widgets/general_button.dart';
+import 'package:huicrochet_mobile/widgets/general/general_button.dart';
 
 class MailingAddressCart extends StatefulWidget {
   const MailingAddressCart({super.key});

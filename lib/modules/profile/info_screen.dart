@@ -211,12 +211,7 @@ class _InfoScreenState extends State<InfoScreen> {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pushReplacementNamed(context, '/navigation');
-            },
-          ),
+          automaticallyImplyLeading: true,
           title: Text('Información personal'),
           backgroundColor: Colors.white,
           elevation: 0,

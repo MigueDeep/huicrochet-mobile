@@ -62,12 +62,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+        automaticallyImplyLeading: false,
         title: const Text('Perfil'),
         backgroundColor: Colors.white,
         elevation: 0,
@@ -101,7 +96,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             trailing: const Icon(Icons.local_shipping,
                 color: Color.fromRGBO(130, 48, 56, 1)),
             onTap: () {
-              Navigator.pushReplacementNamed(context, '/orders');
+              Navigator.pushNamed(context, '/orders');
             },
           ),
           const Divider(),
@@ -114,7 +109,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     fontSize: 16,
                     color: Color.fromRGBO(130, 48, 56, 1))),
             onTap: () {
-              Navigator.pushReplacementNamed(context, '/info');
+              Navigator.pushNamed(context, '/info');
             },
           ),
           const Divider(),
@@ -127,7 +122,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     fontSize: 16,
                     color: Color.fromRGBO(130, 48, 56, 1))),
             onTap: () {
-              Navigator.pushReplacementNamed(context, '/addresses');
+              Navigator.pushNamed(context, '/addresses');
             },
           ),
           const Divider(),
