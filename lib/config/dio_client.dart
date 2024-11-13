@@ -23,8 +23,6 @@ class DioClient {
         onRequest: (options, handler) async {
           SharedPreferences prefs = await SharedPreferences.getInstance();
           String? token = prefs.getString('token');
-
-          // Configura el token en el encabezado de autorización si existe
           if (token != null && token.isNotEmpty) {
             options.headers['Authorization'] = 'Bearer $token';
           }
