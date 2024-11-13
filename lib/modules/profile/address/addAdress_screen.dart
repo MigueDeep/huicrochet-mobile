@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/config/dio_client.dart';
 import 'package:huicrochet_mobile/config/error_state.dart';
+import 'package:huicrochet_mobile/widgets/general/loader.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,6 +22,7 @@ class _AddadressScreenState extends State<AddadressScreen> {
   final TextEditingController _disctrictController = TextEditingController();
   final TextEditingController _stateController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
+  final LoaderController _loaderController = LoaderController();
 
   @override
   void initState() {
@@ -126,6 +128,7 @@ class _AddadressScreenState extends State<AddadressScreen> {
   }
 
   Future<void> createAddress() async {
+    _loaderController.show(context);
     final dio = DioClient(context).dio;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     try {
@@ -145,6 +148,7 @@ class _AddadressScreenState extends State<AddadressScreen> {
         },
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
+        _loaderController.hide();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Dirección de envío registrada'),
@@ -167,6 +171,7 @@ class _AddadressScreenState extends State<AddadressScreen> {
       } else {
         errorState.setError('Error inesperado: $e');
       }
+      _loaderController.hide();
 
       errorState.showErrorDialog(context);
     }

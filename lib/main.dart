@@ -35,9 +35,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dioClient = Dio(BaseOptions(baseUrl: 'http://192.168.0.2:8080/api-crochet'));
+    final dioClient =
+        Dio(BaseOptions(baseUrl: 'http://192.168.56.1:8080/api-crochet'));
     final userRemoteDataSource = UserRemoteDataSourceImpl(dioClient: dioClient);
-    final userRepository = UserRepositoryImpl(remoteDataSource: userRemoteDataSource);
+    final userRepository =
+        UserRepositoryImpl(remoteDataSource: userRemoteDataSource);
     final loginUseCase = LoginUseCase(userRepository: userRepository);
     return ChangeNotifierProvider(
       create: (context) => ErrorState(),
@@ -46,7 +48,7 @@ class MyApp extends StatelessWidget {
         initialRoute: '/',
         routes: {
           '/': (context) => const SplashScreen(),
-           '/login': (context) => LoginScreen(loginUseCase: loginUseCase),
+          '/login': (context) => LoginScreen(loginUseCase: loginUseCase),
           '/navigation': (context) => const Navigation(),
           '/register': (context) => const RegisterScreen(),
           '/recoverpass1': (context) => const Recoverpass1Screen(),
