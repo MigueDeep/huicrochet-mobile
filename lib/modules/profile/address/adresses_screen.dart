@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/config/dio_client.dart';
 import 'package:huicrochet_mobile/config/error_state.dart';
+import 'package:huicrochet_mobile/config/global_variables.dart';
 import 'package:huicrochet_mobile/modules/entities/address.dart';
 import 'package:huicrochet_mobile/modules/entities/user.dart';
 import 'package:huicrochet_mobile/modules/profile/address/editAddress_screen.dart';
@@ -40,27 +41,15 @@ class _AddressesScreenState extends State<AddressesScreen> {
     super.dispose();
   }
 
-  Widget _buildProfileImage() {
-    if (userImg != null && userImg!.startsWith('data:image')) {
-      String base64Image = userImg!.split(',').last;
-      Uint8List imageBytes = base64Decode(base64Image);
-      return CircleAvatar(
-        radius: 50,
-        backgroundImage: MemoryImage(imageBytes),
-      );
-    } else {
-      return const CircleAvatar(
-        radius: 50,
-        backgroundImage: AssetImage('assets/logo.png'),
-      );
-    }
-  }
-
   Future<void> getProfile() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    final imagePath = prefs.getString('userImg');
+    final imageName = imagePath?.split('/').last;
+    final profileImage = 'http://${ip}:8080/$imageName';
     setState(() {
       name = prefs.getString('fullName')!;
       userImg = prefs.getString('userImg');
+      userImg = profileImage;
     });
   }
 
@@ -254,6 +243,19 @@ class _AddressesScreenState extends State<AddressesScreen> {
     }
   }
 
+  String getInitials(String fullName) {
+    List<String> nameParts = fullName.split(' ');
+    String initials = '';
+
+    for (var part in nameParts) {
+      if (part.isNotEmpty) {
+        initials += part[0].toUpperCase();
+      }
+    }
+
+    return initials.length > 2 ? initials.substring(0, 2) : initials;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -274,7 +276,23 @@ class _AddressesScreenState extends State<AddressesScreen> {
         child: Column(
           children: [
             SizedBox(height: 32),
-            _buildProfileImage(),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(50),
+              child: Image.network(
+                userImg ?? '',
+                width: 100,
+                height: 100,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  String initials = name != null ? getInitials(name!) : '??';
+                  return CircleAvatar(
+                    backgroundColor: const Color.fromRGBO(242, 148, 165, 1),
+                    child:
+                        Text(initials, style: TextStyle(color: Colors.white)),
+                  );
+                },
+              ),
+            ),
             SizedBox(height: 10),
             Text(
               name!,
