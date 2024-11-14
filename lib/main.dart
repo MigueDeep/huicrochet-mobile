@@ -6,6 +6,8 @@ import 'package:huicrochet_mobile/modules/auth/use_cases/login_use_case.dart';
 import 'package:huicrochet_mobile/modules/navigation/navigation.dart';
 import 'package:huicrochet_mobile/modules/product/use_cases/fetch_products_data.dart';
 import 'package:huicrochet_mobile/modules/profile/addAdress_screen.dart';
+import 'package:huicrochet_mobile/modules/profile/address/addAdress_screen.dart';
+import 'package:huicrochet_mobile/modules/profile/address/adresses_screen.dart';
 import 'package:huicrochet_mobile/modules/profile/adresses_screen.dart';
 import 'package:huicrochet_mobile/modules/profile/info_screen.dart';
 import 'package:huicrochet_mobile/modules/profile/orderDetails_screen.dart';
