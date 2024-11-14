@@ -1,3 +1,3 @@
 library global_variables;
 
-String ip ='192.168.0.2';
+String ip = '192.168.56.1';

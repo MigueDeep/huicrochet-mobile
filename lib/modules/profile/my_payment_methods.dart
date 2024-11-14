@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:huicrochet_mobile/payment-methods/use_cases/get_payment.dart';
+import 'package:huicrochet_mobile/modules/payment-methods/models/payment_method_model.dart';
+import 'package:huicrochet_mobile/modules/payment-methods/use_cases/get_payment.dart';
 import 'package:huicrochet_mobile/widgets/general/general_button.dart';
 import 'package:huicrochet_mobile/widgets/payment/credit_card.dart';
-import 'package:huicrochet_mobile/widgets/payment/purchase_progress_bar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MyPaymentMethods extends StatefulWidget {
   final GetPayment getPaymentMethod;
-  const MyPaymentMethods({super.key ,required this.getPaymentMethod});
+  const MyPaymentMethods({super.key, required this.getPaymentMethod});
 
   @override
   State<MyPaymentMethods> createState() => _MyPaymentMethodsState();
@@ -15,26 +16,36 @@ class MyPaymentMethods extends StatefulWidget {
 class _MyPaymentMethodsState extends State<MyPaymentMethods> {
   int? selectedCardIndex;
 
-  final List<Map<String, dynamic>> cards = [
-    {
-      'logoImage': 'assets/mlogo.png',
-      'cardType': 'Crédito',
-      'ownerName': 'Juan Pérez',
-      'cardNumber': '1234567812345678',
-      'expiryDate': '12/25',
-      'startColor': const Color.fromARGB(255, 95, 95, 95),
-      'endColor': const Color.fromARGB(255, 186, 186, 186),
-    },
-    {
-      'logoImage': 'assets/vlogo.png',
-      'cardType': 'Débito',
-      'ownerName': 'Ana García',
-      'cardNumber': '8765432187654321',
-      'expiryDate': '11/24',
-      'startColor': const Color.fromARGB(255, 0, 27, 97),
-      'endColor': const Color.fromARGB(255, 168, 193, 255),
-    },
-  ];
+  late Future<List<PaymentCardModel>> _paymentMethodsFuture = Future.value([]);
+
+  Future<void> _loadUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getString('userId') ?? '';
+    setState(() {
+      _paymentMethodsFuture =
+          widget.getPaymentMethod.call(userId).then((paymentCards) {
+        return paymentCards
+            .map((paymentCard) => PaymentCardModel(
+                  id: paymentCard.id,
+                  userId: paymentCard.userId,
+                  cardType: paymentCard.cardType,
+                  cardNumber: paymentCard.cardNumber,
+                  expirationDate: paymentCard.expirationDate,
+                  cvv: paymentCard.cvv,
+                  last4Numbers: paymentCard.last4Numbers,
+                  status: paymentCard.status,
+                ))
+            .toList();
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserId();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,59 +61,80 @@ class _MyPaymentMethodsState extends State<MyPaymentMethods> {
           textAlign: TextAlign.center,
         ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  const SizedBox(height: 20),
-                  // Generar tarjetas desde la lista
-                  ...cards.asMap().entries.map((entry) {
-                    int index = entry.key;
-                    Map<String, dynamic> card = entry.value;
-                    return GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          selectedCardIndex = index;
-                        });
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 30, vertical: 10),
-                        child: CreditCard(
-                          logoImage: card['logoImage'],
-                          cardType: card['cardType'],
-                          ownerName: card['ownerName'],
-                          cardNumber: card['cardNumber'],
-                          expiryDate: card['expiryDate'],
-                          startColor: card['startColor'],
-                          endColor: card['endColor'],
-                          isSelected: selectedCardIndex == index,
+      body: FutureBuilder<List<PaymentCardModel>>(
+        future: _paymentMethodsFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return Center(child: Text('Error al cargar los métodos de pago'));
+          }
+
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(
+                child: Text('No tienes métodos de pago disponibles.'));
+          }
+
+          final paymentCards = snapshot.data!;
+
+          return Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: paymentCards.asMap().entries.map((entry) {
+                      int index = entry.key;
+                      PaymentCardModel card = entry.value;
+
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            selectedCardIndex = index;
+                          });
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 30, vertical: 10),
+                          child: CreditCard(
+                            logoImage: 'assets/mlogo.png',
+                            cardType: card.cardType ?? 'Crédito',
+                            ownerName: card.cardNumber.isNotEmpty
+                                ? '**** **** **** ${card.last4Numbers}'
+                                : 'No disponible',
+                            cardNumber: card.cardNumber ?? '1234567812345678',
+                            expiryDate:
+                                "${card.expirationDate.month.toString().padLeft(2, '0')}/${card.expirationDate.year.toString().substring(2, 4)}",
+                            startColor: const Color.fromARGB(255, 95, 95, 95),
+                            endColor: const Color.fromARGB(255, 186, 186, 186),
+                            isSelected: selectedCardIndex == index,
+                          ),
                         ),
-                      ),
-                    );
-                  }).toList(),
-                ],
+                      );
+                    }).toList(),
+                  ),
+                ),
               ),
-            ),
-          ),
-          const Divider(
-            thickness: 1,
-            color: Color.fromARGB(63, 142, 119, 119),
-          ),
-          Padding(
-           padding: const EdgeInsets.only(top: 10, right: 20, left: 20),
-              child: GeneralButton(
+              const Divider(
+                thickness: 1,
+                color: Color.fromARGB(63, 142, 119, 119),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 10, right: 20, left: 20),
+                child: GeneralButton(
                   text: 'Editar tarjeta',
                   onPressed: () {
                     Navigator.pushNamed(context, '/add-payment-method');
-                  })),
-          Padding(
-              padding: const EdgeInsets.only(top: 10, bottom: 30, right: 20, left: 20),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: 10, bottom: 30, right: 20, left: 20),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.all(16),
                       shape: RoundedRectangleBorder(
@@ -123,9 +155,13 @@ class _MyPaymentMethodsState extends State<MyPaymentMethods> {
                     ),
                     onPressed: () {
                       Navigator.pushNamed(context, '/add-payment-method');
-                    }),
-              )),
-        ],
+                    },
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
