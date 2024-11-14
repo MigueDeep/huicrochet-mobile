@@ -1,71 +1,51 @@
 import 'package:flutter/material.dart';
 
 class ColorSelector extends StatefulWidget {
-  const ColorSelector({super.key});
+  final List<String> colorCodes;
+
+  const ColorSelector({super.key, required this.colorCodes});
 
   @override
   _ColorSelectorState createState() => _ColorSelectorState();
 }
 
 class _ColorSelectorState extends State<ColorSelector> {
-  int _selectedColorIndex = 0; 
+  int _selectedColorIndex = 0;
 
   @override
   Widget build(BuildContext context) {
+    if (widget.colorCodes.isEmpty) {
+      // Mostrar mensaje si no hay colores
+      return Text(
+        'Colores no disponibles',
+        style: TextStyle(
+          fontFamily: 'Poppins',
+          fontSize: 16,
+          color: Colors.grey,
+        ),
+      );
+    }
+
     return Row(
-      children: [
-        GestureDetector(
+      children: List.generate(widget.colorCodes.length, (index) {
+        final color = Color(int.parse(widget.colorCodes[index].replaceFirst('#', '0xff')));
+        
+        return GestureDetector(
           onTap: () {
             setState(() {
-              _selectedColorIndex = 0;
+              _selectedColorIndex = index;
             });
           },
-          child: Icon(
-            _selectedColorIndex == 0 ? Icons.radio_button_checked : Icons.circle,
-            color: Colors.black,
-            size: 30,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5.0),
+            child: Icon(
+              _selectedColorIndex == index ? Icons.radio_button_checked : Icons.circle,
+              color: color,
+              size: 30,
+            ),
           ),
-        ),
-        const SizedBox(width: 5),
-        GestureDetector(
-          onTap: () {
-            setState(() {
-              _selectedColorIndex = 1; 
-            });
-          },
-          child: Icon(
-            _selectedColorIndex == 1 ? Icons.radio_button_checked : Icons.circle,
-            color: Colors.blue,
-            size: 30,
-          ),
-        ),
-        const SizedBox(width: 5),
-        GestureDetector(
-          onTap: () {
-            setState(() {
-              _selectedColorIndex = 2; 
-            });
-          },
-          child: Icon(
-            _selectedColorIndex == 2 ? Icons.radio_button_checked : Icons.circle,
-            color: Colors.brown,
-            size: 30,
-          ),
-        ),
-        const SizedBox(width: 5),
-        GestureDetector(
-          onTap: () {
-            setState(() {
-              _selectedColorIndex = 3; 
-            });
-          },
-          child: Icon(
-            _selectedColorIndex == 3 ? Icons.radio_button_checked : Icons.circle,
-            color: Colors.deepOrange,
-            size: 30,
-          ),
-        ),
-      ],
+        );
+      }),
     );
   }
 }

@@ -101,22 +101,23 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               SizedBox(height: 10),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.9,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: ProductsScreen.products.map((product) {
-                      return productCard(
-                        product['name']!, // Nombre del producto
-                        product['image']!, // URL de la imagen del producto
-                        product['price']!, // Precio del producto
-                        context,
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ),
+              // SizedBox(
+              //   width: MediaQuery.of(context).size.width * 0.9,
+              //   child: SingleChildScrollView(
+              //     scrollDirection: Axis.horizontal,
+              //     child: Row(
+              //       children: ProductsScreen.products.map((product) {
+              //         return productCard(
+              //           product['name']!, // Nombre del producto
+              //           product['image']!, // URL de la imagen del producto
+              //           product['price']!, 
+              //           product['id']!,// Precio del producto
+              //           context,
+              //         );
+              //       }).toList(),
+              //     ),
+              //   ),
+              // ),
               SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -148,22 +149,23 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               SizedBox(height: 10),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.9,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: ProductsScreen.products.map((product) {
-                      return productCard(
-                        product['name']!, // Nombre del producto
-                        product['image']!, // URL de la imagen del producto
-                        product['price']!, // Precio del producto
-                        context,
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ),
+              // SizedBox(
+              //   width: MediaQuery.of(context).size.width * 0.9,
+              //   child: SingleChildScrollView(
+              //     scrollDirection: Axis.horizontal,
+              //     child: Row(
+              //       children: ProductsScreen.products.map((product) {
+              //         return productCard(
+              //           product['name']!, // Nombre del producto
+              //           product['image']!, // URL de la imagen del producto
+              //           product['price']!,
+              //           product['id']!, // Precio del producto
+              //           context,
+              //         );
+              //       }).toList(),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ),
