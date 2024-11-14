@@ -25,7 +25,7 @@ class UserRemoteDataSourceImpl implements UserAuthRemoteDataSource {
             message: jsonData['message'],
             token: jsonData['data']['token'],
             userId: jsonData['data']['user']['id'],
-            userImg: jsonData['data']['user']['image']['imageData'],
+            userImg: jsonData['data']['user']['image']['imageUri'],
             fullName: jsonData['data']['user']['fullName']
             );
             

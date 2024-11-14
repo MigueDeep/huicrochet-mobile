@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:huicrochet_mobile/config/global_variables.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'error_state.dart';
@@ -10,7 +11,7 @@ class DioClient {
   DioClient(BuildContext context)
       : _dio = Dio(
           BaseOptions(
-            baseUrl: 'http://192.168.56.1:8080/api-crochet',
+            baseUrl: 'http://${ip}:8080/api-crochet',
             connectTimeout: const Duration(seconds: 10),
             receiveTimeout: const Duration(seconds: 10),
             headers: {
