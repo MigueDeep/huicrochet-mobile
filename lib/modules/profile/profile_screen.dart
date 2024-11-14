@@ -19,7 +19,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       fullName = prefs.getString('fullName');
-      userImg = prefs.getString('userImg');
+      userImg =  prefs.getString('userImg');
     });
   }
 
@@ -56,21 +56,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  Widget _buildProfileImage() {
-    if (userImg != null && userImg!.startsWith('data:image')) {
-      String base64Image = userImg!.split(',').last;
-      Uint8List imageBytes = base64Decode(base64Image);
-      return CircleAvatar(
-        radius: 50,
-        backgroundImage: MemoryImage(imageBytes),
-      );
-    } else {
-      return const CircleAvatar(
-        radius: 50,
-        backgroundImage: AssetImage('assets/logo.png'),
-      );
+  String getInitials(String fullName) {
+  List<String> nameParts = fullName.split(' '); 
+  String initials = '';
+
+  for (var part in nameParts) {
+    if (part.isNotEmpty) {
+      initials += part[0].toUpperCase(); 
     }
   }
+
+  return initials.length > 2 ? initials.substring(0, 2) : initials; 
+}
+
   @override
   void initState() {
     super.initState();
@@ -91,7 +89,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: Column(
         children: [
           const SizedBox(height: 32),
-          _buildProfileImage(), 
+          Image.network(
+            userImg ?? '',
+            width: 40,
+            height: 40,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              String initials = fullName != null
+                  ? getInitials(fullName!)
+                  : '??';
+              return CircleAvatar(
+                backgroundColor: const Color.fromRGBO(242, 148, 165, 1),
+                child: Text(initials, style: TextStyle(color: Colors.white)),
+              );
+            },
+          ),
           const SizedBox(height: 10),
           Text(
             fullName ?? 'Cargando...',

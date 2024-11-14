@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:huicrochet_mobile/modules/auth/entities/login_result.dart';
 import 'package:huicrochet_mobile/modules/auth/models/user_auth_model.dart'; 
@@ -25,7 +24,7 @@ class UserRemoteDataSourceImpl implements UserAuthRemoteDataSource {
             message: jsonData['message'],
             token: jsonData['data']['token'],
             userId: jsonData['data']['user']['id'],
-            userImg: jsonData['data']['user']['image']['imageData'],
+            userImg: jsonData['data']['user']['image']['imageUri'],
             fullName: jsonData['data']['user']['fullName']
             );
             

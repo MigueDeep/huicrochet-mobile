@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'error_state.dart';
 
 class DioClient {
@@ -9,7 +10,7 @@ class DioClient {
   DioClient(BuildContext context)
       : _dio = Dio(
           BaseOptions(
-            baseUrl: 'http://192.168.0.2:8080/api-crochet',
+            baseUrl: 'http://192.168.107.138:8080/api-crochet',
             connectTimeout: const Duration(seconds: 10),
             receiveTimeout: const Duration(seconds: 10),
             headers: {
@@ -19,7 +20,16 @@ class DioClient {
         ) {
     _dio.interceptors.add(
       InterceptorsWrapper(
-        onRequest: (options, handler) {
+        onRequest: (options, handler) async {
+          // Recupera el token de SharedPreferences
+          final prefs = await SharedPreferences.getInstance();
+          final token = prefs.getString('token') ?? '';
+
+          // Si el token no está vacío, agrégalo a los headers
+          if (token.isNotEmpty) {
+            options.headers['Authorization'] = 'Bearer $token';
+          }
+
           print('Enviando petición a: ${options.path}');
           print('Datos de la solicitud: ${options.data}');
           return handler.next(options);

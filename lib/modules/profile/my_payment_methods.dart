@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:huicrochet_mobile/payment-methods/use_cases/get_payment.dart';
 import 'package:huicrochet_mobile/widgets/general/general_button.dart';
 import 'package:huicrochet_mobile/widgets/payment/credit_card.dart';
 import 'package:huicrochet_mobile/widgets/payment/purchase_progress_bar.dart';
 
 class MyPaymentMethods extends StatefulWidget {
-  const MyPaymentMethods({super.key});
+  final GetPayment getPaymentMethod;
+  const MyPaymentMethods({super.key ,required this.getPaymentMethod});
 
   @override
   State<MyPaymentMethods> createState() => _MyPaymentMethodsState();

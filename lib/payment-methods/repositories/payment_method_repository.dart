@@ -5,6 +5,8 @@ import 'package:huicrochet_mobile/payment-methods/models/payment_method_model.da
 abstract class PaymentMethodRepository {
   Future<PaymentCard> getPaymentMethod(String id);
   Future<PaymentCard> createPaymentMethod(PaymentCard paymentMethod);
+  Future<void>updatePaymentMethod(String id, PaymentCard paymentMethod);
+  Future<void> deletePaymentMethod(String id);
 }
 
 class PaymentMethodRepositoryImpl implements PaymentMethodRepository {
@@ -20,5 +22,15 @@ class PaymentMethodRepositoryImpl implements PaymentMethodRepository {
   @override
   Future<PaymentCard> createPaymentMethod(PaymentCard paymentMethod) async {
     return await remoteDataSource.createPaymentMethod(paymentMethod as PaymentCardModel);
+  }
+
+  @override
+  Future<void> updatePaymentMethod(String id, PaymentCard paymentMethod) async {
+    return await remoteDataSource.updatePaymentMethod(id, paymentMethod  as PaymentCardModel);
+  }
+
+  @override
+  Future<void> deletePaymentMethod(String id) async {
+    return await remoteDataSource.deletePaymentMethod(id);
   }
 }

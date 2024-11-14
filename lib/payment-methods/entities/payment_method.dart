@@ -11,5 +11,6 @@ class PaymentCard {
     required this.cardNumber,
     required this.expirationDate,
     required this.securityCode,
-  }); 
+  });
+
 }
