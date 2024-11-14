@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:huicrochet_mobile/modules/auth/entities/login_result.dart';
 import 'package:huicrochet_mobile/modules/auth/models/user_auth_model.dart'; 

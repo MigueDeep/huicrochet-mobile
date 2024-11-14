@@ -2,17 +2,21 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/config/dio_client.dart';
+import 'package:huicrochet_mobile/modules/product/entities/product_category.dart';
+import 'package:huicrochet_mobile/modules/product/use_cases/fetch_products_data.dart';
 import 'package:huicrochet_mobile/widgets/general/category_menu.dart';
 import 'package:huicrochet_mobile/widgets/product/product_card.dart';
 import 'package:huicrochet_mobile/widgets/general/app_bar.dart';
 
 class ProductsScreen extends StatefulWidget {
-  const ProductsScreen({super.key});
+  final FetchProductsData getProductsUseCase;
+
+  const ProductsScreen({super.key, required this.getProductsUseCase});
+
   static const List<Map<String, String>> products = [
     {
       'name': 'Pájaro tejido a mano bala sjjsjjdjdjdjjdsj',
       'price': '99.50',
-      'image': 'assets/product1.png',
     },
     {
       'name': 'Producto 2',
@@ -32,17 +36,38 @@ class ProductsScreen extends StatefulWidget {
   ];
 
   @override
-  State<ProductsScreen> createState() => _ProductsScreenState();
+  _ProductsScreenState createState() => _ProductsScreenState();
 }
 
 class _ProductsScreenState extends State<ProductsScreen> {
   List<String> categories = ['Todas'];
+  // List<Product> products = response.map((productData) {
+  //   return Product(
+  //     productName: productData['name'],
+  //     price: productData['price'],
+  //     image: productData['image'],
+  //   );
+  // }).toList();
 
   @override
   void initState() {
     super.initState();
     _getCategories();
+    // _fetchProducts();
   }
+
+  // Future<void> _fetchProducts() async {
+  //   try {
+  //     final response = await widget.getProductsUseCase.execute();
+
+  //     setState(() {
+  //       products = response;
+  //       print(products);
+  //     });
+  //   } catch (e) {
+  //     print('Error fetching products: $e');
+  //   }
+  // }
 
   Future<void> _getCategories() async {
     final dioClient = DioClient(context);
@@ -52,7 +77,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.toString());
-        
+
         final List<dynamic> categoryData = jsonData['data'];
         setState(() {
           categories = ['Todas'];
@@ -100,26 +125,20 @@ class _ProductsScreenState extends State<ProductsScreen> {
               ]),
             ),
             const SizedBox(height: 10),
-            Expanded(
-              child: GridView.builder(
-                itemCount: ProductsScreen.products.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.8,
-                ),
-                itemBuilder: (context, index) {
-                  final product = ProductsScreen.products[index];
-                  return Center(
-                    child: productCard(
-                      product['name']!,
-                      product['image']!,
-                      product['price']!,
-                      context,
-                    ),
-                  );
-                },
-              ),
-            ),
+            // Expanded(
+            //   child: GridView.builder(
+            //     itemCount: products.length,
+            //     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            //       crossAxisCount: 2,
+            //       childAspectRatio: 0.8,
+            //     ),
+            //     itemBuilder: (context, index) {
+            //       final product = products[index]; // Obtener un producto
+            //       return productCard(
+            //           product, context); // Pasar el producto y el contexto
+            //     },
+            //   ),
+            // ),
           ],
         ),
       ),
