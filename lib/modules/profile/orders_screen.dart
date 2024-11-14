@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:huicrochet_mobile/config/global_variables.dart';
+import 'package:huicrochet_mobile/widgets/general/loader.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OrdersScreen extends StatefulWidget {
   const OrdersScreen({super.key});
@@ -8,6 +11,10 @@ class OrdersScreen extends StatefulWidget {
 }
 
 class _OrdersScreenState extends State<OrdersScreen> {
+  String? name;
+  String? userImg;
+  final LoaderController _loaderController = LoaderController();
+
   final orders = [
     {
       'id': 1,
@@ -46,6 +53,10 @@ class _OrdersScreenState extends State<OrdersScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loaderController.show(context);
+      getProfile();
+    });
   }
 
   @override
@@ -53,16 +64,38 @@ class _OrdersScreenState extends State<OrdersScreen> {
     super.dispose();
   }
 
+  String getInitials(String fullName) {
+    List<String> nameParts = fullName.split(' ');
+    String initials = '';
+
+    for (var part in nameParts) {
+      if (part.isNotEmpty) {
+        initials += part[0].toUpperCase();
+      }
+    }
+
+    return initials.length > 2 ? initials.substring(0, 2) : initials;
+  }
+
+  Future<void> getProfile() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final imagePath = prefs.getString('userImg');
+    final imageName = imagePath?.split('/').last;
+    final profileImage = 'http://${ip}:8080/$imageName';
+    setState(() {
+      name = prefs.getString('fullName')!;
+      userImg = prefs.getString('userImg');
+      userImg = profileImage;
+    });
+    _loaderController.hide();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pushReplacementNamed(context, '/profile');
-          },
-        ),
+        automaticallyImplyLeading: true,
         title: Text('Órdenes'),
         backgroundColor: Colors.white,
         elevation: 0,
@@ -72,13 +105,26 @@ class _OrdersScreenState extends State<OrdersScreen> {
         child: Column(
           children: [
             SizedBox(height: 32),
-            CircleAvatar(
-              radius: 50,
-              backgroundImage: AssetImage('assets/logo.png'),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(50),
+              child: Image.network(
+                userImg ?? '',
+                width: 100,
+                height: 100,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  String initials = name != null ? getInitials(name!) : '??';
+                  return CircleAvatar(
+                    backgroundColor: const Color.fromRGBO(242, 148, 165, 1),
+                    child:
+                        Text(initials, style: TextStyle(color: Colors.white)),
+                  );
+                },
+              ),
             ),
             SizedBox(height: 10),
             Text(
-              'Ava Johnson',
+              name ?? '',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -105,7 +151,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
                 children: [
                   for (var order in orders)
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.pushNamed(context, '/orderDetails');
+                      },
                       child: Column(
                         children: [
                           Row(

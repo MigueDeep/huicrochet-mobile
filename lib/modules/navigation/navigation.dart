@@ -1,9 +1,13 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/modules/home/home_screen.dart';
-import 'package:huicrochet_mobile/modules/product/products_screen.dart';
-import 'package:huicrochet_mobile/modules/profile/adresses_screen.dart';
-import 'package:huicrochet_mobile/modules/profile/orders_screen.dart';
+import 'package:huicrochet_mobile/modules/product/datasource/product_remote_data_source.dart';
+import 'package:huicrochet_mobile/modules/product/repositories/product_repository.dart';
+import 'package:huicrochet_mobile/modules/product/screens/products_screen.dart';
+import 'package:huicrochet_mobile/modules/product/use_cases/fetch_products_data.dart';
+import 'package:huicrochet_mobile/modules/shopping-cart/shoppingCart_screen.dart';
 import 'package:huicrochet_mobile/modules/profile/profile_screen.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class Navigation extends StatefulWidget {
   const Navigation({super.key});
@@ -15,14 +19,23 @@ class Navigation extends StatefulWidget {
 class _NavigationState extends State<Navigation> {
   int _selectedIndex = 0;
 
-  static const List<Widget> _widgetOptions = <Widget>[
-    HomeScreen(),
-    ProductsScreen(),
-    OrdersScreen(),
-    ProfileScreen()
-  ];
+  // Dio client for network requests
+  final dioClient = Dio(BaseOptions(baseUrl: 'http://192.168.107.138:8080/api-crochet'));
+
+  // Use case for fetching products, initialized in initState
+  late final FetchProductsData getProductsUseCase;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize data source and repository, then assign the use case
+    final productRemoteDataSource = ProductRemoteDataSourceImpl(dioClient: dioClient);
+    final productRepository = ProductRepositoryImpl(remoteDataSource: productRemoteDataSource);
+    getProductsUseCase = FetchProductsData(repository: productRepository);
+  }
+
+  // Method to update selected tab index
   void _onItemTapped(int index) {
-    //Indicar un cambio en el estado de la aplicación
     setState(() {
       _selectedIndex = index;
     });
@@ -30,32 +43,52 @@ class _NavigationState extends State<Navigation> {
 
   @override
   Widget build(BuildContext context) {
+    // Screens for each tab with getProductsUseCase passed to ProductsScreen
+    final List<Widget> _widgetOptions = <Widget>[
+      const HomeScreen(),
+      ProductsScreen(getProductsUseCase: getProductsUseCase),
+      const ShoppingcartScreen(),
+      const ProfileScreen()
+    ];
+
     return Scaffold(
       body: _widgetOptions.elementAt(_selectedIndex),
-      bottomNavigationBar: BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Inicio',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.ac_unit_outlined),
-            label: 'Productos',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
-            label: 'Carrito',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Perfil',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: const Color.fromRGBO(242, 148, 165, 1),
-        unselectedItemColor: Colors.grey,
-        showSelectedLabels: true,
-        onTap: _onItemTapped,
+      bottomNavigationBar: Theme(
+        data: Theme.of(context).copyWith(
+          canvasColor: Colors.white, 
+        ),
+        child: BottomNavigationBar(
+          items: <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.home),
+              label: 'Inicio',
+            ),
+            BottomNavigationBarItem(
+              icon: SvgPicture.asset(
+                'assets/PhYarn.svg',
+                width: 30,
+                height: 30,
+                color: _selectedIndex == 1
+                    ? const Color.fromRGBO(242, 148, 165, 1)
+                    : Colors.grey,
+              ),
+              label: 'Productos',
+            ),
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.shopping_cart),
+              label: 'Carrito',
+            ),
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.person),
+              label: 'Perfil',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: const Color.fromRGBO(242, 148, 165, 1),
+          unselectedItemColor: Colors.grey,
+          showSelectedLabels: true,
+          onTap: _onItemTapped,
+        ),
       ),
     );
   }

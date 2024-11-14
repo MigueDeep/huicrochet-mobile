@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:huicrochet_mobile/modules/product/products_screen.dart';
-import 'package:huicrochet_mobile/widgets/product_card.dart';
-import 'package:huicrochet_mobile/widgets/category_menu.dart';
+import 'package:huicrochet_mobile/modules/product/screens/products_screen.dart';
+import 'package:huicrochet_mobile/widgets/product/product_card.dart';
+import 'package:huicrochet_mobile/widgets/general/app_bar.dart';
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -13,57 +13,15 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        title: Row(
-          children: [
-            Icon(
-              Icons.local_shipping,
-              color: Colors.black,
-            ),
-            const SizedBox(width: 15),
-            Expanded(
-              child: TextField(
-                style: const TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 15,
-                  color: Colors.black,
-                ),
-                decoration: InputDecoration(
-                  hintText: 'Buscar',
-                  hintStyle: const TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 15,
-                    color: Colors.grey,
-                  ),
-                  suffixIcon: const Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide.none,
-                  ),
-                  filled: true,
-                  fillColor: Colors.grey[100],
-                ),
-              ),
-            ),
-            const SizedBox(width: 15),
-            Icon(
-              Icons.format_bold,
-              color: Colors.black,
-            ),
-          ],
-        ),
-      ),
+      appBar: CustomAppBar(),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
-        child: Center( // Centra todo el contenido horizontalmente
+        child: Center( 
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center, // Alinea los hijos horizontalmente
+            crossAxisAlignment: CrossAxisAlignment.center, 
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 20),
+                padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
                 child: Stack(
                   children: [
                     ClipRRect(
@@ -100,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       bottom: 110,
                       left: 15,
                       child: Text(
-                        'CALIDAD EN CADA DETALLE.',
+                        'CALIDAD EN CADA DETALLE',
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontSize: 24,
@@ -148,14 +106,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
-                    children: ProductsScreen.products.map((product) {
-                      return productCard(
-                        product['name']!, // Nombre del producto
-                        product['image']!, // URL de la imagen del producto
-                        product['price']!, // Precio del producto
-                        context,
-                      );
-                    }).toList(),
+                    // children: ProductsScreen.products.map((product) {
+                    //   return productCard(
+                    //     product['name']!, // Nombre del producto
+                    //     product['image']!, // URL de la imagen del producto
+                    //     product['price']!, // Precio del producto
+                    //     context,
+                    //   );
+                    // }).toList(),
                   ),
                 ),
               ),
@@ -195,14 +153,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
-                    children: ProductsScreen.products.map((product) {
-                      return productCard(
-                        product['name']!, // Nombre del producto
-                        product['image']!, // URL de la imagen del producto
-                        product['price']!, // Precio del producto
-                        context,
-                      );
-                    }).toList(),
+                    // children: ProductsScreen.products.map((product) {
+                    //   return productCard(
+                    //     product['name']!, // Nombre del producto
+                    //     product['image']!, // URL de la imagen del producto
+                    //     product['price']!, // Precio del producto
+                    //     context,
+                    //   );
+                    // }).toList(),
                   ),
                 ),
               ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:huicrochet_mobile/config/global_variables.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -8,81 +10,201 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  String? fullName;
+  String? userImg;
+
+  Future<void> getProfile() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final imagePath = prefs.getString('userImg');
+    final imageName = imagePath?.split('/').last;
+    final profileImage = 'http://${ip}:8080/$imageName';
+    setState(() {
+      fullName = prefs.getString('fullName');
+      userImg = profileImage;
+    });
+  }
+
+  Future<void> checkLoginStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.getString('token') == null) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('No tienes sesión iniciada'),
+            content: const Text('¿Quieres iniciar sesión'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Cancelar'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.pushReplacementNamed(context, '/navigation');
+                },
+              ),
+              TextButton(
+                child: const Text('Iniciar sesión'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.pushReplacementNamed(context, '/login');
+                },
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      getProfile();
+    }
+  }
+
+  String getInitials(String fullName) {
+    List<String> nameParts = fullName.split(' ');
+    String initials = '';
+
+    for (var part in nameParts) {
+      if (part.isNotEmpty) {
+        initials += part[0].toUpperCase();
+      }
+    }
+
+    return initials.length > 2 ? initials.substring(0, 2) : initials;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    checkLoginStatus();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: Text('Perfil'),
+        automaticallyImplyLeading: false,
+        title: const Text('Perfil'),
         backgroundColor: Colors.white,
         elevation: 0,
-        iconTheme: IconThemeData(color: Colors.black),
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: Column(
         children: [
-          SizedBox(height: 32),
-          CircleAvatar(
-            radius: 50,
-            backgroundImage: AssetImage('assets/logo.png'),
+          const SizedBox(height: 32),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(50),
+            child: Image.network(
+              userImg ?? '',
+              width: 100,
+              height: 100,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                String initials =
+                    fullName != null ? getInitials(fullName!) : '??';
+                return CircleAvatar(
+                  backgroundColor: const Color.fromRGBO(242, 148, 165, 1),
+                  child: Text(initials, style: TextStyle(color: Colors.white)),
+                );
+              },
+            ),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Text(
-            'Ava Johnson',
-            style: TextStyle(
+            fullName ?? 'Cargando...',
+            style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
               fontFamily: 'Poppins',
               color: Colors.black,
             ),
           ),
-          SizedBox(height: 20),
-          Divider(),
+          const SizedBox(height: 20),
+          const Divider(),
           ListTile(
-            leading: Text('Mis ordenes',
+            leading: const Text('Mis ordenes',
                 style: TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 16,
                     color: Color.fromRGBO(130, 48, 56, 1))),
-            trailing: Icon(Icons.local_shipping,
+            trailing: const Icon(Icons.local_shipping,
                 color: Color.fromRGBO(130, 48, 56, 1)),
             onTap: () {
-              Navigator.pushReplacementNamed(context, '/orders');
+              Navigator.pushNamed(context, '/orders');
             },
           ),
-          Divider(),
+          const Divider(),
           ListTile(
-            trailing: Icon(Icons.person_outline,
+            trailing: const Icon(Icons.person_outline,
                 color: Color.fromRGBO(130, 48, 56, 1)),
-            leading: Text('Información personal',
-                style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 16,
-                    color: Color.fromRGBO(130, 48, 56, 1))),
-            onTap: () {
-              Navigator.pushReplacementNamed(context, '/info');
-            },
-          ),
-          Divider(),
-          ListTile(
-            trailing: Icon(Icons.location_on_outlined,
-                color: Color.fromRGBO(130, 48, 56, 1)),
-            leading: Text('Direcciones',
+            leading: const Text('Información personal',
                 style: TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 16,
                     color: Color.fromRGBO(130, 48, 56, 1))),
             onTap: () {
-              Navigator.pushReplacementNamed(context, '/addresses');
+              Navigator.pushNamed(context, '/info');
             },
           ),
-          Divider(),
+          const Divider(),
+          ListTile(
+            trailing: const Icon(Icons.location_on_outlined,
+                color: Color.fromRGBO(130, 48, 56, 1)),
+            leading: const Text('Direcciones',
+                style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 16,
+                    color: Color.fromRGBO(130, 48, 56, 1))),
+            onTap: () {
+              Navigator.pushNamed(context, '/addresses');
+            },
+          ),
+          const Divider(),
+          ListTile(
+            trailing: const Icon(Icons.credit_card,
+                color: Color.fromRGBO(130, 48, 56, 1)),
+            leading: const Text('Métodos de pago',
+                style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 16,
+                    color: Color.fromRGBO(130, 48, 56, 1))),
+            onTap: () {
+              Navigator.pushNamed(context, '/my-payment-methods');
+            },
+          ),
+          const Divider(),
+          const Spacer(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.all(16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  backgroundColor: const Color.fromRGBO(242, 148, 165, 1),
+                ),
+                onPressed: () async {
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  prefs.remove('token');
+                  prefs.remove('fullName');
+                  prefs.remove('userId');
+                  Navigator.pushReplacementNamed(context, '/login');
+                },
+                child: const Text(
+                  'Cerrar sesión',
+                  style: TextStyle(
+                      fontSize: 16, color: Colors.white, fontFamily: 'Poppins'),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
         ],
       ),
     );
   }
 }
+

@@ -1,4 +1,10 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:huicrochet_mobile/config/dio_client.dart';
+import 'package:huicrochet_mobile/config/error_state.dart';
+import 'package:huicrochet_mobile/widgets/general/loader.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddadressScreen extends StatefulWidget {
   const AddadressScreen({super.key});
@@ -15,16 +21,8 @@ class _AddadressScreenState extends State<AddadressScreen> {
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _disctrictController = TextEditingController();
   final TextEditingController _stateController = TextEditingController();
-
-  /* {
-      'id': 1,
-      'zipCode': '62742',
-      'street': 'Privet Drive',
-      'city': 'Little Whinging',
-      'number': '12',
-      'district': 'Surrey',
-      'state': 'England',
-    } */
+  final TextEditingController _phoneNumberController = TextEditingController();
+  final LoaderController _loaderController = LoaderController();
 
   @override
   void initState() {
@@ -35,6 +33,7 @@ class _AddadressScreenState extends State<AddadressScreen> {
     _zipCodeController.addListener(_validateForm);
     _disctrictController.addListener(_validateForm);
     _stateController.addListener(_validateForm);
+    _phoneNumberController.addListener(_validateForm);
   }
 
   @override
@@ -54,6 +53,7 @@ class _AddadressScreenState extends State<AddadressScreen> {
   bool _districtTouched = false;
   bool _zipCodeTouched = false;
   bool _stateTouched = false;
+  bool _phoneNumberTouched = false;
   bool _isValid = false;
 
   String? _validateStreet(String? value) {
@@ -99,6 +99,17 @@ class _AddadressScreenState extends State<AddadressScreen> {
     return null;
   }
 
+  String? _validatePhoneNumber(String? value) {
+    if (!_phoneNumberTouched) return null;
+    if (value == null || value.isEmpty) {
+      return 'Por favor ingresa número de teléfono';
+    }
+    if (int.tryParse(value) == null) {
+      return 'Por favor ingresa un número válido';
+    }
+    return null;
+  }
+
   String? _validateZipCode(String? value) {
     if (!_zipCodeTouched) return null;
     if (value == null || value.isEmpty) {
@@ -116,14 +127,66 @@ class _AddadressScreenState extends State<AddadressScreen> {
     });
   }
 
+  Future<void> createAddress() async {
+    _loaderController.show(context);
+    final dio = DioClient(context).dio;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    try {
+      final response = await dio.post(
+        '/shipping-address',
+        data: {
+          'userId': prefs.getString('userId'),
+          'state': _stateController.text,
+          'city': _cityController.text,
+          'zipCode': _zipCodeController.text,
+          'district': _disctrictController.text,
+          'street': _streetController.text,
+          'number': _numberController.text,
+          'phoneNumber': _phoneNumberController.text,
+          'defaultAddress': false,
+          'status': true
+        },
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        _loaderController.hide();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Dirección de envío registrada'),
+            backgroundColor: Colors.blue,
+          ),
+        );
+        Navigator.pushReplacementNamed(context, '/addresses');
+      }
+    } catch (e) {
+      final errorState = Provider.of<ErrorState>(context, listen: false);
+
+      if (e is DioException) {
+        if (e.response?.statusCode == 400) {
+          String errorMessage =
+              e.response?.data['message'] ?? 'Error desconocido';
+          errorState.setError(errorMessage);
+        } else {
+          errorState.setError('Error de conexión');
+        }
+      } else {
+        errorState.setError('Error inesperado: $e');
+      }
+      _loaderController.hide();
+
+      errorState.showErrorDialog(context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
+          title: Text('Agregar dirección'),
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
-              Navigator.pushReplacementNamed(context, '/addresses');
+              Navigator.pop(context);
             },
           ),
           backgroundColor: Colors.white,
@@ -135,15 +198,6 @@ class _AddadressScreenState extends State<AddadressScreen> {
             key: _formKey,
             child: Column(
               children: [
-                SizedBox(height: 8),
-                ListTile(
-                  leading: Text('Agregar dirección',
-                      style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 16,
-                          color: Color.fromRGBO(130, 48, 56, 1))),
-                ),
-                Divider(),
                 Container(
                     padding: const EdgeInsets.all(24.0),
                     child: Column(
@@ -184,6 +238,7 @@ class _AddadressScreenState extends State<AddadressScreen> {
                                   TextFormField(
                                     keyboardType: TextInputType.number,
                                     controller: _numberController,
+                                    maxLength: 4,
                                     decoration: InputDecoration(
                                       border: OutlineInputBorder(
                                         borderRadius:
@@ -200,8 +255,7 @@ class _AddadressScreenState extends State<AddadressScreen> {
                                 ],
                               ),
                             ),
-                            const SizedBox(
-                                width: 16), // Espaciado entre los campos
+                            const SizedBox(width: 16),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -215,6 +269,7 @@ class _AddadressScreenState extends State<AddadressScreen> {
                                   TextFormField(
                                     keyboardType: TextInputType.number,
                                     controller: _zipCodeController,
+                                    maxLength: 5,
                                     decoration: InputDecoration(
                                       border: OutlineInputBorder(
                                         borderRadius:
@@ -293,6 +348,28 @@ class _AddadressScreenState extends State<AddadressScreen> {
                             });
                           },
                         ),
+                        SizedBox(height: 16),
+                        Text('Número de teléfono de quien recibe:',
+                            style: TextStyle(
+                                fontFamily: 'Poppins',
+                                color: Color.fromRGBO(130, 48, 56, 1))),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          keyboardType: TextInputType.number,
+                          controller: _phoneNumberController,
+                          maxLength: 10,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                          ),
+                          validator: _validatePhoneNumber,
+                          onTap: () {
+                            setState(() {
+                              _phoneNumberTouched = true;
+                            });
+                          },
+                        ),
                         SizedBox(height: 40),
                         SizedBox(
                           width: double.infinity,
@@ -307,6 +384,7 @@ class _AddadressScreenState extends State<AddadressScreen> {
                             ),
                             onPressed: () {
                               setState(() {
+                                _phoneNumberTouched = true;
                                 _streetTouched = true;
                                 _numberTouched = true;
                                 _cityTouched = true;
@@ -315,10 +393,10 @@ class _AddadressScreenState extends State<AddadressScreen> {
                                 _stateTouched = true;
                               });
                               if (_formKey.currentState!.validate()) {
-                                Navigator.pushNamed(context, '/addresses');
+                                createAddress();
                               }
                             },
-                            child: const Text('Guardar',
+                            child: const Text('Registrar dirección',
                                 style: TextStyle(
                                     fontSize: 16,
                                     color: Colors.white,
