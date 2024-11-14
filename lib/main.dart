@@ -51,8 +51,7 @@ class MyApp extends StatelessWidget {
           '/recoverpass1': (context) => const Recoverpass1Screen(),
           '/home': (context) => const HomeScreen(),
           '/product-detail': (context) => const ProductDetail(),
-          '/products': (context) =>
-              ProductsScreen(getProductsUseCase: getIt<FetchProductsData>()),
+          '/products': (context) => const ProductsScreen(),
           '/profile': (context) => const ProfileScreen(),
           '/info': (context) => const InfoScreen(),
           '/addresses': (context) => const AddressesScreen(),
