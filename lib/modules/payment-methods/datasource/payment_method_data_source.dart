@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:huicrochet_mobile/modules/payment-methods/entities/payment_method.dart';
 import 'package:huicrochet_mobile/modules/payment-methods/models/payment_method_model.dart';
@@ -39,16 +41,29 @@ class PaymentMethodRemoteDataSourceImpl
         options: Options(headers: headers),
       );
 
-      if (response.data['status'] == 'OK' && response.data['data'] != null) {
-        return (response.data['data'] as List)
-            .map((json) => PaymentCardModel.fromJson(json))
-            .toList();
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.data);
+        if (jsonData['status'] == 'OK' && jsonData['data'] != null) {
+          return (jsonData['data'] as List)
+              .map((json) => PaymentCardModel.fromJson(json))
+              .toList();
+        } else {
+          throw Exception(
+              "Error fetching payment methods: ${jsonData['message']}");
+        }
       } else {
         throw Exception(
-            "Error fetching payment methods: ${response.data['message']}");
+            "Error fetching payment methods, status code: ${response.statusCode}");
       }
     } catch (e) {
-      throw Exception('Failed to load payment methods');
+      print('Exception occurred: $e');
+      if (e is DioException && e.response != null) {
+        final errorData = jsonDecode(e.response!.data);
+        throw Exception(
+            "Error fetching payment methods: ${errorData['message'] ?? 'Unknown error'}");
+      } else {
+        throw Exception('Failed to load payment methods: $e');
+      }
     }
   }
 

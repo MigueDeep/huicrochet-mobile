@@ -8,14 +8,13 @@ class PaymentCard {
   final String last4Numbers;
   final bool? status;
 
-  PaymentCard({
-    this.id,
-    required this.last4Numbers,
-    this.status,
-    required this.userId,
-    required this.cardType,
-    required this.cardNumber,
-    required this.expirationDate,
-    required this.cvv,
-  });
+  PaymentCard(
+      {required this.userId,
+      required this.cardType,
+      required this.cardNumber,
+      required this.expirationDate,
+      required this.cvv,
+      this.id,
+      required this.last4Numbers,
+      this.status});
 }

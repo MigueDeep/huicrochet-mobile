@@ -69,7 +69,8 @@ class _MyPaymentMethodsState extends State<MyPaymentMethods> {
           }
 
           if (snapshot.hasError) {
-            return Center(child: Text('Error al cargar los métodos de pago'));
+            // Mostrar el error específico
+            return Center(child: Text('Error: ${snapshot.error}'));
           }
 
           if (!snapshot.hasData || snapshot.data!.isEmpty) {

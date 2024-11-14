@@ -42,7 +42,6 @@ void setupServiceLocator() {
       () => FetchProductsData(repository: getIt()));
 
   // Payment Methods
-  // Registrar PaymentMethodRepository y su implementación
   getIt.registerFactory<PaymentMethodRemoteDataSource>(
       () => PaymentMethodRemoteDataSourceImpl(dioClient: getIt()));
   getIt.registerFactory<PaymentMethodRepository>(

@@ -24,13 +24,14 @@ class PaymentCardModel extends PaymentCard {
   factory PaymentCardModel.fromJson(Map<String, dynamic> json) {
     return PaymentCardModel(
       id: json['id'],
-      userId: json['userId'] ?? '', // Ajustar según corresponda
+      userId: json['userId'] ?? '',
       cardType: json['cardType'],
       cardNumber: json['cardNumber'],
       expirationDate: _parseExpirationDate(json['expirationDate']),
       cvv: json['cvv'],
       last4Numbers: json['last4Numbers'],
-      status: json['status'],
+      status:
+          json['status'] is bool ? json['status'] : json['status'] == 'true',
     );
   }
 
@@ -48,10 +49,9 @@ class PaymentCardModel extends PaymentCard {
   }
 
   static DateTime _parseExpirationDate(String expirationDate) {
-    // Asume el formato MM/YY y convierte a DateTime en el primer día del mes.
     final parts = expirationDate.split('/');
     final month = int.parse(parts[0]);
-    final year = int.parse(parts[1]) + 2000; // Ajuste para año 2000+
+    final year = int.parse(parts[1]) + 2000;
     return DateTime(year, month, 1);
   }
 }
