@@ -22,22 +22,17 @@ class DioClient {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          // Recupera el token de SharedPreferences
-          final prefs = await SharedPreferences.getInstance();
-          final token = prefs.getString('token') ?? '';
-
-          // Si el token no está vacío, agrégalo a los headers
-          if (token.isNotEmpty) {
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          String? token = prefs.getString('token');
+          if (token != null && token.isNotEmpty) {
             options.headers['Authorization'] = 'Bearer $token';
           }
 
-          print('Enviando petición a: ${options.path}');
-          print('Datos de la solicitud: ${options.data}');
           return handler.next(options);
         },
         onResponse: (response, handler) {
           print('Respuesta recibida: ${response.data}');
-          if (response.statusCode == 200) {
+          if (response.statusCode == 200 || response.statusCode == 201) {
             print('Solicitud exitosa.');
           } else {
             print('Código de estado inesperado: ${response.statusCode}');
