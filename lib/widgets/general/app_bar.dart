@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:huicrochet_mobile/config/global_variables.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserProfile {
@@ -16,7 +17,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
     if (imagePath != null) {
       final imageName = imagePath.split('/').last;
-      final profileImage = 'http://192.168.107.138:8080/$imageName';
+      final profileImage = 'http://${ip}:8080/$imageName';
 
       return UserProfile(imageUrl: profileImage, fullName: fullName);
     } else {

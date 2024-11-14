@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:huicrochet_mobile/config/global_variables.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -17,9 +18,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> getProfile() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    final imagePath = prefs.getString('userImg');
+    final imageName = imagePath?.split('/').last;
+    final profileImage = 'http://${ip}:8080/$imageName';
     setState(() {
       fullName = prefs.getString('fullName');
-      userImg =  prefs.getString('userImg');
+      userImg = profileImage;
     });
   }
 
@@ -57,17 +61,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   String getInitials(String fullName) {
-  List<String> nameParts = fullName.split(' '); 
-  String initials = '';
+    List<String> nameParts = fullName.split(' ');
+    String initials = '';
 
-  for (var part in nameParts) {
-    if (part.isNotEmpty) {
-      initials += part[0].toUpperCase(); 
+    for (var part in nameParts) {
+      if (part.isNotEmpty) {
+        initials += part[0].toUpperCase();
+      }
     }
-  }
 
-  return initials.length > 2 ? initials.substring(0, 2) : initials; 
-}
+    return initials.length > 2 ? initials.substring(0, 2) : initials;
+  }
 
   @override
   void initState() {
@@ -89,20 +93,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: Column(
         children: [
           const SizedBox(height: 32),
-          Image.network(
-            userImg ?? '',
-            width: 40,
-            height: 40,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              String initials = fullName != null
-                  ? getInitials(fullName!)
-                  : '??';
-              return CircleAvatar(
-                backgroundColor: const Color.fromRGBO(242, 148, 165, 1),
-                child: Text(initials, style: TextStyle(color: Colors.white)),
-              );
-            },
+          ClipRRect(
+            borderRadius: BorderRadius.circular(50),
+            child: Image.network(
+              userImg ?? '',
+              width: 100,
+              height: 100,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                String initials =
+                    fullName != null ? getInitials(fullName!) : '??';
+                return CircleAvatar(
+                  backgroundColor: const Color.fromRGBO(242, 148, 165, 1),
+                  child: Text(initials, style: TextStyle(color: Colors.white)),
+                );
+              },
+            ),
           ),
           const SizedBox(height: 10),
           Text(

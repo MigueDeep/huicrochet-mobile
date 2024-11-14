@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/config/error_state.dart';
+import 'package:huicrochet_mobile/config/global_variables.dart';
 import 'package:huicrochet_mobile/kernel/utils/dio_client.dart';
 import 'package:huicrochet_mobile/modules/auth/datasource/user_auth_remote_data_source.dart';
 import 'package:huicrochet_mobile/modules/auth/repositories/user_auth_repository.dart';
@@ -47,7 +48,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dioClient = Dio(BaseOptions(baseUrl: 'http://192.168.107.138:8080/api-crochet'));
+    final dioClient = Dio(BaseOptions(baseUrl: 'http://${ip}:8080/api-crochet'));
     final userRemoteDataSource = UserRemoteDataSourceImpl(dioClient: dioClient);
     final userRepository = UserRepositoryImpl(remoteDataSource: userRemoteDataSource);
     final loginUseCase = LoginUseCase(userRepository: userRepository);
@@ -65,16 +66,8 @@ class MyApp extends StatelessWidget {
     final deletePaymentMethod = DeletePayment(repository: PaymentMethodRepository);
 
     
-    return MultiProvider(
-      providers: [
-        Provider<FetchProductsData>(
-           create: (context) => FetchProductsData(repository: productRepository),
-        ),
-        Provider<ErrorState>(
-          create: (context) => ErrorState(),
-        ),
-      ],
-      child: MaterialApp(
+    return Provider(create: (context) => ErrorState(),
+    child: MaterialApp(
         debugShowCheckedModeBanner: false,
         initialRoute: '/',
         routes: {
@@ -101,6 +94,7 @@ class MyApp extends StatelessWidget {
         },
       ),
     );
+         
        
     
   }
