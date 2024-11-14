@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart' as flutter_ui;
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/config/dio_client.dart';
+import 'package:huicrochet_mobile/config/global_variables.dart';
 import 'package:huicrochet_mobile/modules/product/entities/product.dart';
 import 'package:huicrochet_mobile/widgets/product/select_colors.dart';
 import 'package:huicrochet_mobile/widgets/product/user_comment.dart';
@@ -18,6 +19,7 @@ class ProductDetail extends StatefulWidget {
 
 class _ProductDetailState extends State<ProductDetail> {
   late Future<Product> product;
+  int _selectedIndex = 0;
 
   @override
   void didChangeDependencies() {
@@ -103,8 +105,15 @@ class _ProductDetailState extends State<ProductDetail> {
       future: product, // Usar el futuro `product` en lugar de 'productId'
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
-            child: CircularProgressIndicator(),
+          return Container(
+            color: Colors.white,
+            width: double.infinity,
+            height: double.infinity,
+            child: Center(
+              child: CircularProgressIndicator(
+                color: Colors.amberAccent,
+              ),
+            ),
           );
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
@@ -128,26 +137,30 @@ class _ProductDetailState extends State<ProductDetail> {
                         child: Row(
                           children: [
                             if (productData.items.isNotEmpty &&
-                                productData.items[1].images.isNotEmpty)
-                              ...productData.items[1].images.map((image) {
-                                print(image.imageUri);
+                                productData
+                                    .items[_selectedIndex].images.isNotEmpty)
+                              ...productData.items[_selectedIndex].images
+                                  .map((image) {
                                 return Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 4.0),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(20),
                                     child: flutter_ui.Image.network(
-                                      image.imageUri, // Usar la imagen del item
+                                      image.imageUri != null
+                                          ? 'http://${ip}:8080/${image.imageUri.split('/').last}'
+                                          : 'not found',
                                       width: 320,
                                       height: 400,
                                       fit: BoxFit.cover,
                                       errorBuilder:
                                           (context, error, stackTrace) {
                                         return flutter_ui.Image.asset(
-                                            width: 320,
-                                            height: 400,
-                                            fit: BoxFit.cover,
-                                            'assets/snoopyAzul.jpg');
+                                          'assets/snoopyAzul.jpg',
+                                          width: 320,
+                                          height: 400,
+                                          fit: BoxFit.cover,
+                                        );
                                       },
                                     ),
                                   ),
@@ -256,7 +269,12 @@ class _ProductDetailState extends State<ProductDetail> {
                                       .map((item) => item.color.colorCod)
                                       .toList()
                                   : [],
-                            )
+                              onColorSelected: (index) {
+                                setState(() {
+                                  _selectedIndex = index;
+                                });
+                              },
+                            ),
                           ],
                         ),
                       ),

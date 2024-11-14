@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 
 class ColorSelector extends StatefulWidget {
   final List<String> colorCodes;
+  final ValueChanged<int> onColorSelected;
 
-  const ColorSelector({super.key, required this.colorCodes});
+  const ColorSelector({
+    super.key,
+    required this.colorCodes,
+    required this.onColorSelected,
+  });
 
   @override
   _ColorSelectorState createState() => _ColorSelectorState();
@@ -15,7 +20,6 @@ class _ColorSelectorState extends State<ColorSelector> {
   @override
   Widget build(BuildContext context) {
     if (widget.colorCodes.isEmpty) {
-      // Mostrar mensaje si no hay colores
       return Text(
         'Colores no disponibles',
         style: TextStyle(
@@ -35,6 +39,7 @@ class _ColorSelectorState extends State<ColorSelector> {
             setState(() {
               _selectedColorIndex = index;
             });
+            widget.onColorSelected(index);
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 5.0),
