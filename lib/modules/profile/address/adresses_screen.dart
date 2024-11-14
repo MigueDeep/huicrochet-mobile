@@ -73,20 +73,10 @@ class _AddressesScreenState extends State<AddressesScreen> {
           await dio.get('/shipping-address/user/${prefs.getString('userId')}');
       if (response.statusCode == 200 || response.statusCode == 201) {
         final jsonData = jsonDecode(response.data);
-
-        print("Respuesta recibida:");
-        print(jsonData);
-
         setState(() {
           try {
             final dataList = jsonData['data'] as List;
-            print("Lista de direcciones:");
-            print(dataList);
-
             addresses = dataList.map((address) {
-              print("Procesando dirección con datos:");
-              print(address);
-
               final userMap = address['user'] ?? {};
 
               return Address(
