@@ -113,7 +113,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 } else {
                   String initials = userProfile.fullName != null
                       ? getInitials(userProfile.fullName!)
-                      : '??';
+                      : 'H';
                   return CircleAvatar(
                     backgroundColor: const Color.fromRGBO(242, 148, 165, 1),
                     child:
