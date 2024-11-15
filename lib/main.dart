@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:huicrochet_mobile/modules/product/providers/produc_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:huicrochet_mobile/config/error_state.dart';
 import 'package:huicrochet_mobile/config/service_locator.dart';
 import 'package:huicrochet_mobile/modules/auth/screens/login_screen.dart';
 import 'package:huicrochet_mobile/modules/auth/use_cases/login_use_case.dart';
 import 'package:huicrochet_mobile/modules/navigation/navigation.dart';
-import 'package:huicrochet_mobile/modules/product/use_cases/fetch_products_data.dart';
+import 'package:huicrochet_mobile/modules/product/screens/new_products_screen.dart';
 import 'package:huicrochet_mobile/modules/profile/address/addAdress_screen.dart';
 import 'package:huicrochet_mobile/modules/profile/address/adresses_screen.dart';
 import 'package:huicrochet_mobile/modules/profile/info_screen.dart';
@@ -23,9 +25,7 @@ import 'package:huicrochet_mobile/modules/shopping-cart/shoppingcart_screen.dart
 import 'package:huicrochet_mobile/modules/shopping-cart/mailing_address_cart.dart';
 import 'package:huicrochet_mobile/modules/shopping-cart/payment_methods.dart';
 import 'package:huicrochet_mobile/modules/shopping-cart/add_payment_method.dart';
-import 'package:provider/provider.dart';
 import 'package:huicrochet_mobile/modules/profile/my_payment_methods.dart';
-
 void main() {
   setupServiceLocator();
 
@@ -37,8 +37,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Provider(
-      create: (context) => ErrorState(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ErrorState()),
+        ChangeNotifierProvider(create: (_) => ProductsProvider()),
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         initialRoute: '/',
@@ -64,7 +67,8 @@ class MyApp extends StatelessWidget {
           '/payment-methods': (context) => const PaymentMethods(),
           '/add-payment-method': (context) => const AddPaymentMethod(),
           '/my-payment-methods': (context) =>
-              MyPaymentMethods(getPaymentMethod: getIt<GetPayment>())
+              MyPaymentMethods(getPaymentMethod: getIt<GetPayment>()),
+          '/new-products': (context) => NewProductsScreen(),
         },
       ),
     );
