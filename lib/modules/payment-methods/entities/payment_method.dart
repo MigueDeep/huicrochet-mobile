@@ -5,7 +5,7 @@ class PaymentCard {
   final DateTime expirationDate;
   final String cvv;
   final String? id;
-  final String last4Numbers;
+  final String? last4Numbers;
   final bool? status;
 
   PaymentCard(
@@ -15,6 +15,6 @@ class PaymentCard {
       required this.expirationDate,
       required this.cvv,
       this.id,
-      required this.last4Numbers,
+      this.last4Numbers,
       this.status});
 }

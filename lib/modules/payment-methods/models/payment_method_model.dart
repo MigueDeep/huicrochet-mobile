@@ -8,7 +8,7 @@ class PaymentCardModel extends PaymentCard {
     required String cardNumber,
     required DateTime expirationDate,
     required String cvv,
-    required String last4Numbers,
+    String? last4Numbers,
     bool? status,
   }) : super(
           id: id,
@@ -29,7 +29,7 @@ class PaymentCardModel extends PaymentCard {
       cardNumber: json['cardNumber'],
       expirationDate: _parseExpirationDate(json['expirationDate']),
       cvv: json['cvv'],
-      last4Numbers: json['last4Numbers'],
+      last4Numbers: json['last4Numbers'] ?? '',
       status:
           json['status'] is bool ? json['status'] : json['status'] == 'true',
     );

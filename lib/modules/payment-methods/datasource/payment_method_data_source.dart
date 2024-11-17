@@ -8,8 +8,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 abstract class PaymentMethodRemoteDataSource {
   Future<List<PaymentCard>> getPaymentMethods(String userId);
   Future<PaymentCard> createPaymentMethod(PaymentCardModel paymentCard);
-  Future<void> updatePaymentMethod(String userId, PaymentCardModel paymentCard);
-  Future<void> deletePaymentMethod(String userId);
+  Future<PaymentCard> getPaymentMethod(String id);
+  Future<void> updatePaymentMethod(String id, PaymentCardModel paymentCard);
+  Future<void> deletePaymentMethod(String id);
 }
 
 class PaymentMethodRemoteDataSourceImpl
@@ -56,7 +57,6 @@ class PaymentMethodRemoteDataSourceImpl
             "Error fetching payment methods, status code: ${response.statusCode}");
       }
     } catch (e) {
-      print('Exception occurred: $e');
       if (e is DioException && e.response != null) {
         final errorData = jsonDecode(e.response!.data);
         throw Exception(
@@ -68,38 +68,75 @@ class PaymentMethodRemoteDataSourceImpl
   }
 
   @override
+  Future<PaymentCard> getPaymentMethod(String id) async {
+    try {
+      final headers = await _getHeaders();
+      final response = await dioClient.get(
+        '/payment-method/$id',
+        options: Options(headers: headers),
+      );
+
+      final jsonData = jsonDecode(response.data);
+
+      if (jsonData['status'] == 'OK' && jsonData['data'] != null) {
+        return PaymentCardModel.fromJson(jsonData['data']);
+      } else {
+        throw Exception("Error getting payment method: ${jsonData['message']}");
+      }
+    } catch (e) {
+      if (e is DioException && e.response != null) {
+        final errorData = jsonDecode(e.response!.data);
+        throw Exception(
+            "Error gettin payment method: ${errorData['message'] ?? 'Unknown error'}");
+      } else {
+        throw Exception('Failed to create payment method: $e');
+      }
+    }
+  }
+
+  @override
   Future<PaymentCard> createPaymentMethod(PaymentCardModel paymentCard) async {
     try {
       final headers = await _getHeaders();
       final response = await dioClient.post(
-        '/payment-methods',
+        '/payment-method',
         data: paymentCard.toJson(),
         options: Options(headers: headers),
       );
 
-      if (response.data['status'] == 'OK' && response.data['data'] != null) {
-        return PaymentCardModel.fromJson(response.data['data']);
+      final jsonData = jsonDecode(response.data);
+
+      if (jsonData['status'] == 'CREATED' && jsonData['data'] != null) {
+        return PaymentCardModel.fromJson(jsonData['data']);
       } else {
         throw Exception(
-            "Error creating payment method: ${response.data['message']}");
+            "Error creating payment method: ${jsonData['message']}");
       }
     } catch (e) {
-      throw Exception('Failed to create payment method');
+      if (e is DioException && e.response != null) {
+        final errorData = jsonDecode(e.response!.data);
+        throw Exception(
+            "Error creating payment method: ${errorData['message'] ?? 'Unknown error'}");
+      } else {
+        throw Exception('Failed to create payment method: $e');
+      }
     }
   }
 
   @override
   Future<void> updatePaymentMethod(
-      String userId, PaymentCardModel paymentCard) async {
+      String id, PaymentCardModel paymentCard) async {
     try {
       final headers = await _getHeaders();
       final response = await dioClient.put(
-        '/payment-methods/$userId',
+        '/payment-method/$id',
         data: paymentCard.toJson(),
         options: Options(headers: headers),
       );
 
-      if (response.data['status'] != 'OK') {
+      final jsonData = jsonDecode(response.data);
+
+      if (jsonData['status'] != 'OK') {
         throw Exception(
             "Error updating payment method: ${response.data['message']}");
       }
@@ -109,15 +146,16 @@ class PaymentMethodRemoteDataSourceImpl
   }
 
   @override
-  Future<void> deletePaymentMethod(String userId) async {
+  Future<void> deletePaymentMethod(String id) async {
     try {
       final headers = await _getHeaders();
-      final response = await dioClient.delete(
-        '/payment-methods/$userId',
+      final response = await dioClient.put(
+        '/payment-method/disable/$id',
         options: Options(headers: headers),
       );
+      final jsonData = jsonDecode(response.data);
 
-      if (response.data['status'] != 'OK') {
+      if (jsonData['status'] != 'OK') {
         throw Exception(
             "Error deleting payment method: ${response.data['message']}");
       }
