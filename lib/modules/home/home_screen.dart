@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:huicrochet_mobile/modules/product/providers/produc_provider.dart';
+import 'package:huicrochet_mobile/modules/product/providers/new_products_provider.dart'; 
 import 'package:huicrochet_mobile/widgets/general/app_bar.dart';
 import 'package:huicrochet_mobile/widgets/product/product_card.dart';
 import 'package:provider/provider.dart';
@@ -34,10 +34,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final productsProvider = Provider.of<ProductsProvider>(context);
+    final newProductsProvider = Provider.of<NewProductsProvider>(context); 
 
     if (_isFirstVisit) {
-      productsProvider.fetchProducts(context, endpoint: '/product/getTop10');
+      newProductsProvider.fetchNewProducts(context);
     }
 
     return Scaffold(
@@ -47,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.white,
         color: const Color.fromRGBO(242, 148, 165, 1),
         onRefresh: () async {
-          await productsProvider.fetchProducts(context, forceRefresh: true, endpoint: '/product/getTop10');
+          await newProductsProvider.fetchNewProducts(context, forceRefresh: true);
         },
         child: SingleChildScrollView(
           child: Center(
@@ -106,6 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 SizedBox(height: 20),
 
+                // Sección de nuevos productos
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: SizedBox(
@@ -137,14 +138,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 SizedBox(height: 10),
 
+                // Productos en carrusel horizontal
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 0.9,
-                  child: productsProvider.isLoading
+                  child: newProductsProvider.isLoading
                       ? Center(child: CircularProgressIndicator())
                       : SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Row(
-                            children: productsProvider.products.map((product) {
+                            children: newProductsProvider.newProducts.map((product) {
                               return Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: productCard(
@@ -162,13 +164,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 SizedBox(height: 10),
 
+                // Sección de más vendidos
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.9,
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.pushNamed(context, '/new-products');
+                        Navigator.pushNamed(context, '/best-sellers');
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -193,12 +196,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 SizedBox(height: 10),
 
+                // Carrusel horizontal para más vendidos
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 0.9,
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
-                      children: productsProvider.products.map((product) {
+                      children: newProductsProvider.newProducts.map((product) {
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: productCard(

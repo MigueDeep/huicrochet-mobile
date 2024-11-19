@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:huicrochet_mobile/modules/product/providers/new_products_provider.dart';
 import 'package:huicrochet_mobile/modules/product/providers/produc_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:huicrochet_mobile/config/error_state.dart';
@@ -41,6 +42,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => ErrorState()),
         ChangeNotifierProvider(create: (_) => ProductsProvider()),
+        ChangeNotifierProvider(create: (_) => NewProductsProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

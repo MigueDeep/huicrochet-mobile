@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:huicrochet_mobile/modules/product/providers/produc_provider.dart';
+import 'package:huicrochet_mobile/modules/product/providers/new_products_provider.dart'; 
 import 'package:huicrochet_mobile/widgets/general/app_bar.dart';
 import 'package:huicrochet_mobile/widgets/product/product_card.dart';
 import 'package:provider/provider.dart';
@@ -32,10 +32,10 @@ class _NewProductsScreenState extends State<NewProductsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final productsProvider = Provider.of<ProductsProvider>(context);
+    final newProductsProvider = Provider.of<NewProductsProvider>(context); 
 
     if (_isFirstVisit) {
-      productsProvider.fetchProducts(context, endpoint: '/product/getTop10');
+      newProductsProvider.fetchNewProducts(context); 
     }
 
     return Scaffold(
@@ -54,27 +54,26 @@ class _NewProductsScreenState extends State<NewProductsScreen> {
               ),
             ),
           ),
-          
           Padding(
-            padding: const EdgeInsets.only(top: 40), 
+            padding: const EdgeInsets.only(top: 40),
             child: RefreshIndicator(
               backgroundColor: Colors.white,
-                color: const Color.fromRGBO(242, 148, 165, 1),
+              color: const Color.fromRGBO(242, 148, 165, 1),
               onRefresh: () async {
-                await productsProvider.fetchProducts(context, forceRefresh: true, endpoint: '/product/getTop10');
+                await newProductsProvider.fetchNewProducts(context, forceRefresh: true); 
               },
-              child: productsProvider.isLoading
+              child: newProductsProvider.isLoading
                   ? Center(child: CircularProgressIndicator())
                   : Padding(
                       padding: const EdgeInsets.only(left: 20, top: 10),
                       child: GridView.builder(
-                        itemCount: productsProvider.products.length,
+                        itemCount: newProductsProvider.newProducts.length,
                         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           childAspectRatio: 0.8,
                         ),
                         itemBuilder: (context, index) {
-                          final product = productsProvider.products[index];
+                          final product = newProductsProvider.newProducts[index];
                           return productCard(
                             product['name'] as String,
                             product['imageUri'] as String,
@@ -87,8 +86,6 @@ class _NewProductsScreenState extends State<NewProductsScreen> {
                     ),
             ),
           ),
-          
-          // Botón de retroceso en la parte inferior
           Positioned(
             bottom: 30,
             left: 20,

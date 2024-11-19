@@ -3,21 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/config/dio_client.dart';
 import 'package:huicrochet_mobile/config/global_variables.dart';
 
-class ProductsProvider with ChangeNotifier {
-  List<Map<String, Object>> _products = [];
+class NewProductsProvider with ChangeNotifier {
+  List<Map<String, Object>> _newProducts = [];
   bool _isLoading = false;
 
-  List<Map<String, Object>> get products => _products;
+  List<Map<String, Object>> get newProducts => _newProducts;
   bool get isLoading => _isLoading;
 
-  Future<void> fetchProducts(BuildContext context, {bool forceRefresh = false, required String endpoint}) async {
-    if (_products.isNotEmpty && !forceRefresh) return;
+  Future<void> fetchNewProducts(BuildContext context, {bool forceRefresh = false}) async {
+    if (_newProducts.isNotEmpty && !forceRefresh) return;
 
     _isLoading = true;
     notifyListeners();
 
     final dioClient = DioClient(context);
-
+    const String endpoint = '/product/getTop10';
     try {
       final response = await dioClient.dio.get(endpoint);
 
@@ -25,7 +25,7 @@ class ProductsProvider with ChangeNotifier {
         final jsonData = jsonDecode(response.toString());
         final List<dynamic> productData = jsonData['data'];
 
-        _products = productData.map((product) {
+        _newProducts = productData.map((product) {
           final name = product['productName'] as String;
           final productId = product['id'] as String;
           final price = product['price'].toString();
@@ -48,7 +48,7 @@ class ProductsProvider with ChangeNotifier {
         _isLoading = false;
         notifyListeners();
       } else {
-        print('Error al obtener productos ${response.statusCode}');
+        print('Error al obtener nuevos productos ${response.statusCode}');
       }
     } catch (e) {
       print('Error desconocido ${e.toString()}');
