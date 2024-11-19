@@ -27,8 +27,6 @@ import 'package:huicrochet_mobile/modules/product/screens/products_screen.dart';
 import 'package:huicrochet_mobile/modules/shopping-cart/shoppingcart_screen.dart';
 import 'package:huicrochet_mobile/modules/shopping-cart/mailing_address_cart.dart';
 import 'package:huicrochet_mobile/modules/shopping-cart/payment_methods.dart';
-import 'package:huicrochet_mobile/modules/shopping-cart/add_payment_method.dart';
-import 'package:huicrochet_mobile/modules/profile/my_payment_methods.dart';
 import 'package:huicrochet_mobile/modules/payment-methods/screens/add_payment_method.dart';
 import 'package:provider/provider.dart';
 import 'package:huicrochet_mobile/modules/payment-methods/screens/my_payment_methods.dart';
