@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/config/dio_client.dart';
 import 'package:huicrochet_mobile/config/global_variables.dart';
 import 'package:huicrochet_mobile/modules/product/entities/product_category.dart';
+import 'package:huicrochet_mobile/widgets/product/product_detail_loading.dart';
 import 'package:huicrochet_mobile/widgets/product/select_colors.dart';
 import 'package:huicrochet_mobile/widgets/product/user_comment.dart';
 import 'package:huicrochet_mobile/widgets/general/general_button.dart';
@@ -102,19 +103,10 @@ class _ProductDetailState extends State<ProductDetail> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Product>(
-      future: product, // Usar el futuro `product` en lugar de 'productId'
+      future: product, 
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Container(
-            color: Colors.white,
-            width: double.infinity,
-            height: double.infinity,
-            child: Center(
-              child: CircularProgressIndicator(
-                color: Colors.amberAccent,
-              ),
-            ),
-          );
+           return const ProductDetailLoading();
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (snapshot.hasData) {

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:huicrochet_mobile/modules/product/providers/new_products_provider.dart'; 
+import 'package:huicrochet_mobile/modules/product/providers/new_products_provider.dart';
 import 'package:huicrochet_mobile/widgets/general/app_bar.dart';
 import 'package:huicrochet_mobile/widgets/product/product_card.dart';
+import 'package:huicrochet_mobile/widgets/product/product_card_loading.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -34,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final newProductsProvider = Provider.of<NewProductsProvider>(context); 
+    final newProductsProvider = Provider.of<NewProductsProvider>(context);
 
     if (_isFirstVisit) {
       newProductsProvider.fetchNewProducts(context);
@@ -47,7 +48,8 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.white,
         color: const Color.fromRGBO(242, 148, 165, 1),
         onRefresh: () async {
-          await newProductsProvider.fetchNewProducts(context, forceRefresh: true);
+          await newProductsProvider.fetchNewProducts(context,
+              forceRefresh: true);
         },
         child: SingleChildScrollView(
           child: Center(
@@ -138,15 +140,27 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 SizedBox(height: 10),
 
-                // Productos en carrusel horizontal
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 0.9,
                   child: newProductsProvider.isLoading
-                      ? Center(child: CircularProgressIndicator())
+                      ? SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: List.generate(
+                              6, 
+                              (index) => Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child:
+                                    loadingProductCard()
+                              ),
+                            ),
+                          ),
+                        )
                       : SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Row(
-                            children: newProductsProvider.newProducts.map((product) {
+                            children:
+                                newProductsProvider.newProducts.map((product) {
                               return Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: productCard(

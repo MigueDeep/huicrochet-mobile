@@ -1,11 +1,11 @@
 import 'dart:convert';
-import 'package:dio/dio.dart';
+
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/config/dio_client.dart';
-import 'package:huicrochet_mobile/config/global_variables.dart';
 import 'package:huicrochet_mobile/widgets/general/app_bar.dart';
 import 'package:huicrochet_mobile/widgets/general/category_menu.dart';
 import 'package:huicrochet_mobile/widgets/product/product_card.dart';
+import 'package:huicrochet_mobile/widgets/product/product_card_loading.dart';
 import 'package:provider/provider.dart';
 import 'package:huicrochet_mobile/modules/product/providers/produc_provider.dart';
 
@@ -45,17 +45,6 @@ class _ProductsScreenState extends State<ProductsScreen> {
       } else {
         print('Error al obtener categorías ${response.statusCode}');
       }
-    } on DioException catch (e) {
-      String errorMessage = 'Error al obtener categorías';
-      if (e.response != null && e.response?.data != null) {
-        try {
-          final errorData = jsonDecode(e.response!.data);
-          errorMessage = errorData['message'] ?? errorMessage;
-        } catch (_) {
-          errorMessage = e.message ?? 'Error desconocido';
-        }
-      }
-      print('Error de red ${errorMessage}');
     } catch (e) {
       print('Error desconocido ${e.toString()}');
     }
@@ -66,7 +55,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
     final productsProvider = Provider.of<ProductsProvider>(context);
 
     if (_isFirstVisit) {
-      productsProvider.fetchProducts(context, endpoint: '/product/getTop10');
+      productsProvider.fetchProducts(context, endpoint: '/product/getActiveProducts');
       setState(() {
         _isFirstVisit = false;
       });
@@ -86,8 +75,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                 children: [
                   CategoryMenu(
                     categories: categories,
-                    onCategorySelected: (selectedCategory) {
-                    },
+                    onCategorySelected: (selectedCategory) {},
                   ),
                 ],
               ),
@@ -101,11 +89,22 @@ class _ProductsScreenState extends State<ProductsScreen> {
                   await productsProvider.fetchProducts(
                     context,
                     forceRefresh: true,
-                    endpoint: '/product/getActiveProducts', 
+                    endpoint: '/product/getActiveProducts',
                   );
                 },
                 child: productsProvider.isLoading
-                    ? Center(child: CircularProgressIndicator())
+                    ? GridView.builder(
+                        itemCount: 6,
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          childAspectRatio: 0.8,
+                        ),
+                        itemBuilder: (context, index) {
+                          return Center(
+                            child: loadingProductCard(), 
+                          );
+                        },
+                      )
                     : GridView.builder(
                         itemCount: productsProvider.products.length,
                         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

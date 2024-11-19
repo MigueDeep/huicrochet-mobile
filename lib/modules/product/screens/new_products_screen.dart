@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/modules/product/providers/new_products_provider.dart'; 
 import 'package:huicrochet_mobile/widgets/general/app_bar.dart';
 import 'package:huicrochet_mobile/widgets/product/product_card.dart';
+import 'package:huicrochet_mobile/widgets/product/product_card_loading.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -63,7 +64,18 @@ class _NewProductsScreenState extends State<NewProductsScreen> {
                 await newProductsProvider.fetchNewProducts(context, forceRefresh: true); 
               },
               child: newProductsProvider.isLoading
-                  ? Center(child: CircularProgressIndicator())
+                  ? GridView.builder(
+                        itemCount: 6,
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          childAspectRatio: 0.8,
+                        ),
+                        itemBuilder: (context, index) {
+                          return Center(
+                            child: loadingProductCard(), 
+                          );
+                        },
+                      )
                   : Padding(
                       padding: const EdgeInsets.only(left: 20, top: 10),
                       child: GridView.builder(
