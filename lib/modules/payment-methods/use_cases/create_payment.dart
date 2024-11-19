@@ -7,7 +7,7 @@ class CreatePayment {
 
   CreatePayment({required this.repository});
 
-  Future<PaymentCard> call(PaymentCardModel payment_method) async {
-    return await repository.createPaymentMethod(payment_method);
+  Future<PaymentCard> call(PaymentCardModel paymentMethod) async {
+    return await repository.createPaymentMethod(paymentMethod);
   }
 }
