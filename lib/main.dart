@@ -4,7 +4,8 @@ import 'package:huicrochet_mobile/config/service_locator.dart';
 import 'package:huicrochet_mobile/modules/auth/screens/login_screen.dart';
 import 'package:huicrochet_mobile/modules/auth/use_cases/login_use_case.dart';
 import 'package:huicrochet_mobile/modules/navigation/navigation.dart';
-import 'package:huicrochet_mobile/modules/product/use_cases/fetch_products_data.dart';
+import 'package:huicrochet_mobile/modules/payment-methods/use_cases/create_payment.dart';
+import 'package:huicrochet_mobile/modules/payment-methods/use_cases/delete_payment.dart';
 import 'package:huicrochet_mobile/modules/profile/address/addAdress_screen.dart';
 import 'package:huicrochet_mobile/modules/profile/address/adresses_screen.dart';
 import 'package:huicrochet_mobile/modules/profile/info_screen.dart';
@@ -22,9 +23,9 @@ import 'package:huicrochet_mobile/modules/product/screens/products_screen.dart';
 import 'package:huicrochet_mobile/modules/shopping-cart/shoppingcart_screen.dart';
 import 'package:huicrochet_mobile/modules/shopping-cart/mailing_address_cart.dart';
 import 'package:huicrochet_mobile/modules/shopping-cart/payment_methods.dart';
-import 'package:huicrochet_mobile/modules/shopping-cart/add_payment_method.dart';
+import 'package:huicrochet_mobile/modules/payment-methods/screens/add_payment_method.dart';
 import 'package:provider/provider.dart';
-import 'package:huicrochet_mobile/modules/profile/my_payment_methods.dart';
+import 'package:huicrochet_mobile/modules/payment-methods/screens/my_payment_methods.dart';
 
 void main() {
   setupServiceLocator();
@@ -51,8 +52,7 @@ class MyApp extends StatelessWidget {
           '/recoverpass1': (context) => const Recoverpass1Screen(),
           '/home': (context) => const HomeScreen(),
           '/product-detail': (context) => const ProductDetail(),
-          '/products': (context) =>
-              ProductsScreen(getProductsUseCase: getIt<FetchProductsData>()),
+          '/products': (context) => const ProductsScreen(),
           '/profile': (context) => const ProfileScreen(),
           '/info': (context) => const InfoScreen(),
           '/addresses': (context) => const AddressesScreen(),
@@ -63,9 +63,11 @@ class MyApp extends StatelessWidget {
           '/orderDetails': (context) => const OrderDetailsScreen(),
           '/purchaseDetails': (context) => const PurchasedetailsScreen(),
           '/payment-methods': (context) => const PaymentMethods(),
-          '/add-payment-method': (context) => const AddPaymentMethod(),
-          '/my-payment-methods': (context) =>
-              MyPaymentMethods(getPaymentMethod: getIt<GetPayment>())
+          '/add-payment-method': (context) =>
+              AddPaymentMethod(createPayment: getIt<CreatePayment>()),
+          '/my-payment-methods': (context) => MyPaymentMethods(
+              getPaymentMethod: getIt<GetPayment>(),
+              deletePaymentMethod: getIt<DeletePayment>()),
         },
       ),
     );

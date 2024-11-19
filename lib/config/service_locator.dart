@@ -5,6 +5,7 @@ import 'package:huicrochet_mobile/config/global_variables.dart';
 import 'package:huicrochet_mobile/modules/auth/datasource/user_auth_remote_data_source.dart';
 import 'package:huicrochet_mobile/modules/auth/repositories/user_auth_repository.dart';
 import 'package:huicrochet_mobile/modules/auth/use_cases/login_use_case.dart';
+import 'package:huicrochet_mobile/modules/payment-methods/use_cases/get_payment_byId.dart';
 import 'package:huicrochet_mobile/modules/product/datasource/product_remote_data_source.dart';
 import 'package:huicrochet_mobile/modules/product/repositories/product_repository.dart';
 import 'package:huicrochet_mobile/modules/product/use_cases/fetch_products_data.dart';
@@ -53,4 +54,6 @@ void setupServiceLocator() {
       .registerFactory<UpdatePayment>(() => UpdatePayment(repository: getIt()));
   getIt
       .registerFactory<DeletePayment>(() => DeletePayment(repository: getIt()));
+  getIt.registerFactory<GetPaymentByid>(
+      () => GetPaymentByid(repository: getIt()));
 }

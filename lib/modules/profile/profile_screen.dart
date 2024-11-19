@@ -191,6 +191,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   prefs.remove('token');
                   prefs.remove('fullName');
                   prefs.remove('userId');
+                  prefs.remove('userImg');
                   Navigator.pushReplacementNamed(context, '/login');
                 },
                 child: const Text(

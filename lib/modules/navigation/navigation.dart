@@ -46,7 +46,7 @@ class _NavigationState extends State<Navigation> {
     // Screens for each tab with getProductsUseCase passed to ProductsScreen
     final List<Widget> _widgetOptions = <Widget>[
       const HomeScreen(),
-      ProductsScreen(getProductsUseCase: getProductsUseCase),
+     const ProductsScreen(),
       const ShoppingcartScreen(),
       const ProfileScreen()
     ];

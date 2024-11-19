@@ -4,6 +4,7 @@ import 'package:huicrochet_mobile/modules/payment-methods/models/payment_method_
 
 abstract class PaymentMethodRepository {
   Future<List<PaymentCard>> getPaymentMethods(String userId);
+  Future<PaymentCard> getPaymentMethod(String id);
   Future<PaymentCard> createPaymentMethod(PaymentCard paymentMethod);
   Future<void> updatePaymentMethod(String id, PaymentCard paymentMethod);
   Future<void> deletePaymentMethod(String id);
@@ -13,6 +14,17 @@ class PaymentMethodRepositoryImpl implements PaymentMethodRepository {
   final PaymentMethodRemoteDataSource remoteDataSource;
 
   PaymentMethodRepositoryImpl({required this.remoteDataSource});
+
+  @override
+  Future<PaymentCard> getPaymentMethod(String id) async {
+    try {
+      final PaymentCard paymentMethodResponse =
+          await remoteDataSource.getPaymentMethod(id);
+      return paymentMethodResponse;
+    } catch (e) {
+      throw Exception('Error creating payment method: $e');
+    }
+  }
 
   @override
   Future<List<PaymentCard>> getPaymentMethods(String userId) async {
