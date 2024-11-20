@@ -126,16 +126,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     fontFamily: 'Poppins',
                     fontSize: 16,
                     color: colors['wine'])),
-            trailing: Icon(Icons.local_shipping,
-                color:colors['wine']),
+            trailing: Icon(Icons.local_shipping, color: colors['wine']),
             onTap: () {
               Navigator.pushNamed(context, '/orders');
             },
           ),
           const Divider(),
           ListTile(
-            trailing: Icon(Icons.person_outline,
-                color: colors['wine']),
+            trailing: Icon(Icons.person_outline, color: colors['wine']),
             leading: Text('Información personal',
                 style: TextStyle(
                     fontFamily: 'Poppins',
@@ -147,8 +145,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           const Divider(),
           ListTile(
-            trailing: Icon(Icons.location_on_outlined,
-                color:  colors['wine']),
+            trailing: Icon(Icons.location_on_outlined, color: colors['wine']),
             leading: Text('Direcciones',
                 style: TextStyle(
                     fontFamily: 'Poppins',
@@ -160,13 +157,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           const Divider(),
           ListTile(
-            trailing: Icon(Icons.credit_card,
-                color:  colors['wine']),
+            trailing: Icon(Icons.credit_card, color: colors['wine']),
             leading: Text('Métodos de pago',
                 style: TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 16,
-                    color:  colors['wine'])),
+                    color: colors['wine'])),
             onTap: () {
               Navigator.pushNamed(context, '/my-payment-methods');
             },
@@ -174,21 +170,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const Divider(),
           const Spacer(),
           Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: GeneralButton(text: 'Cerrar sesión', onPressed: () async {
+              padding: const EdgeInsets.all(8.0),
+              child: GeneralButton(
+                text: 'Cerrar sesión',
+                onPressed: () async {
                   SharedPreferences prefs =
                       await SharedPreferences.getInstance();
                   prefs.remove('token');
                   prefs.remove('fullName');
                   prefs.remove('userId');
                   prefs.remove('userImg');
+                  prefs.remove('shoppingCartId');
                   Navigator.pushReplacementNamed(context, '/login');
-                },)
-          ),
+                },
+              )),
           const SizedBox(height: 16),
         ],
       ),
     );
   }
 }
-

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/config/dio_client.dart';
 import 'package:huicrochet_mobile/config/error_state.dart';
+import 'package:huicrochet_mobile/config/global_variables.dart';
 import 'package:huicrochet_mobile/modules/auth/screens/recoverPass2_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -63,13 +64,13 @@ class _Recoverpass1ScreenState extends State<Recoverpass1Screen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
+                  Text(
                     'HUICROCHET',
                     style: TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Color.fromRGBO(130, 48, 56, 1),
+                      color: colors['wine'],
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -91,7 +92,7 @@ class _Recoverpass1ScreenState extends State<Recoverpass1Screen> {
                             style: TextStyle(
                               fontFamily: 'Poppins',
                               fontSize: 16,
-                              color: Color.fromRGBO(130, 48, 56, 1),
+                              color: colors['wine'],
                             ),
                           ),
                         ),
@@ -105,7 +106,7 @@ class _Recoverpass1ScreenState extends State<Recoverpass1Screen> {
                               fontFamily: 'Poppins',
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: Color.fromRGBO(130, 48, 56, 1),
+                              color: colors['wine'],
                             ),
                           ),
                         ),
@@ -134,8 +135,7 @@ class _Recoverpass1ScreenState extends State<Recoverpass1Screen> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8.0),
                               ),
-                              backgroundColor:
-                                  const Color.fromRGBO(242, 148, 165, 1),
+                              backgroundColor: colors['violet'],
                             ),
                             onPressed: () {
                               setState(() {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:huicrochet_mobile/config/global_variables.dart';
 import 'package:huicrochet_mobile/modules/auth/use_cases/login_use_case.dart';
 import 'package:huicrochet_mobile/widgets/general/general_button.dart';
 import 'package:huicrochet_mobile/widgets/general/loader.dart';
@@ -81,8 +82,9 @@ class _LoginScreenState extends State<LoginScreen> {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', result.token ?? '');
         await prefs.setString('userId', result.userId ?? '');
-        await prefs.setString('userImg', result.userImg ??'');
-        await prefs.setString('fullName', result.fullName ??'');
+        await prefs.setString('userImg', result.userImg ?? '');
+        await prefs.setString('fullName', result.fullName ?? '');
+        await prefs.setString('shoppingCartId', result.shoppingCartId ?? '');
         Navigator.pushReplacementNamed(context, '/navigation');
       } else {
         _showErrorDialog(result.message);
@@ -124,13 +126,13 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text(
+                Text(
                   'HUICROCHET',
                   style: TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: Color.fromRGBO(130, 48, 56, 1),
+                    color: colors['wine'],
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -152,7 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontSize: 16,
-                            color: Color.fromRGBO(130, 48, 56, 1),
+                            color: colors['wine'],
                           ),
                         ),
                       ),
@@ -166,7 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             fontFamily: 'Poppins',
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
-                            color: Color.fromRGBO(130, 48, 56, 1),
+                            color: colors['wine'],
                           ),
                         ),
                       ),
@@ -179,7 +181,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontSize: 14,
-                            color: Color.fromRGBO(130, 48, 56, 1),
+                            color: colors['wine'],
                           ),
                         ),
                       ),
@@ -210,7 +212,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           suffixIcon: IconButton(
                             icon: Icon(
-                              color: const Color.fromRGBO(130, 48, 56, 1),
+                              color: colors['wine'],
                               _isObscured
                                   ? Icons.visibility_off
                                   : Icons.visibility,

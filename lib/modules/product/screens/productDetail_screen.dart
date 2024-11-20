@@ -3,12 +3,15 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart' as flutter_ui;
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/config/dio_client.dart';
+import 'package:huicrochet_mobile/config/error_state.dart';
 import 'package:huicrochet_mobile/config/global_variables.dart';
 import 'package:huicrochet_mobile/modules/product/entities/product_category.dart';
+import 'package:huicrochet_mobile/widgets/general/loader.dart';
 import 'package:huicrochet_mobile/widgets/product/product_detail_loading.dart';
 import 'package:huicrochet_mobile/widgets/product/select_colors.dart';
 import 'package:huicrochet_mobile/widgets/product/user_comment.dart';
 import 'package:huicrochet_mobile/widgets/general/general_button.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductDetail extends StatefulWidget {
@@ -20,7 +23,9 @@ class ProductDetail extends StatefulWidget {
 
 class _ProductDetailState extends State<ProductDetail> {
   late Future<Product> product;
+  final LoaderController _loaderController = LoaderController();
   int _selectedIndex = 0;
+  String _selectedItem = '';
 
   @override
   void didChangeDependencies() {
@@ -96,17 +101,74 @@ class _ProductDetailState extends State<ProductDetail> {
         },
       );
     } else {
-      // Aquí mandas a llamar al metodo que agrega el producto al carrito
+      addToShoppingCart();
+    }
+  }
+
+  Future<void> addToShoppingCart() async {
+    _loaderController.show(context);
+    final dio = DioClient(context).dio;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    try {
+      final response = await dio.post(
+        '/shopping-cart/${prefs.getString('shoppingCartId')}',
+        data: {
+          'itemId': _selectedItem,
+          'quantity': _quantity,
+        },
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        _loaderController.hide();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Producto agregado al carrito'),
+            backgroundColor: Colors.blue,
+          ),
+        );
+      }
+    } catch (e) {
+      final errorState = Provider.of<ErrorState>(context, listen: false);
+
+      if (e is DioException) {
+        if (e.response?.statusCode == 400) {
+          String errorMessage =
+              e.response?.data['message'] ?? 'Error desconocido';
+          errorState.setError(errorMessage);
+        } else {
+          errorState.setError('Error de conexión');
+        }
+      } else {
+        errorState.setError('Error inesperado: $e');
+      }
+      _loaderController.hide();
+
+      errorState.showErrorDialog(context);
+    }
+  }
+
+  int _quantity = 0;
+
+  void _incrementQuantity() {
+    setState(() {
+      _quantity++;
+    });
+  }
+
+  void _decrementQuantity() {
+    if (_quantity > 0) {
+      setState(() {
+        _quantity--;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Product>(
-      future: product, 
+      future: product,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-           return const ProductDetailLoading();
+          return const ProductDetailLoading();
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (snapshot.hasData) {
@@ -264,6 +326,8 @@ class _ProductDetailState extends State<ProductDetail> {
                               onColorSelected: (index) {
                                 setState(() {
                                   _selectedIndex = index;
+                                  _selectedItem =
+                                      productData.items[_selectedIndex].id;
                                 });
                               },
                             ),
@@ -271,13 +335,69 @@ class _ProductDetailState extends State<ProductDetail> {
                         ),
                       ),
                       SizedBox(
-                        height: 20,
+                        height: 10,
                       ),
-                      GeneralButton(
-                        text: 'Agregar al carrito',
-                        onPressed: () {
-                          checkLoginStatus();
-                        },
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white,
+                                border: Border.all(color: Colors.grey[200]!)),
+                            child: IconButton(
+                              onPressed: _decrementQuantity,
+                              icon: Icon(Icons.remove),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Text(
+                              '$_quantity',
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white,
+                                border: Border.all(color: Colors.grey[200]!)),
+                            child: IconButton(
+                              onPressed: _incrementQuantity,
+                              icon: Icon(Icons.add),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 10),
+                      flutter_ui.SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.all(16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            backgroundColor: colors['violet'],
+                          ),
+                          onPressed: _quantity > 0
+                              ? () {
+                                  if (_selectedItem == '') {
+                                    _selectedItem = productData.items[0].id;
+                                  }
+                                  checkLoginStatus();
+                                }
+                              : null,
+                          child: Text(
+                            'Agregar al carrito',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
+                        ),
                       ),
                       const SizedBox(
                         height: 20,

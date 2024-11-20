@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:huicrochet_mobile/config/global_variables.dart';
 import 'package:huicrochet_mobile/config/service_locator.dart';
 import 'package:huicrochet_mobile/modules/payment-methods/models/payment_method_model.dart';
 import 'package:huicrochet_mobile/modules/payment-methods/screens/edit_payment_method.dart';
@@ -250,13 +251,13 @@ class _MyPaymentMethodsState extends State<MyPaymentMethods> {
                       side: const BorderSide(
                           color: Color.fromARGB(63, 142, 119, 119), width: 0.5),
                     ),
-                    backgroundColor: Colors.white,
+                    backgroundColor: colors['violet'],
                   ),
                   child: const Text(
                     'Agregar tarjeta',
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.black,
+                      color: Colors.white,
                       fontFamily: 'Poppins',
                     ),
                   ),

@@ -310,7 +310,7 @@ class _AddressesScreenState extends State<AddressesScreen> {
                 style: TextStyle(
                   fontFamily: 'Poppins',
                   fontSize: 16,
-                  color: Color.fromRGBO(130, 48, 56, 1),
+                  color: colors['wine'],
                 ),
               ),
             ),
@@ -433,16 +433,16 @@ class _AddressesScreenState extends State<AddressesScreen> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
-                        backgroundColor: Colors.white,
+                        backgroundColor: colors['violet'],
                       ),
                       onPressed: () {
                         Navigator.pushNamed(context, '/addAddress');
                       },
-                      child: const Text(
+                      child: Text(
                         'Agregar dirección',
                         style: TextStyle(
                           fontSize: 16,
-                          color: Color.fromRGBO(130, 48, 56, 1),
+                          color: Colors.white,
                           fontFamily: 'Poppins',
                         ),
                       ),
