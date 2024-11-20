@@ -22,7 +22,8 @@ class UserRepositoryImpl implements UserAuthRepository {
         token: result.token,
         userId: result.userId,
         userImg: result.userImg,
-        fullName: result.fullName
+        fullName: result.fullName,
+        shoppingCartId: result.shoppingCartId,
       );
     } else {
       return LoginResult(
