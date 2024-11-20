@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/config/global_variables.dart';
+import 'package:huicrochet_mobile/widgets/general/general_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -101,7 +102,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 String initials =
                     fullName != null ? getInitials(fullName!) : '??';
                 return CircleAvatar(
-                  backgroundColor: const Color.fromRGBO(242, 148, 165, 1),
+                  backgroundColor: colors['pink'],
                   child: Text(initials, style: TextStyle(color: Colors.white)),
                 );
               },
@@ -120,52 +121,52 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const SizedBox(height: 20),
           const Divider(),
           ListTile(
-            leading: const Text('Mis ordenes',
+            leading: Text('Mis ordenes',
                 style: TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 16,
-                    color: Color.fromRGBO(130, 48, 56, 1))),
-            trailing: const Icon(Icons.local_shipping,
-                color: Color.fromRGBO(130, 48, 56, 1)),
+                    color: colors['wine'])),
+            trailing: Icon(Icons.local_shipping,
+                color:colors['wine']),
             onTap: () {
               Navigator.pushNamed(context, '/orders');
             },
           ),
           const Divider(),
           ListTile(
-            trailing: const Icon(Icons.person_outline,
-                color: Color.fromRGBO(130, 48, 56, 1)),
-            leading: const Text('Información personal',
+            trailing: Icon(Icons.person_outline,
+                color: colors['wine']),
+            leading: Text('Información personal',
                 style: TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 16,
-                    color: Color.fromRGBO(130, 48, 56, 1))),
+                    color: colors['wine'])),
             onTap: () {
               Navigator.pushNamed(context, '/info');
             },
           ),
           const Divider(),
           ListTile(
-            trailing: const Icon(Icons.location_on_outlined,
-                color: Color.fromRGBO(130, 48, 56, 1)),
-            leading: const Text('Direcciones',
+            trailing: Icon(Icons.location_on_outlined,
+                color:  colors['wine']),
+            leading: Text('Direcciones',
                 style: TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 16,
-                    color: Color.fromRGBO(130, 48, 56, 1))),
+                    color: colors['wine'])),
             onTap: () {
               Navigator.pushNamed(context, '/addresses');
             },
           ),
           const Divider(),
           ListTile(
-            trailing: const Icon(Icons.credit_card,
-                color: Color.fromRGBO(130, 48, 56, 1)),
-            leading: const Text('Métodos de pago',
+            trailing: Icon(Icons.credit_card,
+                color:  colors['wine']),
+            leading: Text('Métodos de pago',
                 style: TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 16,
-                    color: Color.fromRGBO(130, 48, 56, 1))),
+                    color:  colors['wine'])),
             onTap: () {
               Navigator.pushNamed(context, '/my-payment-methods');
             },
@@ -174,18 +175,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const Spacer(),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.all(16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  backgroundColor: const Color.fromRGBO(242, 148, 165, 1),
-                ),
-                onPressed: () async {
+            child: GeneralButton(text: 'Cerrar sesión', onPressed: () async {
                   SharedPreferences prefs =
                       await SharedPreferences.getInstance();
                   prefs.remove('token');
@@ -193,14 +183,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   prefs.remove('userId');
                   prefs.remove('userImg');
                   Navigator.pushReplacementNamed(context, '/login');
-                },
-                child: const Text(
-                  'Cerrar sesión',
-                  style: TextStyle(
-                      fontSize: 16, color: Colors.white, fontFamily: 'Poppins'),
-                ),
-              ),
-            ),
+                },)
           ),
           const SizedBox(height: 16),
         ],
