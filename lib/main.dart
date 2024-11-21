@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/modules/product/providers/new_products_provider.dart';
 import 'package:huicrochet_mobile/modules/product/providers/produc_provider.dart';
+import 'package:huicrochet_mobile/modules/product/providers/product_details_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:huicrochet_mobile/config/error_state.dart';
 import 'package:huicrochet_mobile/config/service_locator.dart';
@@ -47,6 +48,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ErrorState()),
         ChangeNotifierProvider(create: (_) => ProductsProvider()),
         ChangeNotifierProvider(create: (_) => NewProductsProvider()),
+        ChangeNotifierProvider(create: (_) => ProductDetailsProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
