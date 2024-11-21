@@ -36,6 +36,7 @@ class _EditadressScreenState extends State<EditadressScreen> {
   String? initialState;
   String? initialPhoneNumber;
   bool isButtonEnabled = false;
+  bool isDefaultAddress = false;
 
   Future<void> getAddress() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -55,6 +56,7 @@ class _EditadressScreenState extends State<EditadressScreen> {
           _disctrictController.text = jsonData['data']['district'] as String;
           _zipCodeController.text =
               (jsonData['data']['zipCode'] ?? '').toString();
+          isDefaultAddress = jsonData['data']['defaultAddress'] as bool;
           initialStreet = _streetController.text;
           initialNumber = _numberController.text;
           initialZipCode = _zipCodeController.text;
@@ -209,7 +211,7 @@ class _EditadressScreenState extends State<EditadressScreen> {
         'street': _streetController.text,
         'number': _numberController.text,
         'phoneNumber': _phoneNumberController.text,
-        'defaultAddress': false,
+        'defaultAddress': isDefaultAddress,
         'status': true
       };
 
