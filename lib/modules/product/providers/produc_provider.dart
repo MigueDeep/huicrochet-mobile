@@ -4,13 +4,15 @@ import 'package:huicrochet_mobile/config/dio_client.dart';
 import 'package:huicrochet_mobile/config/global_variables.dart';
 
 class ProductsProvider with ChangeNotifier {
-  List<Map<String, Object>> _products = [];
+  List<Map<String, dynamic>> _products = [];
   bool _isLoading = false;
 
-  List<Map<String, Object>> get products => _products;
+  List<Map<String, dynamic>> get products => _products;
   bool get isLoading => _isLoading;
 
-  Future<void> fetchProducts(BuildContext context, {bool forceRefresh = false, required String endpoint}) async {
+  Future<void> fetchProducts(BuildContext context,
+      {bool forceRefresh = false,
+      String endpoint = "/item/getDistinctItemsByProduct"}) async {
     if (_products.isNotEmpty && !forceRefresh) return;
 
     _isLoading = true;
@@ -26,22 +28,28 @@ class ProductsProvider with ChangeNotifier {
         final List<dynamic> productData = jsonData['data'];
 
         _products = productData.map((product) {
-          final name = product['productName'] as String;
-          final productId = product['id'] as String;
-          final price = product['price'].toString();
-          final imageUri = (product['items'] != null &&
-                  product['items'].isNotEmpty &&
-                  product['items'][0]['images'] != null &&
-                  product['items'][0]['images'].isNotEmpty)
-              ? product['items'][0]['images'][0]['imageUri'] as String
-              : 'assets/logo.png';
-          final imageName = imageUri.split('/').last;
-          final uriNetwork = 'http://$ip:8080/$imageName';
+          final name = product['product']['productName'] as String;
+          final productId = product['product']['id'] as String;
+          final price = product['product']['price'].toString();
+
+          final images = product['images'] as List<dynamic>;
+          String imageUri = 'assets/logo.png';
+          if (images.isNotEmpty) {
+            final firstImage = images[0];
+            if (firstImage != null &&
+                (images).isNotEmpty) {
+              imageUri = firstImage['imageUri'] as String;
+            }
+          }
+
+          final imagePath = imageUri.split('/').last;
+          final uriNetwork = 'http://$ip:8080/$imagePath';
+
           return {
             'name': name,
             'price': price,
             'imageUri': uriNetwork,
-            'productId': productId
+            'productId': productId,
           };
         }).toList();
 

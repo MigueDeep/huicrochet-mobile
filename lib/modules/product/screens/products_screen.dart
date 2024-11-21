@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/config/dio_client.dart';
+import 'package:huicrochet_mobile/config/global_variables.dart';
 import 'package:huicrochet_mobile/widgets/general/app_bar.dart';
 import 'package:huicrochet_mobile/widgets/general/category_menu.dart';
 import 'package:huicrochet_mobile/widgets/product/product_card.dart';
@@ -18,6 +19,8 @@ class ProductsScreen extends StatefulWidget {
 
 class _ProductsScreenState extends State<ProductsScreen> {
   List<String> categories = ['Todas'];
+   List<Map<String, dynamic>> productsByCategory = [];
+   Map<String, String> categoryIdMap = {};
   bool _isFirstVisit = true;
 
   @override
@@ -50,12 +53,37 @@ class _ProductsScreenState extends State<ProductsScreen> {
     }
   }
 
+// Future<void> _getProductsByCategory(String categoryId) async {
+//     final dioClient = DioClient(context);
+
+//     try {
+//       print(''+categoryId);
+//       final response = await dioClient.dio.get('/product/getByCategory/$categoryId');
+
+//       if (response.statusCode == 200) {
+//         final jsonData = jsonDecode(response.toString());
+//         final List<dynamic> productData = jsonData['data'];
+
+//         setState(() {
+//           productsByCategory =
+//               productData.map((product) => product['name'] as String).cast<Map<String, dynamic>>().toList();
+//         });
+//       } else {
+//         print('Error al obtener productos: ${response.statusCode}');
+//       }
+//     } catch (e) {
+//       print('Error desconocido: ${e.toString()}');
+//     }
+//   }
+
+
+
   @override
   Widget build(BuildContext context) {
     final productsProvider = Provider.of<ProductsProvider>(context);
 
     if (_isFirstVisit) {
-      productsProvider.fetchProducts(context, endpoint: '/product/getActiveProducts');
+      productsProvider.fetchProducts(context);
       setState(() {
         _isFirstVisit = false;
       });
@@ -73,9 +101,18 @@ class _ProductsScreenState extends State<ProductsScreen> {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  CategoryMenu(
+                   CategoryMenu(
                     categories: categories,
-                    onCategorySelected: (selectedCategory) {},
+                    onCategorySelected: (selectedCategory) {
+                      final categoryId = categoryIdMap[selectedCategory] ?? '';
+                      if (selectedCategory == 'Todas') {
+                        setState(() {
+                          productsByCategory = [];
+                        });
+                      } else {
+                       // _getProductsByCategory(categoryId);
+                      }
+                    },
                   ),
                 ],
               ),
@@ -88,8 +125,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                 onRefresh: () async {
                   await productsProvider.fetchProducts(
                     context,
-                    forceRefresh: true,
-                    endpoint: '/product/getActiveProducts',
+                    forceRefresh: true
                   );
                 },
                 child: productsProvider.isLoading
