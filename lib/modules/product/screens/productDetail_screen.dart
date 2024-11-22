@@ -10,7 +10,6 @@ import 'package:huicrochet_mobile/widgets/general/loader.dart';
 import 'package:huicrochet_mobile/widgets/product/product_detail_loading.dart';
 import 'package:huicrochet_mobile/widgets/product/select_colors.dart';
 import 'package:huicrochet_mobile/widgets/product/user_comment.dart';
-import 'package:huicrochet_mobile/widgets/general/general_button.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -26,6 +25,7 @@ class _ProductDetailState extends State<ProductDetail> {
   final LoaderController _loaderController = LoaderController();
   int _selectedIndex = 0;
   String _selectedItem = '';
+  bool _isAdded = false;
 
   @override
   void didChangeDependencies() {
@@ -118,6 +118,10 @@ class _ProductDetailState extends State<ProductDetail> {
         },
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
+        setState(() {
+          _isAdded = true;
+        });
+
         _loaderController.hide();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -125,6 +129,11 @@ class _ProductDetailState extends State<ProductDetail> {
             backgroundColor: Colors.blue,
           ),
         );
+
+        await Future.delayed(const Duration(seconds: 2));
+        setState(() {
+          _isAdded = false;
+        });
       }
     } catch (e) {
       final errorState = Provider.of<ErrorState>(context, listen: false);
@@ -371,7 +380,7 @@ class _ProductDetailState extends State<ProductDetail> {
                         ],
                       ),
                       SizedBox(height: 10),
-                      flutter_ui.SizedBox(
+                      SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
@@ -379,23 +388,44 @@ class _ProductDetailState extends State<ProductDetail> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
-                            backgroundColor: colors['violet'],
+                            backgroundColor:
+                                _isAdded ? Colors.green : colors['violet'],
                           ),
-                          onPressed: _quantity > 0
+                          onPressed: _quantity > 0 && !_isAdded
                               ? () {
                                   if (_selectedItem == '') {
-                                    _selectedItem = productData.items[0].id;
+                                    setState(() {
+                                      _selectedItem = productData.items[0].id;
+                                    });
                                   }
                                   checkLoginStatus();
                                 }
                               : null,
-                          child: Text(
-                            'Agregar al carrito',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.white,
-                              fontFamily: 'Poppins',
-                            ),
+                          child: Row(
+                            key: const ValueKey('animated_icon'),
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 300),
+                                child: _isAdded
+                                    ? Icon(Icons.check,
+                                        key: const ValueKey('check_icon'),
+                                        color: Colors.white)
+                                    : Icon(Icons.shopping_cart,
+                                        key: const ValueKey('cart_icon'),
+                                        color: Colors.white),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                _isAdded
+                                    ? 'Agregado al carrito'
+                                    : 'Agregar al carrito',
+                                style: const TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontSize: 16,
+                                    color: Colors.white),
+                              ),
+                            ],
                           ),
                         ),
                       ),
