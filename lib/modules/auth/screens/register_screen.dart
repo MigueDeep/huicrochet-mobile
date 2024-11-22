@@ -443,6 +443,18 @@ Future _register(
     List<String> parts = birthday.split('/');
     String formattedBirthday = '${parts[2]}-${parts[1]}-${parts[0]}';
 
+    if (profileImage != null) {
+      String extension = profileImage.path.split('.').last.toLowerCase();
+      if (!['jpg', 'jpeg', 'png'].contains(extension)) {
+        throw Exception('El formato de la imagen no es válido. Solo se permiten jpg, jpeg y png.');
+      }
+    }
+
+    String filename = profileImage != null
+        ? 'profileImage.${profileImage.path.split('.').last}'
+        : '';
+
+String mimeType = 'image/jpeg'; 
     FormData formData = FormData.fromMap({
       'user': jsonEncode({
         'fullName': _nameController.text,
@@ -455,7 +467,8 @@ Future _register(
       if (profileImage != null)
         'profileImage': await MultipartFile.fromFile(
           profileImage.path,
-          filename: 'profileImage.jpg',
+          filename: filename,
+          contentType: DioMediaType.parse(mimeType),
         ),
     });
 
