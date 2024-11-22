@@ -258,7 +258,7 @@ Future<void> checkLoginStatus() async {
                                 color: Colors.black,
                               ),
                             ),
-                            const SizedBox(height: 10),
+                            const SizedBox(height: 20),
                             Row(
                               children: [
                                 Icon(
@@ -275,6 +275,7 @@ Future<void> checkLoginStatus() async {
                                 ),
                               ],
                             ),
+                            const SizedBox(height: 20,),
                             Text(
                               'Colores',
                               style: TextStyle(
@@ -283,7 +284,6 @@ Future<void> checkLoginStatus() async {
                                 color: Colors.black,
                               ),
                             ),
-                            const SizedBox(height: 20),
                             ColorSelector(
                               colorCodes: itemData[_selectedIndex]['colors'],
                               onColorSelected: (index) {
