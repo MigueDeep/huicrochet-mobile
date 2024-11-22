@@ -24,19 +24,19 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       return UserProfile(imageUrl: null, fullName: fullName);
     }
   }
+
   String getInitials(String fullName) {
-  List<String> nameParts = fullName.split(' '); 
-  String initials = '';
+    List<String> nameParts = fullName.split(' ');
+    String initials = '';
 
-  for (var part in nameParts) {
-    if (part.isNotEmpty) {
-      initials += part[0].toUpperCase(); 
+    for (var part in nameParts) {
+      if (part.isNotEmpty) {
+        initials += part[0].toUpperCase();
+      }
     }
+
+    return initials.length > 2 ? initials.substring(0, 2) : initials;
   }
-
-  return initials.length > 2 ? initials.substring(0, 2) : initials; 
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -111,13 +111,23 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     ),
                   );
                 } else {
-                  String initials = userProfile.fullName != null
-                      ? getInitials(userProfile.fullName!)
-                      : 'H';
-                  return CircleAvatar(
-                    backgroundColor: const Color.fromRGBO(242, 148, 165, 1),
-                    child:
-                        Text(initials, style: TextStyle(color: Colors.white)),
+                  return Container(
+                    width: 40,
+                    height: 40, 
+                    decoration: BoxDecoration(
+                      color: colors['wine'], 
+                      borderRadius: BorderRadius.circular(
+                          40), 
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(40),
+                      child: Image.asset(
+                        'assets/logo.png',
+                        width: 40,
+                        height: 40,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   );
                 }
               } else {
@@ -133,4 +143,3 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
-

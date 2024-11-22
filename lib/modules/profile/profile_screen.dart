@@ -93,20 +93,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const SizedBox(height: 32),
           ClipRRect(
             borderRadius: BorderRadius.circular(50),
-            child: Image.network(
-              userImg ?? '',
-              width: 100,
-              height: 100,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                String initials =
-                    fullName != null ? getInitials(fullName!) : '??';
-                return CircleAvatar(
-                  backgroundColor: colors['pink'],
-                  child: Text(initials, style: TextStyle(color: Colors.white)),
-                );
-              },
-            ),
+            child: userImg != null
+                ? Image.network(
+                    userImg!,
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      String initials =
+                          fullName != null ? getInitials(fullName!) : '??';
+                      return CircleAvatar(
+                        backgroundColor: colors['wine'],
+                        child: Text(
+                          initials,
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      );
+                    },
+                  )
+                : Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: colors['wine'], // Color de fondo
+                      borderRadius: BorderRadius.circular(40), // Forma circular
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(40),
+                      child: Image.asset(
+                        'assets/logo.png', // Imagen por defecto
+                        width: 40,
+                        height: 40,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
           ),
           const SizedBox(height: 10),
           Text(
