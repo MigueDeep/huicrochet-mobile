@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:huicrochet_mobile/modules/product/providers/product_details_provider.dart';
+import 'package:provider/provider.dart';
 
 Widget productCard(String productName, String? imagePath, String? price, String? id, BuildContext context) {
   return GestureDetector(
     onTap: () {
       if (id != null) {
-        Navigator.pushNamed(context, '/product-detail', arguments: {'productId': id});
+        Navigator.pushNamed(
+  context,
+  '/product-detail',
+  arguments: {'productId': id},
+).then((_) {
+  // Limpia el estado cuando regreses de la pantalla de detalles
+  Provider.of<ProductDetailsProvider>(context, listen: false).clearProductDetails();
+});
+
       }
     },
     child: Container(

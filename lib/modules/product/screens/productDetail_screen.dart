@@ -1,11 +1,9 @@
-import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart' as flutter_ui;
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/config/dio_client.dart';
 import 'package:huicrochet_mobile/config/error_state.dart';
 import 'package:huicrochet_mobile/config/global_variables.dart';
-import 'package:huicrochet_mobile/modules/product/entities/product_category.dart';
+import 'package:huicrochet_mobile/modules/product/providers/product_details_provider.dart';
 import 'package:huicrochet_mobile/widgets/general/loader.dart';
 import 'package:huicrochet_mobile/widgets/product/product_detail_loading.dart';
 import 'package:huicrochet_mobile/widgets/product/select_colors.dart';
@@ -21,59 +19,38 @@ class ProductDetail extends StatefulWidget {
 }
 
 class _ProductDetailState extends State<ProductDetail> {
-  late Future<Product> product;
   final LoaderController _loaderController = LoaderController();
   int _selectedIndex = 0;
   String _selectedItem = '';
+  int _quantity = 0;
   bool _isAdded = false;
+
+  void _incrementQuantity() {
+    setState(() {
+      _quantity++;
+    });
+  }
+
+  void _decrementQuantity() {
+    if (_quantity > 0) {
+      setState(() {
+        _quantity--;
+      });
+    }
+  }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    product = _getProductId().then((productId) {
-      return _getProductById(productId);
-    });
-  }
-
-  Future<String> _getProductId() async {
     final args =
         ModalRoute.of(context)?.settings.arguments as Map<String, String>?;
-    return args?['productId'] ?? '';
-  }
-
-  Future<Product> _getProductById(String productId) async {
-    final dioClient = DioClient(context);
-
-    try {
-      final response = await dioClient.dio.get('/product/getById/$productId');
-
-      if (response.statusCode == 200) {
-        final jsonData = jsonDecode(response.toString());
-        final productData = jsonData['data'];
-        return Product.fromJson(productData);
-      } else {
-        print('Error al obtener producto ${response.statusCode}');
-        throw Exception('Error al obtener producto');
-      }
-    } on DioException catch (e) {
-      String errorMessage = 'Error al obtener producto';
-      if (e.response != null && e.response?.data != null) {
-        try {
-          final errorData = jsonDecode(e.response!.data);
-          errorMessage = errorData['message'] ?? errorMessage;
-        } catch (_) {
-          errorMessage = e.message ?? 'Error desconocido';
-        }
-      }
-      print('Error de red $errorMessage');
-      throw Exception(errorMessage);
-    } catch (e) {
-      print('Error desconocido ${e.toString()}');
-      throw Exception('Error desconocido');
+    if (args != null) {
+      final productId = args['productId'] ?? '';
+      Provider.of<ProductDetailsProvider>(context, listen: false)
+          .fetchProductDetails(context, id: productId);
     }
   }
-
-  Future<void> checkLoginStatus() async {
+Future<void> checkLoginStatus() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (prefs.getString('token') == null) {
       showDialog(
@@ -101,11 +78,10 @@ class _ProductDetailState extends State<ProductDetail> {
         },
       );
     } else {
-      addToShoppingCart();
+     addToShoppingCart();
     }
   }
-
-  Future<void> addToShoppingCart() async {
+   Future<void> addToShoppingCart() async {
     _loaderController.show(context);
     final dio = DioClient(context).dio;
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -121,7 +97,6 @@ class _ProductDetailState extends State<ProductDetail> {
         setState(() {
           _isAdded = true;
         });
-
         _loaderController.hide();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -129,8 +104,7 @@ class _ProductDetailState extends State<ProductDetail> {
             backgroundColor: Colors.blue,
           ),
         );
-
-        await Future.delayed(const Duration(seconds: 2));
+         await Future.delayed(const Duration(seconds: 2));
         setState(() {
           _isAdded = false;
         });
@@ -155,42 +129,29 @@ class _ProductDetailState extends State<ProductDetail> {
     }
   }
 
-  int _quantity = 0;
-
-  void _incrementQuantity() {
-    setState(() {
-      _quantity++;
-    });
-  }
-
-  void _decrementQuantity() {
-    if (_quantity > 0) {
-      setState(() {
-        _quantity--;
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Product>(
-      future: product,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+    return Consumer<ProductDetailsProvider>(
+      builder: (context, provider, child) {
+        if (provider.isLoading) {
           return const ProductDetailLoading();
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (snapshot.hasData) {
-          final productData = snapshot.data!;
+        }
 
-          return Scaffold(
+        if (provider.products.isEmpty) {
+          return Center(child: Text('No se encontraron productos.'));
+        }
+
+        var productData = provider.products[0];
+        var itemData = provider.products;
+        return Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(
             backgroundColor: Colors.white,
-            appBar: AppBar(
-              backgroundColor: Colors.white,
-            ),
-            body: SingleChildScrollView(
-              child: Center(
-                child: Container(
+          ),
+          body: SingleChildScrollView(
+            child: Center(
+              child: Container(
                   width: 350,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -199,26 +160,24 @@ class _ProductDetailState extends State<ProductDetail> {
                         scrollDirection: Axis.horizontal,
                         child: Row(
                           children: [
-                            if (productData.items.isNotEmpty &&
-                                productData
-                                    .items[_selectedIndex].images.isNotEmpty)
-                              ...productData.items[_selectedIndex].images
-                                  .map((image) {
+                            if (itemData.isNotEmpty &&
+                                itemData[_selectedIndex] != null)
+                              ...itemData[_selectedIndex]['imageUris']
+                                  .map<Widget>((imageUri) {
                                 return Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 4.0),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(20),
-                                    child: flutter_ui.Image.network(
-                                      image.imageUri != null
-                                          ? 'http://${ip}:8080/${image.imageUri.split('/').last}'
-                                          : 'not found',
+                                    child: Image.network(
+                                      imageUri ??
+                                          '', // Aquí usamos el valor mapeado de imageUris
                                       width: 320,
                                       height: 400,
                                       fit: BoxFit.cover,
                                       errorBuilder:
                                           (context, error, stackTrace) {
-                                        return flutter_ui.Image.asset(
+                                        return Image.asset(
                                           'assets/snoopyAzul.jpg',
                                           width: 320,
                                           height: 400,
@@ -253,7 +212,7 @@ class _ProductDetailState extends State<ProductDetail> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
-                            productData.name,
+                            productData['name'],
                             style: const TextStyle(
                               fontFamily: 'Poppins',
                               fontSize: 18,
@@ -283,7 +242,7 @@ class _ProductDetailState extends State<ProductDetail> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '\$${productData.price}',
+                              '\$${productData['price']}',
                               style: const TextStyle(
                                 fontFamily: 'Poppins',
                                 fontSize: 18,
@@ -292,14 +251,14 @@ class _ProductDetailState extends State<ProductDetail> {
                               ),
                             ),
                             Text(
-                              productData.description,
+                              productData['description'],
                               style: const TextStyle(
                                 fontFamily: 'Poppins',
                                 fontSize: 16,
                                 color: Colors.black,
                               ),
                             ),
-                            const SizedBox(height: 10),
+                            const SizedBox(height: 20),
                             Row(
                               children: [
                                 Icon(
@@ -307,16 +266,16 @@ class _ProductDetailState extends State<ProductDetail> {
                                   color: Colors.black,
                                 ),
                                 Text(
-                                  productData.categories[0].name,
+                                  productData['categoryNames'][0],
                                   style: const TextStyle(
                                     fontFamily: 'Poppins',
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                   ),
-                                )
+                                ),
                               ],
                             ),
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 20,),
                             Text(
                               'Colores',
                               style: TextStyle(
@@ -325,18 +284,13 @@ class _ProductDetailState extends State<ProductDetail> {
                                 color: Colors.black,
                               ),
                             ),
-                            const SizedBox(height: 10),
                             ColorSelector(
-                              colorCodes: productData.items.isNotEmpty
-                                  ? productData.items
-                                      .map((item) => item.color.colorCod)
-                                      .toList()
-                                  : [],
+                              colorCodes: itemData[_selectedIndex]['colors'],
                               onColorSelected: (index) {
                                 setState(() {
                                   _selectedIndex = index;
                                   _selectedItem =
-                                      productData.items[_selectedIndex].id;
+                                      itemData[_selectedIndex]['itemId'];
                                 });
                               },
                             ),
@@ -359,7 +313,7 @@ class _ProductDetailState extends State<ProductDetail> {
                               icon: Icon(Icons.remove),
                             ),
                           ),
-                          Padding(
+                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: Text(
                               '$_quantity',
@@ -379,8 +333,8 @@ class _ProductDetailState extends State<ProductDetail> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 10),
-                      SizedBox(
+                       SizedBox(height: 10),
+                        SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
@@ -395,7 +349,7 @@ class _ProductDetailState extends State<ProductDetail> {
                               ? () {
                                   if (_selectedItem == '') {
                                     setState(() {
-                                      _selectedItem = productData.items[0].id;
+                                      _selectedItem = _selectedItem =itemData[0]['itemId'];
                                     });
                                   }
                                   checkLoginStatus();
@@ -429,6 +383,7 @@ class _ProductDetailState extends State<ProductDetail> {
                           ),
                         ),
                       ),
+                      
                       const SizedBox(
                         height: 20,
                       ),
@@ -460,17 +415,12 @@ class _ProductDetailState extends State<ProductDetail> {
                               rating: 3.0,
                             ),
                           ],
-                        ),
-                      )
+                        ),)
                     ],
-                  ),
-                ),
-              ),
+                  )),
             ),
-          );
-        } else {
-          return Center(child: Text('No product data available'));
-        }
+          ),
+        );
       },
     );
   }
