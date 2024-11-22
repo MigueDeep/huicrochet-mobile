@@ -22,6 +22,7 @@ class _ShoppingcartScreenState extends State<ShoppingcartScreen> {
   final LoaderController _loaderController = LoaderController();
   late Cart shoppingCart = Cart('', false, 0, []);
   bool emptyCart = false;
+  int quantityUpdate = 0;
   double total = 0;
 
   Future<void> checkLoginStatus() async {
@@ -76,7 +77,6 @@ class _ShoppingcartScreenState extends State<ShoppingcartScreen> {
             }
 
             final data = jsonData['data'];
-
             if (data == null || data['cartItems'] == null) {
               emptyCart = true;
               shoppingCart = Cart('', false, 0, []);
@@ -144,7 +144,7 @@ class _ShoppingcartScreenState extends State<ShoppingcartScreen> {
               child: Text('Eliminar'),
               onPressed: () {
                 Navigator.of(context).pop();
-                deleteItem(item);
+                updateCar(item, 0);
               },
             ),
           ],
@@ -153,14 +153,31 @@ class _ShoppingcartScreenState extends State<ShoppingcartScreen> {
     );
   }
 
-  Future<void> deleteItem(String address) async {
+  Future<void> updateCar(String id, int quantity) async {
+    _loaderController.show(context);
     final dio = DioClient(context).dio;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final List<Map<String, dynamic>> data = shoppingCart.cartItems.map((item) {
+      return {
+        'itemId': item.item.id,
+        'quantity': item.item.id == id ? quantity : item.quantity,
+      };
+    }).toList();
     try {
-      final response = await dio.put('/shipping-address/disable/$address');
+      final response = await dio.put(
+        '/shopping-cart/update/shopping-cart/${prefs.getString('shoppingCartId')}',
+        data: jsonEncode(data),
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'accept': 'application/json',
+          },
+        ),
+      );
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Producto eliminado'),
+            content: Text('Carrito actualizado'),
             backgroundColor: Colors.blue,
           ),
         );
@@ -213,8 +230,7 @@ class _ShoppingcartScreenState extends State<ShoppingcartScreen> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  // Verificamos si el carrito está vacío
-                  if (shoppingCart == null || shoppingCart.cartItems.isEmpty)
+                  if (shoppingCart.cartItems.isEmpty || emptyCart)
                     Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
@@ -244,6 +260,7 @@ class _ShoppingcartScreenState extends State<ShoppingcartScreen> {
                         final cartItem = shoppingCart.cartItems[index];
                         final product = cartItem.item.product;
                         final color = cartItem.item.color.colorName;
+                        quantityUpdate = cartItem.quantity;
 
                         return ProductAddedToCart(
                           image: cartItem.item.images.isNotEmpty
@@ -251,26 +268,37 @@ class _ShoppingcartScreenState extends State<ShoppingcartScreen> {
                               : 'assets/hellokitty.jpg',
                           productName: product.productName,
                           color: color,
-                          quantity: cartItem.quantity,
+                          quantity: quantityUpdate,
                           price: product.price.toDouble(),
                           subColor: Color(int.parse(
                               "0xff${cartItem.item.color.colorCod.substring(1)}")),
                           onIncrement: () {
                             setState(() {
                               // Sumar uno
+                              quantityUpdate++;
+                              Future.delayed(Duration(milliseconds: 3000), () {
+                                updateCar(cartItem.item.id, quantityUpdate);
+                              });
                             });
                           },
                           onDecrement: () {
                             setState(() {
                               if (cartItem.quantity > 1) {
                                 // Restar uno
+                                quantityUpdate--;
+                                //esperar 300ms para evitar que se haga un incremento muy rápido y se haga un incremento por cada click,
+                                Future.delayed(Duration(milliseconds: 3000),
+                                    () {
+                                  updateCar(cartItem.item.id, quantityUpdate);
+                                });
+                              } else {
+                                alertConfirm(cartItem.item.id);
                               }
                             });
                           },
                           onDelete: () {
                             setState(() {
-                              // Remover del carrito
-                              shoppingCart.cartItems.removeAt(index);
+                              alertConfirm(cartItem.item.id);
                             });
                           },
                         );
