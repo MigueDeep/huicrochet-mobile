@@ -139,7 +139,7 @@ Future<void> checkLoginStatus() async {
         }
 
         if (provider.products.isEmpty) {
-          return Center(child: Text('No se encontraron productos.'));
+          return ProductDetailLoading() ;
         }
 
         var productData = provider.products[0];
