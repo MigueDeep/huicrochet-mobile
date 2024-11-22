@@ -454,8 +454,6 @@ String filename = profileImage != null
     ? profileImage.path.split('/').last
     : '';
 
-print(filename);
-
 String mimeType = 'image/jpeg'; 
     FormData formData = FormData.fromMap({
       'user': jsonEncode({
