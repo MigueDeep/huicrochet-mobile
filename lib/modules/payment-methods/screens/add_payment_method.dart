@@ -184,6 +184,10 @@ class _AddPaymentMethodState extends State<AddPaymentMethod> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                     ),
+                    hintText: '1234 5678 9012 3456',
+                    prefixIcon: Icon(
+                      Icons.credit_card,
+                    ),
                   ),
                   keyboardType: TextInputType.number,
                   validator: _validateNumber,
@@ -233,6 +237,7 @@ class _AddPaymentMethodState extends State<AddPaymentMethod> {
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8.0),
                           ),
+                          hintText: '01',
                         ),
                         keyboardType: TextInputType.number,
                         validator: _validateExpirationMonth,
@@ -253,6 +258,7 @@ class _AddPaymentMethodState extends State<AddPaymentMethod> {
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8.0),
                           ),
+                          hintText: '2022',
                         ),
                         keyboardType: TextInputType.number,
                         validator: _validateExpirationYear,
@@ -273,6 +279,8 @@ class _AddPaymentMethodState extends State<AddPaymentMethod> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                     ),
+                    hintText: '123',
+                    prefixIcon: Icon(Icons.lock),
                   ),
                   keyboardType: TextInputType.number,
                   validator: _validateSecurityCode,

@@ -231,6 +231,9 @@ class _EditPaymentMethodState extends State<EditPaymentMethod> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                     ),
+                    prefixIcon: Icon(
+                      Icons.credit_card,
+                    ),
                   ),
                   keyboardType: TextInputType.number,
                   validator: _validateNumber,
@@ -323,6 +326,7 @@ class _EditPaymentMethodState extends State<EditPaymentMethod> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                     ),
+                    prefixIcon: Icon(Icons.lock),
                   ),
                   keyboardType: TextInputType.number,
                   validator: _validateSecurityCode,
