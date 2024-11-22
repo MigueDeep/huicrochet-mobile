@@ -450,9 +450,11 @@ Future _register(
       }
     }
 
-    String filename = profileImage != null
-        ? 'profileImage.${profileImage.path.split('.').last}'
-        : '';
+String filename = profileImage != null
+    ? profileImage.path.split('/').last
+    : '';
+
+print(filename);
 
 String mimeType = 'image/jpeg'; 
     FormData formData = FormData.fromMap({
