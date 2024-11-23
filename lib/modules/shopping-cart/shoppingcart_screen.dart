@@ -24,6 +24,7 @@ class _ShoppingcartScreenState extends State<ShoppingcartScreen> {
   bool emptyCart = false;
   int quantityUpdate = 0;
   double total = 0;
+  bool _isUpdating = false;
 
   Future<void> checkLoginStatus() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -145,6 +146,7 @@ class _ShoppingcartScreenState extends State<ShoppingcartScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
                 updateCar(item, 0);
+                _loaderController.show(context);
               },
             ),
           ],
@@ -154,7 +156,9 @@ class _ShoppingcartScreenState extends State<ShoppingcartScreen> {
   }
 
   Future<void> updateCar(String id, int quantity) async {
-    _loaderController.show(context);
+    if (_isUpdating) return;
+    _isUpdating = true;
+
     final dio = DioClient(context).dio;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final List<Map<String, dynamic>> data = shoppingCart.cartItems.map((item) {
@@ -175,12 +179,6 @@ class _ShoppingcartScreenState extends State<ShoppingcartScreen> {
         ),
       );
       if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Carrito actualizado'),
-            backgroundColor: Colors.blue,
-          ),
-        );
         getShoppingCart();
       }
     } catch (e) {
@@ -199,6 +197,8 @@ class _ShoppingcartScreenState extends State<ShoppingcartScreen> {
       }
 
       errorState.showErrorDialog(context);
+    } finally {
+      _isUpdating = false;
     }
   }
 
@@ -260,7 +260,6 @@ class _ShoppingcartScreenState extends State<ShoppingcartScreen> {
                         final cartItem = shoppingCart.cartItems[index];
                         final product = cartItem.item.product;
                         final color = cartItem.item.color.colorName;
-                        quantityUpdate = cartItem.quantity;
 
                         return ProductAddedToCart(
                           image: cartItem.item.images.isNotEmpty
@@ -268,28 +267,27 @@ class _ShoppingcartScreenState extends State<ShoppingcartScreen> {
                               : 'assets/hellokitty.jpg',
                           productName: product.productName,
                           color: color,
-                          quantity: quantityUpdate,
+                          quantity: cartItem.quantity,
                           price: product.price.toDouble(),
                           subColor: Color(int.parse(
                               "0xff${cartItem.item.color.colorCod.substring(1)}")),
                           onIncrement: () {
                             setState(() {
-                              // Sumar uno
-                              quantityUpdate++;
-                              Future.delayed(Duration(milliseconds: 3000), () {
-                                updateCar(cartItem.item.id, quantityUpdate);
+                              cartItem.quantity++;
+                              Future.delayed(const Duration(milliseconds: 3000),
+                                  () {
+                                updateCar(cartItem.item.id, cartItem.quantity);
                               });
                             });
                           },
                           onDecrement: () {
                             setState(() {
                               if (cartItem.quantity > 1) {
-                                // Restar uno
-                                quantityUpdate--;
-                                //esperar 300ms para evitar que se haga un incremento muy rápido y se haga un incremento por cada click,
-                                Future.delayed(Duration(milliseconds: 3000),
-                                    () {
-                                  updateCar(cartItem.item.id, quantityUpdate);
+                                cartItem.quantity--;
+                                Future.delayed(
+                                    const Duration(milliseconds: 3000), () {
+                                  updateCar(
+                                      cartItem.item.id, cartItem.quantity);
                                 });
                               } else {
                                 alertConfirm(cartItem.item.id);
@@ -308,31 +306,33 @@ class _ShoppingcartScreenState extends State<ShoppingcartScreen> {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Subtotal (IVA incluido)',
-                  style: TextStyle(fontSize: 18, fontFamily: 'Poppins'),
-                ),
-                Text(
-                  '\$${shoppingCart.total.toStringAsFixed(2)}',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ],
+          if (shoppingCart.total > 0)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Subtotal (IVA incluido)',
+                    style: TextStyle(fontSize: 18, fontFamily: 'Poppins'),
+                  ),
+                  Text(
+                    '\$${shoppingCart.total.toStringAsFixed(2)}',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: GeneralButton(
-              text: 'Continuar al pago',
-              onPressed: () {
-                Navigator.pushNamed(context, '/mailing-address');
-              },
+          if (shoppingCart.total > 0)
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: GeneralButton(
+                text: 'Continuar al pago',
+                onPressed: () {
+                  Navigator.pushNamed(context, '/mailing-address');
+                },
+              ),
             ),
-          ),
         ],
       ),
     );
