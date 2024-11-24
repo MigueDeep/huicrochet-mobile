@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:huicrochet_mobile/config/global_variables.dart';
 import 'package:huicrochet_mobile/modules/entities/cart.dart';
 import 'package:huicrochet_mobile/modules/payment-methods/models/payment_method_model.dart';
 import 'package:huicrochet_mobile/modules/payment-methods/use_cases/get_payment.dart';
@@ -145,10 +146,10 @@ class _PaymentMethodsState extends State<PaymentMethods> {
                                 expiryDate:
                                     "${card.expirationDate.month.toString().padLeft(2, '0')}/${card.expirationDate.year.toString().substring(2, 4)}",
                                 startColor: card.cardType == 'debit'
-                                    ? const Color.fromARGB(255, 95, 95, 95)
+                                    ? colors['wine']!
                                     : const Color.fromARGB(255, 0, 27, 97),
                                 endColor: card.cardType == 'debit'
-                                    ? const Color.fromARGB(255, 186, 186, 186)
+                                    ? Color.fromRGBO(233, 159, 166, 0.555)
                                     : const Color.fromARGB(255, 168, 193, 255),
                                 isSelected: selectedCardIndex == index,
                               ),

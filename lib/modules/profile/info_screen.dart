@@ -261,7 +261,7 @@ class _InfoScreenState extends State<InfoScreen> {
                       String initials =
                           name != null ? getInitials(name!) : '??';
                       return CircleAvatar(
-                        backgroundColor: const Color.fromRGBO(242, 148, 165, 1),
+                        backgroundColor: colors['pink'],
                         child: Text(initials,
                             style: TextStyle(color: Colors.white)),
                       );

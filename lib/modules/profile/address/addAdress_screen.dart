@@ -184,12 +184,6 @@ class _AddadressScreenState extends State<AddadressScreen> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           title: Text('Agregar dirección'),
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
           backgroundColor: Colors.white,
           elevation: 0,
           iconTheme: IconThemeData(color: Colors.black),
