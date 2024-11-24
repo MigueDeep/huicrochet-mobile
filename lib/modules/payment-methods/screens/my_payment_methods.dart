@@ -27,7 +27,7 @@ class MyPaymentMethods extends StatefulWidget {
 
 class _MyPaymentMethodsState extends State<MyPaymentMethods> {
   int? selectedCardIndex;
-
+  late String fullName;
   late Future<List<PaymentCardModel>> _paymentMethodsFuture;
   final LoaderController _loaderController = LoaderController();
   String? idPayment;
@@ -48,6 +48,7 @@ class _MyPaymentMethodsState extends State<MyPaymentMethods> {
       _paymentMethodsFuture = Future.value([]);
       _asingSelectedCard(null);
       final prefs = await SharedPreferences.getInstance();
+      fullName = prefs.getString('fullName') ?? '';
       final userId = prefs.getString('userId') ?? '';
       final paymentCards = await widget.getPaymentMethod.call(userId);
       setState(() {
@@ -136,7 +137,7 @@ class _MyPaymentMethodsState extends State<MyPaymentMethods> {
       context: context,
       builder: (BuildContext context) {
         return ActionSheet(
-          title: '¿Qué deseas hacer?',
+          title: '¿Qué deseas hacer con este método de pago?',
           actions: [
             ActionItem(
               icon: Icons.edit,
@@ -226,9 +227,7 @@ class _MyPaymentMethodsState extends State<MyPaymentMethods> {
                         child: CreditCard(
                           logoImage: 'assets/mlogo.png',
                           cardType: card.cardType ?? 'Crédito',
-                          ownerName: card.cardNumber.isNotEmpty
-                              ? '**** **** **** ${card.last4Numbers}'
-                              : 'No disponible',
+                          ownerName: fullName ?? 'Usuario',
                           cardNumber: card.cardNumber ?? '1234567812345678',
                           expiryDate:
                               "${card.expirationDate.month.toString().padLeft(2, '0')}/${card.expirationDate.year.toString().substring(2, 4)}",

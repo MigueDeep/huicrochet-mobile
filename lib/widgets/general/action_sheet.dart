@@ -13,27 +13,45 @@ class ActionSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: actions.length * 70.0 + 100,
-      color: Colors.white,
+      padding: const EdgeInsets.all(16),
+      decoration: const BoxDecoration(
+        color: Color.fromARGB(255, 255, 246, 246),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SizedBox(height: 20),
-          ListTile(
-            title: Center(
-              child: Text(
-                title,
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontFamily: 'Poppins',
-                  fontSize: 20,
-                ),
-              ),
+          const SizedBox(height: 15),
+          Text(
+            'Más opciones',
+            style: const TextStyle(
+              color: Colors.black,
+              fontFamily: 'Poppins',
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 10),
+          Text(
+            title,
+            style: const TextStyle(
+              color: Colors.black,
+              fontFamily: 'Poppins',
+              fontSize: 16,
+            ),
+          ),
+          const SizedBox(height: 16),
           Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20),
             decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.1),
+                  spreadRadius: 1,
+                  blurRadius: 10,
+                  offset: const Offset(0, 1),
+                ),
+              ],
               color: Colors.white,
               border: Border.all(color: Colors.grey.shade300),
               borderRadius: BorderRadius.circular(8.0),
@@ -43,7 +61,6 @@ class ActionSheet extends StatelessWidget {
                 return Column(
                   children: [
                     ListTile(
-                      leading: Icon(action.icon, color: action.iconColor),
                       title: Text(
                         action.label,
                         style: const TextStyle(
@@ -51,6 +68,10 @@ class ActionSheet extends StatelessWidget {
                           fontFamily: 'Poppins',
                           fontSize: 16,
                         ),
+                      ),
+                      trailing: Padding(
+                        padding: const EdgeInsets.only(right: 16.0),
+                        child: Icon(action.icon, color: action.iconColor),
                       ),
                       onTap: action.onTap,
                     ),
@@ -64,10 +85,26 @@ class ActionSheet extends StatelessWidget {
               }).toList(),
             ),
           ),
+          const SizedBox(height: 10),
         ],
       ),
     );
   }
+}
+
+void showCustomActionSheet(
+    BuildContext context, String title, List<ActionItem> actions) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (context) {
+      return ActionSheet(
+        title: title,
+        actions: actions,
+      );
+    },
+  );
 }
 
 class ActionItem {

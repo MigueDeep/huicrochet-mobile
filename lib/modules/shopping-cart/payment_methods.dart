@@ -34,6 +34,7 @@ class _PaymentMethodsState extends State<PaymentMethods> {
   late Future<List<PaymentCardModel>> _paymentMethodsFuture = Future.value([]);
   final LoaderController _loaderController = LoaderController();
   String? idPayment;
+  late String fullName;
 
   Future<void> _fetchPaymentMethods() async {
     try {
@@ -41,6 +42,7 @@ class _PaymentMethodsState extends State<PaymentMethods> {
       _asingSelectedCard(null);
       final prefs = await SharedPreferences.getInstance();
       final userId = prefs.getString('userId') ?? '';
+      fullName = prefs.getString('fullName') ?? '';
       final paymentCards = await widget.getPaymentMethod.call(userId);
       setState(() {
         _paymentMethodsFuture = Future.value(paymentCards
@@ -138,9 +140,7 @@ class _PaymentMethodsState extends State<PaymentMethods> {
                               child: CreditCard(
                                 logoImage: 'assets/mlogo.png',
                                 cardType: card.cardType ?? 'Crédito',
-                                ownerName: card.cardNumber.isNotEmpty
-                                    ? '**** **** **** ${card.last4Numbers}'
-                                    : 'No disponible',
+                                ownerName: fullName ?? 'Usuario',
                                 cardNumber:
                                     card.cardNumber ?? '1234567812345678',
                                 expiryDate:
