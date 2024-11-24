@@ -19,17 +19,13 @@ import 'package:huicrochet_mobile/modules/profile/orders_screen.dart';
 import 'package:huicrochet_mobile/modules/profile/profile_screen.dart';
 import 'package:huicrochet_mobile/modules/auth/screens/recoverPass1_screen.dart';
 import 'package:huicrochet_mobile/modules/auth/screens/register_screen.dart';
-import 'package:huicrochet_mobile/modules/profile/purchaseDetails.dart';
 import 'package:huicrochet_mobile/modules/payment-methods/use_cases/get_payment.dart';
 import 'package:huicrochet_mobile/widgets/splash_screen.dart';
 import 'package:huicrochet_mobile/modules/home/home_screen.dart';
 import 'package:huicrochet_mobile/modules/product/screens/productDetail_screen.dart';
 import 'package:huicrochet_mobile/modules/product/screens/products_screen.dart';
 import 'package:huicrochet_mobile/modules/shopping-cart/shoppingcart_screen.dart';
-import 'package:huicrochet_mobile/modules/shopping-cart/mailing_address_cart.dart';
-import 'package:huicrochet_mobile/modules/shopping-cart/payment_methods.dart';
 import 'package:huicrochet_mobile/modules/payment-methods/screens/add_payment_method.dart';
-import 'package:provider/provider.dart';
 import 'package:huicrochet_mobile/modules/payment-methods/screens/my_payment_methods.dart';
 
 void main() {
@@ -57,7 +53,8 @@ class MyApp extends StatelessWidget {
           '/': (context) => const SplashScreen(),
           '/login': (context) =>
               LoginScreen(loginUseCase: getIt<LoginUseCase>()),
-          '/navigation': (context) => const Navigation(),
+          '/navigation': (context) =>
+              Navigation(getPaymentMethod: getIt<GetPayment>()),
           '/register': (context) => const RegisterScreen(),
           '/recoverpass1': (context) => const Recoverpass1Screen(),
           '/home': (context) => const HomeScreen(),
@@ -68,11 +65,9 @@ class MyApp extends StatelessWidget {
           '/addresses': (context) => const AddressesScreen(),
           '/orders': (context) => const OrdersScreen(),
           '/addAddress': (context) => const AddadressScreen(),
-          '/shopping-cart': (context) => const ShoppingcartScreen(),
-          '/mailing-address': (context) => const MailingAddressCart(),
+          '/shopping-cart': (context) =>
+              ShoppingcartScreen(getPaymentMethod: getIt<GetPayment>()),
           '/orderDetails': (context) => const OrderDetailsScreen(),
-          '/purchaseDetails': (context) => const PurchasedetailsScreen(),
-          '/payment-methods': (context) => const PaymentMethods(),
           '/new-products': (context) => NewProductsScreen(),
           '/add-payment-method': (context) =>
               AddPaymentMethod(createPayment: getIt<CreatePayment>()),

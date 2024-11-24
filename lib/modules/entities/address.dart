@@ -9,7 +9,7 @@ class Address {
   final String _street;
   final String _number;
   final String _phoneNumber;
-  final bool _default;
+  bool _default;
   final bool _status;
   final User _user;
 
@@ -35,6 +35,10 @@ class Address {
   String get number => _number;
   String get phoneNumber => _phoneNumber;
   bool get defaultAddress => _default;
+  set defaultAddress(bool value) {
+    _default = value;
+  }
+
   bool get status => _status;
   User get user => _user;
 }

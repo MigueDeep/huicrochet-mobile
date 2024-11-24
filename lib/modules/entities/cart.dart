@@ -1,24 +1,24 @@
 import 'package:huicrochet_mobile/modules/entities/carItem.dart';
 
 class Cart {
-  final String id;
-  final bool bought;
-  final double total;
-  final List<CartItem> cartItems;
+  final String _id;
+  final bool _bought;
+  final double _total;
+  final List<CartItem> _cartItems;
 
-  Cart({
-    required this.id,
-    required this.bought,
-    required this.total,
-    required this.cartItems,
-  });
+  Cart(this._id, this._bought, this._total, this._cartItems);
+
+  String get id => _id;
+  bool get bought => _bought;
+  double get total => _total;
+  List<CartItem> get cartItems => _cartItems;
 
   factory Cart.fromJson(Map<String, dynamic> json) {
     return Cart(
-      id: json['id'],
-      bought: json['bought'],
-      total: json['total'].toDouble(),
-      cartItems: CartItem.fromJsonList(json['cartItems']),
+      json['id'] as String,
+      json['bought'] as bool,
+      (json['total'] as num).toDouble(),
+      CartItem.fromJsonList(json['cartItems'] as List<dynamic>),
     );
   }
 }

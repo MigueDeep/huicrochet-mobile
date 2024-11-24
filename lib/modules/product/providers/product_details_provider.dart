@@ -55,14 +55,14 @@ class ProductDetailsProvider with ChangeNotifier {
           }).toList();
 
           // Colores
-         final List<Map<String, dynamic>> allItems = productData.cast<Map<String, dynamic>>();
-final colors = allItems
-    .where((item) =>
-        item['product']['id'] == productId && item['color'] != null)
-    .map((item) => item['color']['colorCod'] as String)
-    .toSet() // Eliminar colores duplicados
-    .toList();
-
+          final List<Map<String, dynamic>> allItems =
+              productData.cast<Map<String, dynamic>>();
+          final colors = allItems
+              .where((item) =>
+                  item['product']['id'] == productId && item['color'] != null)
+              .map((item) => item['color']['colorCod'] as String)
+              .toSet() // Eliminar colores duplicados
+              .toList();
 
           return {
             'name': name,
@@ -70,7 +70,7 @@ final colors = allItems
             'price': price,
             'imageUris': imageUris,
             'productId': productId,
-            'colors': colors, // Aquí tienes la lista de colores
+            'colors': colors,
             'categoryNames': categoryNames,
             'itemId': itemId,
           };
