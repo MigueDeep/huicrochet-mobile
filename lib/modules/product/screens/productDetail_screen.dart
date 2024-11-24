@@ -50,7 +50,8 @@ class _ProductDetailState extends State<ProductDetail> {
           .fetchProductDetails(context, id: productId);
     }
   }
-Future<void> checkLoginStatus() async {
+
+  Future<void> checkLoginStatus() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (prefs.getString('token') == null) {
       showDialog(
@@ -78,10 +79,11 @@ Future<void> checkLoginStatus() async {
         },
       );
     } else {
-     addToShoppingCart();
+      addToShoppingCart();
     }
   }
-   Future<void> addToShoppingCart() async {
+
+  Future<void> addToShoppingCart() async {
     _loaderController.show(context);
     final dio = DioClient(context).dio;
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -104,7 +106,7 @@ Future<void> checkLoginStatus() async {
             backgroundColor: Colors.blue,
           ),
         );
-         await Future.delayed(const Duration(seconds: 2));
+        await Future.delayed(const Duration(seconds: 2));
         setState(() {
           _isAdded = false;
         });
@@ -129,7 +131,6 @@ Future<void> checkLoginStatus() async {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Consumer<ProductDetailsProvider>(
@@ -139,7 +140,7 @@ Future<void> checkLoginStatus() async {
         }
 
         if (provider.products.isEmpty) {
-          return ProductDetailLoading() ;
+          return ProductDetailLoading();
         }
 
         var productData = provider.products[0];
@@ -275,7 +276,9 @@ Future<void> checkLoginStatus() async {
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 20,),
+                            const SizedBox(
+                              height: 20,
+                            ),
                             Text(
                               'Colores',
                               style: TextStyle(
@@ -291,8 +294,33 @@ Future<void> checkLoginStatus() async {
                                   _selectedIndex = index;
                                   _selectedItem =
                                       itemData[_selectedIndex]['itemId'];
+                                  _quantity = 0;
                                 });
                               },
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Text(
+                              'Stock: ',
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontSize: 18,
+                                color: Colors.black,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              itemData[_selectedIndex]['stock'] >= 10
+                                  ? 'Más de 10 piezas disponibles'
+                                  : 'Compra ahora, solo ${itemData[_selectedIndex]['stock']} disponibles!',
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontSize: 15,
+                                color: Colors.black,
+                              ),
                             ),
                           ],
                         ),
@@ -313,7 +341,7 @@ Future<void> checkLoginStatus() async {
                               icon: Icon(Icons.remove),
                             ),
                           ),
-                           Padding(
+                          Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: Text(
                               '$_quantity',
@@ -327,14 +355,17 @@ Future<void> checkLoginStatus() async {
                                 color: Colors.white,
                                 border: Border.all(color: Colors.grey[200]!)),
                             child: IconButton(
-                              onPressed: _incrementQuantity,
+                              onPressed:
+                                  _quantity < itemData[_selectedIndex]['stock']
+                                      ? _incrementQuantity
+                                      : null,
                               icon: Icon(Icons.add),
                             ),
                           ),
                         ],
                       ),
-                       SizedBox(height: 10),
-                        SizedBox(
+                      SizedBox(height: 10),
+                      SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
@@ -349,7 +380,8 @@ Future<void> checkLoginStatus() async {
                               ? () {
                                   if (_selectedItem == '') {
                                     setState(() {
-                                      _selectedItem = _selectedItem =itemData[0]['itemId'];
+                                      _selectedItem =
+                                          _selectedItem = itemData[0]['itemId'];
                                     });
                                   }
                                   checkLoginStatus();
@@ -383,7 +415,6 @@ Future<void> checkLoginStatus() async {
                           ),
                         ),
                       ),
-                      
                       const SizedBox(
                         height: 20,
                       ),
@@ -415,7 +446,8 @@ Future<void> checkLoginStatus() async {
                               rating: 3.0,
                             ),
                           ],
-                        ),)
+                        ),
+                      )
                     ],
                   )),
             ),
