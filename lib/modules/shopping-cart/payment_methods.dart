@@ -213,18 +213,20 @@ class _PaymentMethodsState extends State<PaymentMethods> {
               padding: const EdgeInsets.all(20),
               child: GeneralButton(
                 text: 'Continuar',
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PurchasedetailsScreen(
-                        shoppingCart: widget.shoppingCart,
-                        idAddress: widget.idAddress,
-                        idPayment: idPayment!,
-                      ),
-                    ),
-                  );
-                },
+                onPressed: idPayment == null
+                    ? () {}
+                    : () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PurchasedetailsScreen(
+                              shoppingCart: widget.shoppingCart,
+                              idAddress: widget.idAddress,
+                              idPayment: idPayment!,
+                            ),
+                          ),
+                        );
+                      },
               ))
         ],
       ),
