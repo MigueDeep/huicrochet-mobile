@@ -12,7 +12,6 @@ class CartItem {
   int get quantity => _quantity;
 
   set quantity(int value) {
-    // Agrega un setter
     _quantity = value;
   }
 

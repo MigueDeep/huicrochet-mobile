@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/config/dio_client.dart';
 import 'package:huicrochet_mobile/config/error_state.dart';
 import 'package:huicrochet_mobile/modules/entities/cart.dart';
+import 'package:huicrochet_mobile/modules/payment-methods/use_cases/get_payment.dart';
+import 'package:huicrochet_mobile/modules/shopping-cart/mailing_address_cart.dart';
 import 'package:huicrochet_mobile/widgets/general/loader.dart';
 import 'package:huicrochet_mobile/widgets/product/product_added_to_cart.dart';
 import 'package:huicrochet_mobile/widgets/general/general_button.dart';
@@ -12,7 +14,8 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ShoppingcartScreen extends StatefulWidget {
-  const ShoppingcartScreen({super.key});
+  const ShoppingcartScreen({super.key, required this.getPaymentMethod});
+  final GetPayment getPaymentMethod;
 
   @override
   State<ShoppingcartScreen> createState() => _ShoppingcartScreenState();
@@ -179,6 +182,7 @@ class _ShoppingcartScreenState extends State<ShoppingcartScreen> {
         ),
       );
       if (response.statusCode == 200) {
+        _loaderController.show(context);
         getShoppingCart();
       }
     } catch (e) {
@@ -329,7 +333,15 @@ class _ShoppingcartScreenState extends State<ShoppingcartScreen> {
               child: GeneralButton(
                 text: 'Continuar al pago',
                 onPressed: () {
-                  Navigator.pushNamed(context, '/mailing-address');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MailingAddressCart(
+                        shoppingCart: shoppingCart,
+                        getPaymentMethod: widget.getPaymentMethod,
+                      ),
+                    ),
+                  );
                 },
               ),
             ),

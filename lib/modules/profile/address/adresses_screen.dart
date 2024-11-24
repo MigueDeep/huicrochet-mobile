@@ -93,20 +93,23 @@ class _AddressesScreenState extends State<AddressesScreen> {
               );
             }).toList();
             _loaderController.hide();
-            content = false;
+            setState(() {
+              content = true;
+            });
           } catch (e) {
             print('Error específico al mapear los datos: $e');
             final errorState = Provider.of<ErrorState>(context, listen: false);
             errorState.setError('Error al procesar las direcciones.');
             errorState.showErrorDialog(context);
             setState(() {
+              content = false;
               _loaderController.hide();
             });
           }
         });
       } else if (response.statusCode == 204) {
         setState(() {
-          content = true;
+          content = false;
           _loaderController.hide();
         });
       }
@@ -119,8 +122,11 @@ class _AddressesScreenState extends State<AddressesScreen> {
       errorState.showErrorDialog(context);
       setState(() {
         _loaderController.hide();
-        content = true;
+        content = false;
       });
+    } finally {
+      print('variable: $content');
+      _loaderController.hide();
     }
   }
 
@@ -324,126 +330,124 @@ class _AddressesScreenState extends State<AddressesScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  for (var address in addresses)
-                    content
-                        ? Center(
-                            child: Text(
-                              'No hay direcciones de envío registradas',
-                              style: TextStyle(
-                                fontFamily: 'Poppins',
-                                fontSize: 16,
-                                color: Colors.black,
-                              ),
+                  if (!content)
+                    Center(
+                      child: Text(
+                        'No hay direcciones de envío registradas',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 16,
+                          color: Colors.black,
+                        ),
+                      ),
+                    )
+                  else
+                    for (var address in addresses)
+                      Column(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              border: address.defaultAddress
+                                  ? Border.all(
+                                      color: const Color.fromRGBO(
+                                          242, 148, 165, 1),
+                                      width: 2.0)
+                                  : null,
+                              borderRadius: BorderRadius.circular(8.0),
                             ),
-                          )
-                        : Column(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  border: address.defaultAddress
-                                      ? Border.all(
-                                          color: const Color.fromRGBO(
-                                              242, 148, 165, 1),
-                                          width: 2.0)
-                                      : null,
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          if (address.defaultAddress)
-                                            Container(
-                                              padding: EdgeInsets.all(4.0),
-                                              decoration: BoxDecoration(
-                                                  color: Color.fromRGBO(
-                                                      242, 148, 165, 1),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          4.0)),
-                                              child: Text(
-                                                'Default',
-                                                style: TextStyle(
-                                                  fontFamily: 'Poppins',
-                                                  fontSize: 12,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            ),
-                                          const SizedBox(height: 2),
-                                          Text(
-                                            '${address.number} ${address.street}',
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      if (address.defaultAddress)
+                                        Container(
+                                          padding: EdgeInsets.all(4.0),
+                                          decoration: BoxDecoration(
+                                              color: Color.fromRGBO(
+                                                  242, 148, 165, 1),
+                                              borderRadius:
+                                                  BorderRadius.circular(4.0)),
+                                          child: Text(
+                                            'Default',
                                             style: TextStyle(
                                               fontFamily: 'Poppins',
-                                              fontSize: 16,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w600,
+                                              fontSize: 12,
+                                              color: Colors.white,
                                             ),
                                           ),
-                                          Text(
-                                            '${address.zipCode} ${address.city} ${address.state}',
-                                            style: TextStyle(
-                                              fontFamily: 'Poppins',
-                                              fontSize: 16,
-                                              color: Colors.blueGrey,
-                                            ),
-                                          ),
-                                        ],
+                                        ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        '${address.number} ${address.street}',
+                                        style: TextStyle(
+                                          fontFamily: 'Poppins',
+                                          fontSize: 16,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
-                                    ),
-                                    PopupMenuButton<String>(
-                                      onSelected: (value) {
-                                        if (value == 'edit') {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  EditadressScreen(
-                                                address: address.id ?? '',
-                                              ),
-                                            ),
-                                          );
-                                        } else if (value == 'delete') {
-                                          setState(() {
-                                            alertConfirm(address.id ?? '');
-                                          });
-                                        } else if (value == 'default') {
-                                          setState(() {
-                                            alertConfirmDefault(
-                                                address.id ?? '');
-                                          });
-                                        }
-                                      },
-                                      itemBuilder: (BuildContext context) {
-                                        return [
-                                          PopupMenuItem(
-                                            value: 'edit',
-                                            child: Text('Editar'),
-                                          ),
-                                          PopupMenuItem(
-                                            value: 'delete',
-                                            child: Text('Eliminar'),
-                                          ),
-                                          if (!address.defaultAddress)
-                                            PopupMenuItem(
-                                              value: 'default',
-                                              child:
-                                                  Text('Hacer predeterminada'),
-                                            ),
-                                        ];
-                                      },
-                                      icon: Icon(Icons.more_horiz,
-                                          color: Colors.grey),
-                                    ),
-                                  ],
+                                      Text(
+                                        '${address.zipCode} ${address.city} ${address.state}',
+                                        style: TextStyle(
+                                          fontFamily: 'Poppins',
+                                          fontSize: 16,
+                                          color: Colors.blueGrey,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 12),
-                            ],
+                                PopupMenuButton<String>(
+                                  onSelected: (value) {
+                                    if (value == 'edit') {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              EditadressScreen(
+                                            address: address.id ?? '',
+                                          ),
+                                        ),
+                                      );
+                                    } else if (value == 'delete') {
+                                      setState(() {
+                                        alertConfirm(address.id ?? '');
+                                      });
+                                    } else if (value == 'default') {
+                                      setState(() {
+                                        alertConfirmDefault(address.id ?? '');
+                                      });
+                                    }
+                                  },
+                                  itemBuilder: (BuildContext context) {
+                                    return [
+                                      PopupMenuItem(
+                                        value: 'edit',
+                                        child: Text('Editar'),
+                                      ),
+                                      PopupMenuItem(
+                                        value: 'delete',
+                                        child: Text('Eliminar'),
+                                      ),
+                                      if (!address.defaultAddress)
+                                        PopupMenuItem(
+                                          value: 'default',
+                                          child: Text('Hacer predeterminada'),
+                                        ),
+                                    ];
+                                  },
+                                  icon: Icon(Icons.more_horiz,
+                                      color: Colors.grey),
+                                ),
+                              ],
+                            ),
                           ),
+                          const SizedBox(height: 12),
+                        ],
+                      ),
                   const SizedBox(height: 30),
                   SizedBox(
                     width: double.infinity,

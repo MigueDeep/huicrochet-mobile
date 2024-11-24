@@ -1,15 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:huicrochet_mobile/modules/entities/cart.dart';
 import 'package:huicrochet_mobile/widgets/payment/purchase_progress_bar.dart';
 
 class PurchasedetailsScreen extends StatefulWidget {
-  const PurchasedetailsScreen({super.key});
+  final Cart shoppingCart;
+  final String idAddress;
+  final String idPayment;
+
+  const PurchasedetailsScreen(
+      {super.key,
+      required this.shoppingCart,
+      required this.idAddress,
+      required this.idPayment});
 
   @override
   _PurchasedetailsScreenState createState() => _PurchasedetailsScreenState();
 }
 
 class _PurchasedetailsScreenState extends State<PurchasedetailsScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print(
+        'Parametros obtenidos: ${widget.shoppingCart.id} ${widget.idAddress} ${widget.idPayment}');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
