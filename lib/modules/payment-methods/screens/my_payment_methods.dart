@@ -7,6 +7,7 @@ import 'package:huicrochet_mobile/modules/payment-methods/use_cases/delete_payme
 import 'package:huicrochet_mobile/modules/payment-methods/use_cases/get_payment.dart';
 import 'package:huicrochet_mobile/modules/payment-methods/use_cases/get_payment_byId.dart';
 import 'package:huicrochet_mobile/modules/payment-methods/use_cases/update_payment.dart';
+import 'package:huicrochet_mobile/widgets/general/action_sheet.dart';
 import 'package:huicrochet_mobile/widgets/general/general_button.dart';
 import 'package:huicrochet_mobile/widgets/general/loader.dart';
 import 'package:huicrochet_mobile/widgets/payment/credit_card.dart';
@@ -26,11 +27,7 @@ class MyPaymentMethods extends StatefulWidget {
 
 class _MyPaymentMethodsState extends State<MyPaymentMethods> {
   int? selectedCardIndex;
-<<<<<<< Updated upstream
-
-=======
-  late String fullName = '';
->>>>>>> Stashed changes
+  late String fullName;
   late Future<List<PaymentCardModel>> _paymentMethodsFuture;
   final LoaderController _loaderController = LoaderController();
   String? idPayment;
@@ -51,6 +48,7 @@ class _MyPaymentMethodsState extends State<MyPaymentMethods> {
       _paymentMethodsFuture = Future.value([]);
       _asingSelectedCard(null);
       final prefs = await SharedPreferences.getInstance();
+      fullName = prefs.getString('fullName') ?? '';
       final userId = prefs.getString('userId') ?? '';
       final paymentCards = await widget.getPaymentMethod.call(userId);
       setState(() {
@@ -134,6 +132,52 @@ class _MyPaymentMethodsState extends State<MyPaymentMethods> {
     );
   }
 
+  void _mostrarSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return ActionSheet(
+          title: '¿Qué deseas hacer con este método de pago?',
+          actions: [
+            ActionItem(
+              icon: Icons.edit,
+              iconColor: colors['brown']!,
+              label: 'Editar tarjeta',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditPaymentMethod(
+                      getPaymentMethod: getIt<GetPaymentByid>(),
+                      editPayment: getIt<UpdatePayment>(),
+                      id: idPayment!,
+                    ),
+                  ),
+                );
+              },
+            ),
+            ActionItem(
+              icon: Icons.delete,
+              iconColor: colors['brown']!,
+              label: 'Eliminar tarjeta',
+              onTap: () {
+                if (selectedCardIndex != null) {
+                  _showDeleteConfirmationDialog(idPayment!);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Selecciona una tarjeta para eliminar'),
+                    ),
+                  );
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -175,6 +219,7 @@ class _MyPaymentMethodsState extends State<MyPaymentMethods> {
                           selectedCardIndex = index;
                         });
                         _asingSelectedCard(card.id!);
+                        _mostrarSheet(context);
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
@@ -182,17 +227,15 @@ class _MyPaymentMethodsState extends State<MyPaymentMethods> {
                         child: CreditCard(
                           logoImage: 'assets/mlogo.png',
                           cardType: card.cardType ?? 'Crédito',
-                          ownerName: card.cardNumber.isNotEmpty
-                              ? '**** **** **** ${card.last4Numbers}'
-                              : 'No disponible',
+                          ownerName: fullName ?? 'Usuario',
                           cardNumber: card.cardNumber ?? '1234567812345678',
                           expiryDate:
                               "${card.expirationDate.month.toString().padLeft(2, '0')}/${card.expirationDate.year.toString().substring(2, 4)}",
                           startColor: card.cardType == 'debit'
-                              ? const Color.fromARGB(255, 95, 95, 95)
+                              ? colors['wine']!
                               : const Color.fromARGB(255, 0, 27, 97),
                           endColor: card.cardType == 'debit'
-                              ? const Color.fromARGB(255, 186, 186, 186)
+                              ? Color.fromRGBO(233, 159, 166, 0.555)
                               : const Color.fromARGB(255, 168, 193, 255),
                           isSelected: selectedCardIndex == index,
                         ),
@@ -206,42 +249,6 @@ class _MyPaymentMethodsState extends State<MyPaymentMethods> {
               thickness: 1,
               color: Color.fromARGB(63, 142, 119, 119),
             ),
-            if (idPayment != null) ...[
-              Padding(
-                padding: const EdgeInsets.only(top: 10, right: 20, left: 20),
-                child: GeneralButton(
-                  text: 'Editar tarjeta',
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => EditPaymentMethod(
-                            getPaymentMethod: getIt<GetPaymentByid>(),
-                            editPayment: getIt<UpdatePayment>(),
-                            id: idPayment!),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 10, right: 20, left: 20),
-                child: GeneralButton(
-                  text: 'Eliminar tarjeta',
-                  onPressed: () {
-                    if (selectedCardIndex != null) {
-                      _showDeleteConfirmationDialog(idPayment!);
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Selecciona una tarjeta para eliminar'),
-                        ),
-                      );
-                    }
-                  },
-                ),
-              ),
-            ],
             Padding(
               padding: const EdgeInsets.only(
                   top: 10, bottom: 30, right: 20, left: 20),

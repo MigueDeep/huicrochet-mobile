@@ -57,12 +57,15 @@ class ProductDetailsProvider with ChangeNotifier {
           // Colores
           final List<Map<String, dynamic>> allItems =
               productData.cast<Map<String, dynamic>>();
+
           final colors = allItems
               .where((item) =>
                   item['product']['id'] == productId && item['color'] != null)
               .map((item) => item['color']['colorCod'] as String)
               .toSet() // Eliminar colores duplicados
               .toList();
+
+          final stock = product['stock'] as int;
 
           return {
             'name': name,
@@ -73,6 +76,7 @@ class ProductDetailsProvider with ChangeNotifier {
             'colors': colors,
             'categoryNames': categoryNames,
             'itemId': itemId,
+            'stock': stock,
           };
         }).toList();
 

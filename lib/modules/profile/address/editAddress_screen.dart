@@ -270,12 +270,6 @@ class _EditadressScreenState extends State<EditadressScreen> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           title: Text('Editar dirección'),
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pushReplacementNamed(context, '/addresses');
-            },
-          ),
           backgroundColor: Colors.white,
           elevation: 0,
           iconTheme: IconThemeData(color: Colors.black),

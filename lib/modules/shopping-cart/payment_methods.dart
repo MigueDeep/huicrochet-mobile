@@ -44,6 +44,7 @@ class _PaymentMethodsState extends State<PaymentMethods> {
       _asingSelectedCard(null);
       final prefs = await SharedPreferences.getInstance();
       final userId = prefs.getString('userId') ?? '';
+      fullName = prefs.getString('fullName') ?? '';
       final paymentCards = await widget.getPaymentMethod.call(userId);
       setState(() {
         _paymentMethodsFuture = Future.value(paymentCards
@@ -141,18 +142,16 @@ class _PaymentMethodsState extends State<PaymentMethods> {
                               child: CreditCard(
                                 logoImage: 'assets/mlogo.png',
                                 cardType: card.cardType ?? 'Crédito',
-                                ownerName: card.cardNumber.isNotEmpty
-                                    ? '**** **** **** ${card.last4Numbers}'
-                                    : 'No disponible',
+                                ownerName: fullName ?? 'Usuario',
                                 cardNumber:
                                     card.cardNumber ?? '1234567812345678',
                                 expiryDate:
                                     "${card.expirationDate.month.toString().padLeft(2, '0')}/${card.expirationDate.year.toString().substring(2, 4)}",
                                 startColor: card.cardType == 'debit'
-                                    ? const Color.fromARGB(255, 95, 95, 95)
+                                    ? colors['wine']!
                                     : const Color.fromARGB(255, 0, 27, 97),
                                 endColor: card.cardType == 'debit'
-                                    ? const Color.fromARGB(255, 186, 186, 186)
+                                    ? Color.fromRGBO(233, 159, 166, 0.555)
                                     : const Color.fromARGB(255, 168, 193, 255),
                                 isSelected: selectedCardIndex == index,
                               ),
