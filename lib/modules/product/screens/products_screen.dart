@@ -1,8 +1,5 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:huicrochet_mobile/config/dio_client.dart';
-import 'package:huicrochet_mobile/config/global_variables.dart';
+import 'package:huicrochet_mobile/modules/product/providers/categories_provider.dart';
 import 'package:huicrochet_mobile/widgets/general/app_bar.dart';
 import 'package:huicrochet_mobile/widgets/general/category_menu.dart';
 import 'package:huicrochet_mobile/widgets/product/product_card.dart';
@@ -18,76 +15,23 @@ class ProductsScreen extends StatefulWidget {
 }
 
 class _ProductsScreenState extends State<ProductsScreen> {
-  List<String> categories = ['Todas'];
-   List<Map<String, dynamic>> productsByCategory = [];
-   Map<String, String> categoryIdMap = {};
   bool _isFirstVisit = true;
 
   @override
   void initState() {
     super.initState();
-    _getCategories();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<CategoriesProvider>(context, listen: false)
+          .fetchCategories(context);
+      Provider.of<ProductsProvider>(context, listen: false)
+          .fetchProducts(context);
+    });
   }
-
-  Future<void> _getCategories() async {
-    final dioClient = DioClient(context);
-
-    try {
-      final response = await dioClient.dio.get('/category/getAllTrue');
-
-      if (response.statusCode == 200) {
-        final jsonData = jsonDecode(response.toString());
-        final List<dynamic> categoryData = jsonData['data'];
-
-        setState(() {
-          categories = ['Todas'];
-          categories.addAll(
-            categoryData.map((category) => category['name'] as String).toList(),
-          );
-        });
-      } else {
-        print('Error al obtener categorías ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error desconocido ${e.toString()}');
-    }
-  }
-
-// Future<void> _getProductsByCategory(String categoryId) async {
-//     final dioClient = DioClient(context);
-
-//     try {
-//       print(''+categoryId);
-//       final response = await dioClient.dio.get('/product/getByCategory/$categoryId');
-
-//       if (response.statusCode == 200) {
-//         final jsonData = jsonDecode(response.toString());
-//         final List<dynamic> productData = jsonData['data'];
-
-//         setState(() {
-//           productsByCategory =
-//               productData.map((product) => product['name'] as String).cast<Map<String, dynamic>>().toList();
-//         });
-//       } else {
-//         print('Error al obtener productos: ${response.statusCode}');
-//       }
-//     } catch (e) {
-//       print('Error desconocido: ${e.toString()}');
-//     }
-//   }
-
-
 
   @override
   Widget build(BuildContext context) {
+    final categoriesProvider = Provider.of<CategoriesProvider>(context);
     final productsProvider = Provider.of<ProductsProvider>(context);
-
-    if (_isFirstVisit) {
-      productsProvider.fetchProducts(context);
-      setState(() {
-        _isFirstVisit = false;
-      });
-    }
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -101,16 +45,15 @@ class _ProductsScreenState extends State<ProductsScreen> {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                   CategoryMenu(
-                    categories: categories,
+                  CategoryMenu(
+                    categories: categoriesProvider.categories,
                     onCategorySelected: (selectedCategory) {
-                      final categoryId = categoryIdMap[selectedCategory] ?? '';
                       if (selectedCategory == 'Todas') {
                         setState(() {
-                          productsByCategory = [];
+                          productsProvider.fetchProducts(context);
                         });
                       } else {
-                       // _getProductsByCategory(categoryId);
+                        final categoryId = selectedCategory;
                       }
                     },
                   ),
@@ -123,10 +66,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
                 backgroundColor: Colors.white,
                 color: const Color.fromRGBO(242, 148, 165, 1),
                 onRefresh: () async {
-                  await productsProvider.fetchProducts(
-                    context,
-                    forceRefresh: true
-                  );
+                  await productsProvider.fetchProducts(context, forceRefresh: true);
+                  await categoriesProvider.fetchCategories(context, forceRefresh: true);
                 },
                 child: productsProvider.isLoading
                     ? GridView.builder(
@@ -137,7 +78,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                         ),
                         itemBuilder: (context, index) {
                           return Center(
-                            child: loadingProductCard(), 
+                            child: loadingProductCard(),
                           );
                         },
                       )
