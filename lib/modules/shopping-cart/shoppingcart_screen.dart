@@ -92,10 +92,6 @@ class _ShoppingcartScreenState extends State<ShoppingcartScreen> {
 
             _loaderController.hide();
           } catch (e) {
-            print('Error específico al mapear los datos del carrito: $e');
-            final errorState = Provider.of<ErrorState>(context, listen: false);
-            errorState.setError('Error al procesar el carrito de compras.');
-            errorState.showErrorDialog(context);
             setState(() {
               _loaderController.hide();
             });

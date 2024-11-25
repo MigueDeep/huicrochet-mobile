@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/config/global_variables.dart';
+import 'package:huicrochet_mobile/modules/entities/address.dart';
 import 'package:huicrochet_mobile/modules/entities/cart.dart';
 import 'package:huicrochet_mobile/modules/payment-methods/models/payment_method_model.dart';
 import 'package:huicrochet_mobile/modules/payment-methods/use_cases/get_payment.dart';
-import 'package:huicrochet_mobile/modules/profile/purchaseDetails.dart';
+import 'package:huicrochet_mobile/modules/shopping-cart/purchaseDetails.dart';
 import 'package:huicrochet_mobile/widgets/general/loader.dart';
 import 'package:huicrochet_mobile/widgets/payment/credit_card.dart';
 import 'package:huicrochet_mobile/widgets/general/general_button.dart';
@@ -12,11 +13,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class PaymentMethods extends StatefulWidget {
   final Cart shoppingCart;
-  final String idAddress;
+  final Address address;
   const PaymentMethods(
       {super.key,
       required this.shoppingCart,
-      required this.idAddress,
+      required this.address,
       required this.getPaymentMethod});
   final GetPayment getPaymentMethod;
 
@@ -34,7 +35,8 @@ class _PaymentMethodsState extends State<PaymentMethods> {
   late Future<List<PaymentCardModel>> _paymentMethodsFuture = Future.value([]);
   final LoaderController _loaderController = LoaderController();
   String? idPayment;
-  late String fullName;
+  late String fullName = '';
+  late PaymentCardModel payment;
 
   Future<void> _fetchPaymentMethods() async {
     try {
@@ -81,7 +83,6 @@ class _PaymentMethodsState extends State<PaymentMethods> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loaderController.show(context);
       _fetchPaymentMethods();
-      print('direccion seleccionada: ${widget.idAddress}');
     });
   }
 
@@ -131,6 +132,7 @@ class _PaymentMethodsState extends State<PaymentMethods> {
                             onTap: () {
                               setState(() {
                                 selectedCardIndex = index;
+                                payment = card;
                               });
                               _asingSelectedCard(card.id!);
                             },
@@ -222,8 +224,8 @@ class _PaymentMethodsState extends State<PaymentMethods> {
                           MaterialPageRoute(
                             builder: (context) => PurchasedetailsScreen(
                               shoppingCart: widget.shoppingCart,
-                              idAddress: widget.idAddress,
-                              idPayment: idPayment!,
+                              address: widget.address,
+                              payment: payment,
                             ),
                           ),
                         );
