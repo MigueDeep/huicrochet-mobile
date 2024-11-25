@@ -1,4 +1,10 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:huicrochet_mobile/config/dio_client.dart';
+import 'package:huicrochet_mobile/config/error_state.dart';
+import 'package:huicrochet_mobile/config/global_variables.dart';
 import 'package:huicrochet_mobile/modules/entities/address.dart';
 import 'package:huicrochet_mobile/modules/entities/cart.dart';
 import 'package:huicrochet_mobile/modules/payment-methods/models/payment_method_model.dart';
@@ -6,6 +12,7 @@ import 'package:huicrochet_mobile/widgets/general/general_button.dart';
 import 'package:huicrochet_mobile/widgets/general/loader.dart';
 import 'package:huicrochet_mobile/widgets/payment/purchase_progress_bar.dart';
 import 'package:huicrochet_mobile/widgets/product/product_display_widget.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PurchasedetailsScreen extends StatefulWidget {
@@ -26,6 +33,7 @@ class PurchasedetailsScreen extends StatefulWidget {
 class _PurchasedetailsScreenState extends State<PurchasedetailsScreen> {
   final LoaderController _loaderController = LoaderController();
   String fullName = '';
+  String userId = '';
 
   @override
   void initState() {
@@ -38,17 +46,101 @@ class _PurchasedetailsScreenState extends State<PurchasedetailsScreen> {
   }
 
   Future<void> _fetchData() async {
-    final prefs = await SharedPreferences.getInstance();
-    fullName = prefs.getString('fullName') ?? '';
     try {
-      final userId = prefs.getString('userId') ?? '';
-
+      final prefs = await SharedPreferences.getInstance();
+      final fetchedFullName = prefs.getString('fullName') ?? '';
+      setState(() {
+        fullName = fetchedFullName;
+        userId = prefs.getString('userId') ?? '';
+      });
       _loaderController.hide();
     } catch (e) {
       print('Error fetching data: $e');
       _loaderController.hide();
     } finally {
       _loaderController.hide();
+    }
+  }
+
+  Future<void> createOrder() async {
+    _loaderController.show(context);
+    final dio = DioClient(context).dio;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    try {
+      final response = await dio.post(
+        '/order',
+        data: {
+          'shoppingCartId': prefs.getString('shoppingCartId'),
+          'shippingAddressId': widget.address.id,
+          'paymentMethodId': widget.payment.id,
+        },
+      );
+
+      {}
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        _loaderController.hide();
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Orden creada con éxito'),
+              content: Text(
+                  'Puedes ver el estado de tu pedido en la sessión de ordenes  :)'),
+              actions: <Widget>[
+                TextButton(
+                    style:
+                        TextButton.styleFrom(backgroundColor: colors['violet']),
+                    onPressed: () {
+                      getNewShoppingCart();
+                      Navigator.pushReplacementNamed(context, '/navigation');
+                    },
+                    child: Text(
+                      "Aceptar",
+                      style: TextStyle(color: Colors.white),
+                    )),
+              ],
+            );
+          },
+        );
+      }
+    } catch (e) {
+      final errorState = Provider.of<ErrorState>(context, listen: false);
+
+      if (e is DioException) {
+        if (e.response?.statusCode == 400) {
+          String errorMessage =
+              e.response?.data['message'] ?? 'Error desconocido';
+          errorState.setError(errorMessage);
+        } else {
+          errorState.setError('Error de conexión');
+        }
+      } else {
+        errorState.setError('Error inesperado: $e');
+      }
+      _loaderController.hide();
+
+      errorState.showErrorDialog(context);
+    }
+  }
+
+  Future<void> getNewShoppingCart() async {
+    final dio = DioClient(context).dio;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('shoppingCartId');
+    try {
+      final response = await dio.get('/shopping-cart/user/$userId');
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.data);
+        final shoppingCartId = jsonData['data']['id'];
+        if (shoppingCartId != null) {
+          prefs.setString('shoppingCartId', shoppingCartId);
+          debugPrint('Nuevo carrito: ${prefs.getString('shoppingCartId')}');
+        } else {
+          debugPrint('El carrito no tiene un ID válido.');
+        }
+      }
+    } catch (e) {
+      print('Error fetching shopping cart: $e');
     }
   }
 
@@ -59,9 +151,8 @@ class _PurchasedetailsScreenState extends State<PurchasedetailsScreen> {
       appBar: const PurchaseProgressBar(currentStep: '3'),
       body: Column(
         children: [
-          // Sección de productos
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               const Text(
                 'Productos',
@@ -80,7 +171,7 @@ class _PurchasedetailsScreenState extends State<PurchasedetailsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Lista dinámica de productos
+                  // Lista de productos
                   ...widget.shoppingCart.cartItems.map((cartItem) {
                     final product = cartItem.item.product;
                     final color = cartItem.item.color.colorName;
@@ -100,12 +191,12 @@ class _PurchasedetailsScreenState extends State<PurchasedetailsScreen> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Divider(height: 32, thickness: 1),
-                const SizedBox(height: 16),
+                const SizedBox(height: 5),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -131,12 +222,12 @@ class _PurchasedetailsScreenState extends State<PurchasedetailsScreen> {
                 GeneralButton(
                   text: 'Confirmar y pagar',
                   onPressed: () {
-                    print('Confirmar y pagar');
+                    createOrder();
                   },
                 ),
                 const SizedBox(height: 5),
                 const Divider(height: 32, thickness: 1),
-                const SizedBox(height: 16),
+                const SizedBox(height: 5),
                 const Text(
                   'Resúmen de la orden',
                   style: TextStyle(
@@ -188,6 +279,7 @@ class _PurchasedetailsScreenState extends State<PurchasedetailsScreen> {
                 ),
                 const SizedBox(height: 16),
                 Container(
+                  alignment: Alignment.center,
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: Colors.grey.shade200,

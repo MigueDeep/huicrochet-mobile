@@ -69,11 +69,12 @@ class ProductItem extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'MXN${price.toStringAsFixed(2)}',
-                  style: const TextStyle(
+                  '\$ ${price.toStringAsFixed(2)}',
+                  style: TextStyle(
                     fontSize: 14,
-                    color: Color.fromARGB(255, 0, 0, 0),
+                    color: colors['wine'],
                     fontFamily: 'Poppins',
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ],

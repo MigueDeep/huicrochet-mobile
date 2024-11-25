@@ -115,8 +115,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: colors['wine'], // Color de fondo
-                      borderRadius: BorderRadius.circular(40), // Forma circular
+                      color: colors['wine'],
+                      borderRadius: BorderRadius.circular(40),
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(40),

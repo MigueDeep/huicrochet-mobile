@@ -4,7 +4,7 @@ import 'package:huicrochet_mobile/modules/entities/address.dart';
 import 'package:huicrochet_mobile/modules/entities/cart.dart';
 import 'package:huicrochet_mobile/modules/payment-methods/models/payment_method_model.dart';
 import 'package:huicrochet_mobile/modules/payment-methods/use_cases/get_payment.dart';
-import 'package:huicrochet_mobile/modules/profile/purchaseDetails.dart';
+import 'package:huicrochet_mobile/modules/shopping-cart/purchaseDetails.dart';
 import 'package:huicrochet_mobile/widgets/general/loader.dart';
 import 'package:huicrochet_mobile/widgets/payment/credit_card.dart';
 import 'package:huicrochet_mobile/widgets/general/general_button.dart';
