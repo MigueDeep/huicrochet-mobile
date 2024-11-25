@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/modules/product/providers/product_details_provider.dart';
 import 'package:provider/provider.dart';
 
-Widget productCard(String productName, String? imagePath, String? price, String? id, BuildContext context) {
+Widget productCard(String productName, String? imagePath, String? price,
+    String? id, BuildContext context) {
   return GestureDetector(
     onTap: () {
       if (id != null) {
         Navigator.pushNamed(
-  context,
-  '/product-detail',
-  arguments: {'productId': id},
-).then((_) {
-  // Limpia el estado cuando regreses de la pantalla de detalles
-  Provider.of<ProductDetailsProvider>(context, listen: false).clearProductDetails();
-});
-
+          context,
+          '/product-detail',
+          arguments: {'productId': id},
+        ).then((_) {
+          Provider.of<ProductDetailsProvider>(context, listen: false)
+              .clearProductDetails();
+        });
       }
     },
     child: Container(
@@ -25,8 +25,8 @@ Widget productCard(String productName, String? imagePath, String? price, String?
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: Container(
-              width: 165, 
-              height: 170, 
+              width: 165,
+              height: 170,
               color: Colors.grey[200],
               child: Image.network(
                 imagePath!,
@@ -34,14 +34,17 @@ Widget productCard(String productName, String? imagePath, String? price, String?
                 height: 170,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
-                  return Image.asset('assets/snoopyAzul.jpg', width: 155, height: 170, fit: BoxFit.cover);
+                  return Image.asset('assets/snoopyAzul.jpg',
+                      width: 155, height: 170, fit: BoxFit.cover);
                 },
               ),
             ),
           ),
           const SizedBox(height: 10),
           Text(
-            productName.length > 17 ? '${productName.substring(0, 19)}...' : productName,
+            productName.length > 17
+                ? '${productName.substring(0, 19)}...'
+                : productName,
             style: const TextStyle(
               fontFamily: 'Poppins',
               fontSize: 14,
