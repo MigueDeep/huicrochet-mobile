@@ -8,8 +8,11 @@ class UserProfile {
 
   UserProfile({this.imageUrl, this.fullName});
 }
-
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final ValueChanged<String> onSearchTextChanged;
+
+  CustomAppBar({Key? key, required this.onSearchTextChanged}) : super(key: key);
+
   Future<UserProfile?> getUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? imagePath = prefs.getString('userImg');
@@ -63,8 +66,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 fontSize: 15,
                 color: Colors.black,
               ),
+              cursorColor: colors['wine'],
               decoration: InputDecoration(
-                hintText: 'Buscar',
+                hintText: 'Buscar por nombre',
                 hintStyle: const TextStyle(
                   fontFamily: 'Poppins',
                   fontSize: 15,
@@ -78,6 +82,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 filled: true,
                 fillColor: Colors.grey[100],
               ),
+              onChanged: onSearchTextChanged, 
             ),
           ),
           const SizedBox(width: 5),
@@ -113,11 +118,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 } else {
                   return Container(
                     width: 40,
-                    height: 40, 
+                    height: 40,
                     decoration: BoxDecoration(
-                      color: colors['wine'], 
-                      borderRadius: BorderRadius.circular(
-                          40), 
+                      color: colors['wine'],
+                      borderRadius: BorderRadius.circular(40),
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(40),
