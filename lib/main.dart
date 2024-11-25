@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:huicrochet_mobile/modules/product/providers/categories_provider.dart';
 import 'package:huicrochet_mobile/modules/product/providers/new_products_provider.dart';
 import 'package:huicrochet_mobile/modules/product/providers/produc_provider.dart';
 import 'package:huicrochet_mobile/modules/product/providers/product_details_provider.dart';
@@ -45,6 +46,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ProductsProvider()),
         ChangeNotifierProvider(create: (_) => NewProductsProvider()),
         ChangeNotifierProvider(create: (_) => ProductDetailsProvider()),
+        ChangeNotifierProvider(create: (_) => CategoriesProvider())
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

@@ -4,20 +4,21 @@ import 'package:huicrochet_mobile/config/dio_client.dart';
 import 'package:huicrochet_mobile/config/global_variables.dart';
 
 class NewProductsProvider with ChangeNotifier {
-  List<Map<String, Object>> _newProducts = [];
+  List<Map<String, dynamic>> _newProducts = [];
   bool _isLoading = false;
 
-  List<Map<String, Object>> get newProducts => _newProducts;
+  List<Map<String, dynamic>> get newProducts => _newProducts;
   bool get isLoading => _isLoading;
 
-  Future<void> fetchNewProducts(BuildContext context, {bool forceRefresh = false}) async {
+  Future<void> fetchNewProducts(BuildContext context,
+      {bool forceRefresh = false}) async {
     if (_newProducts.isNotEmpty && !forceRefresh) return;
 
     _isLoading = true;
     notifyListeners();
 
     final dioClient = DioClient(context);
-    const String endpoint = '/product/getTop10';
+    const String endpoint = '/item/getTop10Items';
     try {
       final response = await dioClient.dio.get(endpoint);
 
@@ -26,22 +27,26 @@ class NewProductsProvider with ChangeNotifier {
         final List<dynamic> productData = jsonData['data'];
 
         _newProducts = productData.map((product) {
-          final name = product['productName'] as String;
-          final productId = product['id'] as String;
-          final price = product['price'].toString();
-          final imageUri = (product['items'] != null &&
-                  product['items'].isNotEmpty &&
-                  product['items'][0]['images'] != null &&
-                  product['items'][0]['images'].isNotEmpty)
-              ? product['items'][0]['images'][0]['imageUri'] as String
-              : 'assets/logo.png';
-          final imageName = imageUri.split('/').last;
-          final uriNetwork = 'http://$ip:8080/$imageName';
+          final name = product['product']['productName'] as String;
+          final productId = product['product']['id'] as String;
+          final price = product['product']['price'].toString();
+          final images = product['images'] as List<dynamic>;
+          String imageUri = 'assets/logo.png';
+          if (images.isNotEmpty) {
+            final firstImage = images[0];
+            if (firstImage != null && (images).isNotEmpty) {
+              imageUri = firstImage['imageUri'] as String;
+            }
+          }
+
+          final imagePath = imageUri.split('/').last;
+          final uriNetwork = 'http://$ip:8080/$imagePath';
+
           return {
             'name': name,
             'price': price,
             'imageUri': uriNetwork,
-            'productId': productId
+            'productId': productId,
           };
         }).toList();
 
