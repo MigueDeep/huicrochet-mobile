@@ -26,7 +26,11 @@ class MyPaymentMethods extends StatefulWidget {
 
 class _MyPaymentMethodsState extends State<MyPaymentMethods> {
   int? selectedCardIndex;
+<<<<<<< Updated upstream
 
+=======
+  late String fullName = '';
+>>>>>>> Stashed changes
   late Future<List<PaymentCardModel>> _paymentMethodsFuture;
   final LoaderController _loaderController = LoaderController();
   String? idPayment;

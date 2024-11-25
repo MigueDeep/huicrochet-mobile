@@ -30,4 +30,9 @@ class Item {
       Image.fromJsonList(json['images'] as List<dynamic>),
     );
   }
+
+  @override
+  String toString() {
+    return 'Item{id: $_id, product: $_product, color: $_color, stock: $_stock, state: $_state, images: $_images}';
+  }
 }

@@ -217,11 +217,10 @@ class _MailingAddressCartState extends State<MailingAddressCart> {
                     MaterialPageRoute(
                       builder: (context) => PaymentMethods(
                         shoppingCart: widget.shoppingCart,
-                        idAddress: _selectedIndex >= 0
-                            ? addresses[_selectedIndex].id!
-                            : addresses
-                                .firstWhere((address) => address.defaultAddress)
-                                .id!,
+                        address: _selectedIndex >= 0
+                            ? addresses[_selectedIndex]
+                            : addresses.firstWhere(
+                                (address) => address.defaultAddress),
                         getPaymentMethod: widget.getPaymentMethod,
                       ),
                     ),

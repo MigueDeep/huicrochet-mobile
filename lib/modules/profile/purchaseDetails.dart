@@ -1,29 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:huicrochet_mobile/modules/entities/address.dart';
 import 'package:huicrochet_mobile/modules/entities/cart.dart';
+import 'package:huicrochet_mobile/modules/payment-methods/models/payment_method_model.dart';
+import 'package:huicrochet_mobile/widgets/general/general_button.dart';
+import 'package:huicrochet_mobile/widgets/general/loader.dart';
 import 'package:huicrochet_mobile/widgets/payment/purchase_progress_bar.dart';
+import 'package:huicrochet_mobile/widgets/product/product_display_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PurchasedetailsScreen extends StatefulWidget {
   final Cart shoppingCart;
-  final String idAddress;
-  final String idPayment;
+  final Address address;
+  final PaymentCardModel payment;
 
   const PurchasedetailsScreen(
       {super.key,
       required this.shoppingCart,
-      required this.idAddress,
-      required this.idPayment});
+      required this.address,
+      required this.payment});
 
   @override
   _PurchasedetailsScreenState createState() => _PurchasedetailsScreenState();
 }
 
 class _PurchasedetailsScreenState extends State<PurchasedetailsScreen> {
+  final LoaderController _loaderController = LoaderController();
+  String fullName = '';
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    print(
-        'Parametros obtenidos: ${widget.shoppingCart.id} ${widget.idAddress} ${widget.idPayment}');
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loaderController.show(context);
+      _fetchData();
+    });
+  }
+
+  Future<void> _fetchData() async {
+    final prefs = await SharedPreferences.getInstance();
+    fullName = prefs.getString('fullName') ?? '';
+    try {
+      final userId = prefs.getString('userId') ?? '';
+
+      _loaderController.hide();
+    } catch (e) {
+      print('Error fetching data: $e');
+      _loaderController.hide();
+    } finally {
+      _loaderController.hide();
+    }
   }
 
   @override
@@ -33,116 +59,41 @@ class _PurchasedetailsScreenState extends State<PurchasedetailsScreen> {
       appBar: const PurchaseProgressBar(currentStep: '3'),
       body: Column(
         children: [
+          // Sección de productos
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Productos',
+                textAlign: TextAlign.start,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+            ],
+          ),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Sección de productos
-                  const Text(
-                    'Productos',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          image: const DecorationImage(
-                            image: AssetImage('assets/hellokitty.jpg'),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            Text(
-                              'Peluche Hello Kitty',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 16,
-                                  fontFamily: 'Poppins'),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              'Rosa x1',
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey,
-                                  fontFamily: 'Poppins'),
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              'MXN125.00',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey,
-                                fontFamily: 'Poppins',
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          image: const DecorationImage(
-                            image: AssetImage('assets/bolsa.jpg'),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            Text(
-                              'Bolso de hombro con solapa de PU con compartimento',
-                              style: TextStyle(
-                                fontWeight: FontWeight.normal,
-                                fontSize: 16,
-                                fontFamily: 'Poppins',
-                              ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              'MXN125.00',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontFamily: 'Poppins',
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                  // Lista dinámica de productos
+                  ...widget.shoppingCart.cartItems.map((cartItem) {
+                    final product = cartItem.item.product;
+                    final color = cartItem.item.color.colorName;
+                    return ProductItem(
+                      image: cartItem.item.images.isNotEmpty
+                          ? cartItem.item.images[0].imageUri
+                          : 'assets/hellokitty.jpg',
+                      productName: product.productName,
+                      color: color,
+                      quantity: cartItem.quantity,
+                      price: product.price.toDouble(),
+                    );
+                  }).toList(),
                   const SizedBox(height: 32),
                 ],
               ),
@@ -157,7 +108,7 @@ class _PurchasedetailsScreenState extends State<PurchasedetailsScreen> {
                 const SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
+                  children: [
                     Text(
                       'Total:',
                       style: TextStyle(
@@ -167,7 +118,7 @@ class _PurchasedetailsScreenState extends State<PurchasedetailsScreen> {
                       ),
                     ),
                     Text(
-                      'MXN577.00',
+                      '\$${widget.shoppingCart.total.toStringAsFixed(2)}',
                       style: TextStyle(
                         fontSize: 16,
                         fontFamily: 'Poppins',
@@ -177,25 +128,13 @@ class _PurchasedetailsScreenState extends State<PurchasedetailsScreen> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.all(16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        backgroundColor: const Color.fromRGBO(242, 148, 165, 1),
-                      ),
-                      onPressed: () => {},
-                      child: const Text('Confirmar y pagar',
-                          style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.white,
-                              fontFamily: 'Poppins')),
-                    )),
-                const SizedBox(height: 16),
+                GeneralButton(
+                  text: 'Confirmar y pagar',
+                  onPressed: () {
+                    print('Confirmar y pagar');
+                  },
+                ),
+                const SizedBox(height: 5),
                 const Divider(height: 32, thickness: 1),
                 const SizedBox(height: 16),
                 const Text(
@@ -208,23 +147,23 @@ class _PurchasedetailsScreenState extends State<PurchasedetailsScreen> {
                 ),
                 const SizedBox(height: 16),
                 Row(
-                  children: const [
+                  children: [
                     Icon(Icons.person, color: Colors.grey),
                     SizedBox(width: 8),
                     Text(
-                      'Ava Johnson 7772378162',
+                      fullName,
                       style: TextStyle(fontSize: 14, fontFamily: 'Poppins'),
                     ),
                   ],
                 ),
                 const SizedBox(height: 16),
                 Row(
-                  children: const [
+                  children: [
                     Icon(Icons.location_on, color: Colors.grey),
                     SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'Av. Coahuila 475 Col. Pablo T. B. En una reja negra justo en la curva...',
+                        '${widget.address.street} ${widget.address.number}, ${widget.address.district}, ${widget.address.city}, ${widget.address.state}, ${widget.address.zipCode}',
                         style: TextStyle(fontSize: 14, fontFamily: 'Poppins'),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -234,12 +173,12 @@ class _PurchasedetailsScreenState extends State<PurchasedetailsScreen> {
                 ),
                 const SizedBox(height: 16),
                 Row(
-                  children: const [
+                  children: [
                     Icon(Icons.credit_card, color: Colors.grey),
                     SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'Método de pago: Mastercard con terminación 578',
+                        'Método de pago: Mastercard con terminación ${widget.payment.last4Numbers}',
                         style: TextStyle(fontSize: 14, fontFamily: 'Poppins'),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -247,6 +186,23 @@ class _PurchasedetailsScreenState extends State<PurchasedetailsScreen> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  child: Text(
+                    'Por favor revise sus datos antes de confirmar',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontFamily: 'Poppins',
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
               ],
             ),
           ),
