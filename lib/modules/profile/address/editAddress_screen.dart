@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/config/dio_client.dart';
 import 'package:huicrochet_mobile/config/error_state.dart';
+import 'package:huicrochet_mobile/config/global_variables.dart';
 import 'package:huicrochet_mobile/widgets/general/loader.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -35,6 +36,7 @@ class _EditadressScreenState extends State<EditadressScreen> {
   String? initialState;
   String? initialPhoneNumber;
   bool isButtonEnabled = false;
+  bool isDefaultAddress = false;
 
   Future<void> getAddress() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -196,6 +198,7 @@ class _EditadressScreenState extends State<EditadressScreen> {
   Future<void> updateAddress() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final dio = DioClient(context).dio;
+    print('que verga eres $isDefaultAddress');
 
     try {
       final data = {
@@ -208,7 +211,6 @@ class _EditadressScreenState extends State<EditadressScreen> {
         'street': _streetController.text,
         'number': _numberController.text,
         'phoneNumber': _phoneNumberController.text,
-        'defaultAddress': false,
         'status': true
       };
 
@@ -268,12 +270,6 @@ class _EditadressScreenState extends State<EditadressScreen> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           title: Text('Editar dirección'),
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pushReplacementNamed(context, '/addresses');
-            },
-          ),
           backgroundColor: Colors.white,
           elevation: 0,
           iconTheme: IconThemeData(color: Colors.black),
@@ -290,8 +286,7 @@ class _EditadressScreenState extends State<EditadressScreen> {
                       children: [
                         Text('Calle:',
                             style: TextStyle(
-                                fontFamily: 'Poppins',
-                                color: Color.fromRGBO(130, 48, 56, 1))),
+                                fontFamily: 'Poppins', color: colors['wine'])),
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: _streetController,
@@ -299,6 +294,7 @@ class _EditadressScreenState extends State<EditadressScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
+                            prefixIcon: Icon(Icons.streetview),
                           ),
                           validator: _validateStreet,
                           onTap: () {
@@ -317,8 +313,7 @@ class _EditadressScreenState extends State<EditadressScreen> {
                                   Text('Número de casa:',
                                       style: TextStyle(
                                           fontFamily: 'Poppins',
-                                          color:
-                                              Color.fromRGBO(130, 48, 56, 1))),
+                                          color: colors['wine'])),
                                   const SizedBox(height: 8),
                                   TextFormField(
                                     keyboardType: TextInputType.number,
@@ -329,6 +324,7 @@ class _EditadressScreenState extends State<EditadressScreen> {
                                         borderRadius:
                                             BorderRadius.circular(8.0),
                                       ),
+                                      prefixIcon: Icon(Icons.home),
                                     ),
                                     validator: _validateNumber,
                                     onTap: () {
@@ -348,8 +344,7 @@ class _EditadressScreenState extends State<EditadressScreen> {
                                   Text('Código postal:',
                                       style: TextStyle(
                                           fontFamily: 'Poppins',
-                                          color:
-                                              Color.fromRGBO(130, 48, 56, 1))),
+                                          color: colors['wine'])),
                                   const SizedBox(height: 8),
                                   TextFormField(
                                     keyboardType: TextInputType.number,
@@ -360,6 +355,7 @@ class _EditadressScreenState extends State<EditadressScreen> {
                                         borderRadius:
                                             BorderRadius.circular(8.0),
                                       ),
+                                      prefixIcon: Icon(Icons.location_city),
                                     ),
                                     validator: _validateZipCode,
                                     onTap: () {
@@ -376,8 +372,7 @@ class _EditadressScreenState extends State<EditadressScreen> {
                         const SizedBox(height: 16),
                         Text('Ciudad:',
                             style: TextStyle(
-                                fontFamily: 'Poppins',
-                                color: Color.fromRGBO(130, 48, 56, 1))),
+                                fontFamily: 'Poppins', color: colors['wine'])),
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: _cityController,
@@ -385,6 +380,7 @@ class _EditadressScreenState extends State<EditadressScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
+                            prefixIcon: Icon(Icons.location_city),
                           ),
                           validator: _validateCity,
                           onTap: () {
@@ -396,8 +392,7 @@ class _EditadressScreenState extends State<EditadressScreen> {
                         const SizedBox(height: 16),
                         Text('Distrito:',
                             style: TextStyle(
-                                fontFamily: 'Poppins',
-                                color: Color.fromRGBO(130, 48, 56, 1))),
+                                fontFamily: 'Poppins', color: colors['wine'])),
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: _disctrictController,
@@ -405,6 +400,7 @@ class _EditadressScreenState extends State<EditadressScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
+                            prefixIcon: Icon(Icons.location_city),
                           ),
                           validator: _validateDistrict,
                           onTap: () {
@@ -416,8 +412,7 @@ class _EditadressScreenState extends State<EditadressScreen> {
                         const SizedBox(height: 16),
                         Text('Estado:',
                             style: TextStyle(
-                                fontFamily: 'Poppins',
-                                color: Color.fromRGBO(130, 48, 56, 1))),
+                                fontFamily: 'Poppins', color: colors['wine'])),
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: _stateController,
@@ -425,6 +420,7 @@ class _EditadressScreenState extends State<EditadressScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
+                            prefixIcon: Icon(Icons.location_city),
                           ),
                           validator: _validateState,
                           onTap: () {
@@ -436,8 +432,7 @@ class _EditadressScreenState extends State<EditadressScreen> {
                         SizedBox(height: 16),
                         Text('Número de teléfono:',
                             style: TextStyle(
-                                fontFamily: 'Poppins',
-                                color: Color.fromRGBO(130, 48, 56, 1))),
+                                fontFamily: 'Poppins', color: colors['wine'])),
                         const SizedBox(height: 8),
                         TextFormField(
                           keyboardType: TextInputType.number,
@@ -446,6 +441,9 @@ class _EditadressScreenState extends State<EditadressScreen> {
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            prefixIcon: Icon(
+                              Icons.phone,
                             ),
                           ),
                           validator: _validatePhoneNumber,
@@ -464,8 +462,7 @@ class _EditadressScreenState extends State<EditadressScreen> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8.0),
                               ),
-                              backgroundColor:
-                                  const Color.fromRGBO(242, 148, 165, 1),
+                              backgroundColor: colors['violet'],
                             ),
                             onPressed: isButtonEnabled
                                 ? () {

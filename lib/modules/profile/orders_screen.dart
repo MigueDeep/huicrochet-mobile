@@ -139,7 +139,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                 style: TextStyle(
                   fontFamily: 'Poppins',
                   fontSize: 16,
-                  color: Color.fromRGBO(130, 48, 56, 1),
+                  color: colors['wine'],
                 ),
               ),
             ),

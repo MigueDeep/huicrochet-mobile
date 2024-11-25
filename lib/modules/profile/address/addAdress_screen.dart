@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/config/dio_client.dart';
 import 'package:huicrochet_mobile/config/error_state.dart';
+import 'package:huicrochet_mobile/config/global_variables.dart';
 import 'package:huicrochet_mobile/widgets/general/loader.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -183,12 +184,6 @@ class _AddadressScreenState extends State<AddadressScreen> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           title: Text('Agregar dirección'),
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
           backgroundColor: Colors.white,
           elevation: 0,
           iconTheme: IconThemeData(color: Colors.black),
@@ -205,8 +200,7 @@ class _AddadressScreenState extends State<AddadressScreen> {
                       children: [
                         Text('Calle:',
                             style: TextStyle(
-                                fontFamily: 'Poppins',
-                                color: Color.fromRGBO(130, 48, 56, 1))),
+                                fontFamily: 'Poppins', color: colors['wine'])),
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: _streetController,
@@ -214,6 +208,8 @@ class _AddadressScreenState extends State<AddadressScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
+                            hintText: 'Privete Drive',
+                            prefixIcon: Icon(Icons.streetview),
                           ),
                           validator: _validateStreet,
                           onTap: () {
@@ -232,8 +228,7 @@ class _AddadressScreenState extends State<AddadressScreen> {
                                   Text('Número de casa:',
                                       style: TextStyle(
                                           fontFamily: 'Poppins',
-                                          color:
-                                              Color.fromRGBO(130, 48, 56, 1))),
+                                          color: colors['wine'])),
                                   const SizedBox(height: 8),
                                   TextFormField(
                                     keyboardType: TextInputType.number,
@@ -244,6 +239,8 @@ class _AddadressScreenState extends State<AddadressScreen> {
                                         borderRadius:
                                             BorderRadius.circular(8.0),
                                       ),
+                                      hintText: '24',
+                                      prefixIcon: Icon(Icons.house),
                                     ),
                                     validator: _validateNumber,
                                     onTap: () {
@@ -263,8 +260,7 @@ class _AddadressScreenState extends State<AddadressScreen> {
                                   Text('Código postal:',
                                       style: TextStyle(
                                           fontFamily: 'Poppins',
-                                          color:
-                                              Color.fromRGBO(130, 48, 56, 1))),
+                                          color: colors['wine'])),
                                   const SizedBox(height: 8),
                                   TextFormField(
                                     keyboardType: TextInputType.number,
@@ -275,6 +271,8 @@ class _AddadressScreenState extends State<AddadressScreen> {
                                         borderRadius:
                                             BorderRadius.circular(8.0),
                                       ),
+                                      hintText: '12345',
+                                      prefixIcon: Icon(Icons.location_city),
                                     ),
                                     validator: _validateZipCode,
                                     onTap: () {
@@ -291,8 +289,7 @@ class _AddadressScreenState extends State<AddadressScreen> {
                         const SizedBox(height: 16),
                         Text('Ciudad:',
                             style: TextStyle(
-                                fontFamily: 'Poppins',
-                                color: Color.fromRGBO(130, 48, 56, 1))),
+                                fontFamily: 'Poppins', color: colors['wine'])),
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: _cityController,
@@ -300,6 +297,8 @@ class _AddadressScreenState extends State<AddadressScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
+                            hintText: 'Londres',
+                            prefixIcon: Icon(Icons.location_city),
                           ),
                           validator: _validateCity,
                           onTap: () {
@@ -311,8 +310,7 @@ class _AddadressScreenState extends State<AddadressScreen> {
                         const SizedBox(height: 16),
                         Text('Distrito:',
                             style: TextStyle(
-                                fontFamily: 'Poppins',
-                                color: Color.fromRGBO(130, 48, 56, 1))),
+                                fontFamily: 'Poppins', color: colors['wine'])),
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: _disctrictController,
@@ -320,6 +318,8 @@ class _AddadressScreenState extends State<AddadressScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
+                            hintText: 'Privet',
+                            prefixIcon: Icon(Icons.location_city),
                           ),
                           validator: _validateDistrict,
                           onTap: () {
@@ -331,8 +331,7 @@ class _AddadressScreenState extends State<AddadressScreen> {
                         const SizedBox(height: 16),
                         Text('Estado:',
                             style: TextStyle(
-                                fontFamily: 'Poppins',
-                                color: Color.fromRGBO(130, 48, 56, 1))),
+                                fontFamily: 'Poppins', color: colors['wine'])),
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: _stateController,
@@ -340,6 +339,8 @@ class _AddadressScreenState extends State<AddadressScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
+                            hintText: 'Little Whinging',
+                            prefixIcon: Icon(Icons.location_city),
                           ),
                           validator: _validateState,
                           onTap: () {
@@ -351,8 +352,7 @@ class _AddadressScreenState extends State<AddadressScreen> {
                         SizedBox(height: 16),
                         Text('Número de teléfono de quien recibe:',
                             style: TextStyle(
-                                fontFamily: 'Poppins',
-                                color: Color.fromRGBO(130, 48, 56, 1))),
+                                fontFamily: 'Poppins', color: colors['wine'])),
                         const SizedBox(height: 8),
                         TextFormField(
                           keyboardType: TextInputType.number,
@@ -362,6 +362,8 @@ class _AddadressScreenState extends State<AddadressScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
+                            hintText: '1234567890',
+                            prefixIcon: Icon(Icons.phone),
                           ),
                           validator: _validatePhoneNumber,
                           onTap: () {
@@ -379,8 +381,7 @@ class _AddadressScreenState extends State<AddadressScreen> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8.0),
                               ),
-                              backgroundColor:
-                                  const Color.fromRGBO(242, 148, 165, 1),
+                              backgroundColor: colors['violet'],
                             ),
                             onPressed: () {
                               setState(() {

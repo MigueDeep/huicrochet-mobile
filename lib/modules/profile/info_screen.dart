@@ -261,7 +261,7 @@ class _InfoScreenState extends State<InfoScreen> {
                       String initials =
                           name != null ? getInitials(name!) : '??';
                       return CircleAvatar(
-                        backgroundColor: const Color.fromRGBO(242, 148, 165, 1),
+                        backgroundColor: colors['pink'],
                         child: Text(initials,
                             style: TextStyle(color: Colors.white)),
                       );
@@ -284,7 +284,7 @@ class _InfoScreenState extends State<InfoScreen> {
                       style: TextStyle(
                           fontFamily: 'Poppins',
                           fontSize: 16,
-                          color: Color.fromRGBO(130, 48, 56, 1))),
+                          color: colors['wine'])),
                 ),
                 Divider(),
                 Container(
@@ -294,8 +294,7 @@ class _InfoScreenState extends State<InfoScreen> {
                       children: [
                         Text('Nombre:',
                             style: TextStyle(
-                                fontFamily: 'Poppins',
-                                color: Color.fromRGBO(130, 48, 56, 1))),
+                                fontFamily: 'Poppins', color: colors['wine'])),
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: _nameController,
@@ -309,8 +308,7 @@ class _InfoScreenState extends State<InfoScreen> {
                         const SizedBox(height: 24),
                         Text('Correo:',
                             style: TextStyle(
-                                fontFamily: 'Poppins',
-                                color: Color.fromRGBO(130, 48, 56, 1))),
+                                fontFamily: 'Poppins', color: colors['wine'])),
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: _emailController,
@@ -324,8 +322,7 @@ class _InfoScreenState extends State<InfoScreen> {
                         const SizedBox(height: 24),
                         Text('Fecha de nacimiento:',
                             style: TextStyle(
-                                fontFamily: 'Poppins',
-                                color: Color.fromRGBO(130, 48, 56, 1))),
+                                fontFamily: 'Poppins', color: colors['wine'])),
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: _birthdayController,
@@ -347,8 +344,7 @@ class _InfoScreenState extends State<InfoScreen> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8.0),
                               ),
-                              backgroundColor:
-                                  const Color.fromRGBO(242, 148, 165, 1),
+                              backgroundColor: colors['violet'],
                             ),
                             onPressed:
                                 _isEdited && _isValid ? updateProfile : null,

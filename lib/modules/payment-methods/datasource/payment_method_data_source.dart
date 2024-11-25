@@ -52,6 +52,8 @@ class PaymentMethodRemoteDataSourceImpl
           throw Exception(
               "Error fetching payment methods: ${jsonData['message']}");
         }
+      } else if (response.statusCode == 404) {
+        return [];
       } else {
         throw Exception(
             "Error fetching payment methods, status code: ${response.statusCode}");

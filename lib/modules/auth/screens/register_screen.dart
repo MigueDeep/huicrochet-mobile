@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/config/dio_client.dart';
 import 'package:huicrochet_mobile/config/error_state.dart';
+import 'package:huicrochet_mobile/config/global_variables.dart';
 import 'package:huicrochet_mobile/widgets/general/general_button.dart';
 import 'package:huicrochet_mobile/widgets/general/image_picker.dart';
 import 'package:huicrochet_mobile/widgets/general/loader.dart';
@@ -151,13 +152,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
+                  Text(
                     'HUICROCHET',
                     style: TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Color.fromRGBO(130, 48, 56, 1),
+                      color: colors['wine'],
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -179,7 +180,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             style: TextStyle(
                               fontFamily: 'Poppins',
                               fontSize: 16,
-                              color: Color.fromRGBO(130, 48, 56, 1),
+                              color: colors['wine'],
                             ),
                           ),
                         ),
@@ -193,7 +194,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               fontFamily: 'Poppins',
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
-                              color: Color.fromRGBO(130, 48, 56, 1),
+                              color: colors['wine'],
                             ),
                           ),
                         ),
@@ -206,7 +207,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             style: TextStyle(
                               fontFamily: 'Poppins',
                               fontSize: 14,
-                              color: Color.fromRGBO(130, 48, 56, 1),
+                              color: colors['wine'],
                             ),
                           ),
                         ),
@@ -267,7 +268,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             suffixIcon: IconButton(
                               icon: Icon(
-                                color: const Color.fromRGBO(130, 48, 56, 1),
+                                color: colors['wine'],
                                 _isObscured
                                     ? Icons.visibility_off
                                     : Icons.visibility,
@@ -297,7 +298,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             suffixIcon: IconButton(
                               icon: Icon(
-                                color: const Color.fromRGBO(130, 48, 56, 1),
+                                color: colors['wine'],
                                 _isObscured2
                                     ? Icons.visibility_off
                                     : Icons.visibility,
@@ -372,7 +373,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         GeneralButton(
                             text: 'Registrarse',
                             onPressed: () async {
-                               _loaderController.show(context);
+                              _loaderController.show(context);
                               setState(() {
                                 _nameTouched = true;
                                 _emailTouched = true;
@@ -381,9 +382,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 _birthdayTouched = true;
                               });
                               if (_formKey.currentState!.validate()) {
-                                await _register(_emailController, _passwordController, _nameController, _birthdayController, context, image_profile);
+                                await _register(
+                                    _emailController,
+                                    _passwordController,
+                                    _nameController,
+                                    _birthdayController,
+                                    context,
+                                    image_profile);
                                 _loaderController.hide();
-                              }else{
+                              } else {
                                 _loaderController.hide();
                               }
                             }),
@@ -399,11 +406,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               onTap: () {
                                 Navigator.pushNamed(context, '/login');
                               },
-                              child: const Text(
+                              child: Text(
                                 'Iniciar sesión',
                                 style: TextStyle(
                                   fontFamily: 'Poppins',
-                                  color: Color.fromRGBO(130, 48, 56, 1),
+                                  color: colors['wine'],
                                 ),
                               ),
                             ),
@@ -420,6 +427,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         )));
   }
 }
+
 Future _register(
   TextEditingController _emailController,
   TextEditingController _passwordController,
@@ -431,10 +439,22 @@ Future _register(
   final dio = DioClient(context).dio;
 
   try {
-    String birthday = _birthdayController.text; 
-    List<String> parts = birthday.split('/'); 
-    String formattedBirthday = '${parts[2]}-${parts[1]}-${parts[0]}'; 
+    String birthday = _birthdayController.text;
+    List<String> parts = birthday.split('/');
+    String formattedBirthday = '${parts[2]}-${parts[1]}-${parts[0]}';
 
+    if (profileImage != null) {
+      String extension = profileImage.path.split('.').last.toLowerCase();
+      if (!['jpg', 'jpeg', 'png'].contains(extension)) {
+        throw Exception('El formato de la imagen no es válido. Solo se permiten jpg, jpeg y png.');
+      }
+    }
+
+String filename = profileImage != null
+    ? profileImage.path.split('/').last
+    : '';
+
+String mimeType = 'image/jpeg'; 
     FormData formData = FormData.fromMap({
       'user': jsonEncode({
         'fullName': _nameController.text,
@@ -447,7 +467,8 @@ Future _register(
       if (profileImage != null)
         'profileImage': await MultipartFile.fromFile(
           profileImage.path,
-          filename: 'profileImage.jpg',
+          filename: filename,
+          contentType: DioMediaType.parse(mimeType),
         ),
     });
 
@@ -477,19 +498,19 @@ Future _register(
       );
     }
   } catch (e) {
-  final errorState = Provider.of<ErrorState>(context, listen: false);
+    final errorState = Provider.of<ErrorState>(context, listen: false);
 
-  if (e is DioException) {
-    if (e.response?.statusCode == 400) {
-      String errorMessage = e.response?.data['message'] ?? 'Error desconocido';
-      errorState.setError(errorMessage); 
+    if (e is DioException) {
+      if (e.response?.statusCode == 400) {
+        String errorMessage =
+            e.response?.data['message'] ?? 'Error desconocido';
+        errorState.setError(errorMessage);
+      } else {
+        errorState.setError('Error de conexión');
+      }
     } else {
-      errorState.setError('Error de conexión');
+      errorState.setError('Error inesperado: $e');
     }
-  } else {
-    errorState.setError('Error inesperado: $e');
+    errorState.showErrorDialog(context);
   }
-  errorState.showErrorDialog(context);
-}
-
 }

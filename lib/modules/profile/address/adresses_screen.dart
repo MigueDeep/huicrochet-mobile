@@ -9,6 +9,7 @@ import 'package:huicrochet_mobile/config/global_variables.dart';
 import 'package:huicrochet_mobile/modules/entities/address.dart';
 import 'package:huicrochet_mobile/modules/entities/user.dart';
 import 'package:huicrochet_mobile/modules/profile/address/editAddress_screen.dart';
+import 'package:huicrochet_mobile/widgets/general/action_sheet.dart';
 import 'package:huicrochet_mobile/widgets/general/loader.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -24,6 +25,7 @@ class _AddressesScreenState extends State<AddressesScreen> {
   List<Address> addresses = [];
   String? name;
   String? userImg;
+  bool content = false;
   final LoaderController _loaderController = LoaderController();
 
   @override
@@ -92,18 +94,23 @@ class _AddressesScreenState extends State<AddressesScreen> {
               );
             }).toList();
             _loaderController.hide();
+            setState(() {
+              content = true;
+            });
           } catch (e) {
             print('Error específico al mapear los datos: $e');
             final errorState = Provider.of<ErrorState>(context, listen: false);
             errorState.setError('Error al procesar las direcciones.');
             errorState.showErrorDialog(context);
             setState(() {
+              content = false;
               _loaderController.hide();
             });
           }
         });
       } else if (response.statusCode == 204) {
         setState(() {
+          content = false;
           _loaderController.hide();
         });
       }
@@ -116,7 +123,11 @@ class _AddressesScreenState extends State<AddressesScreen> {
       errorState.showErrorDialog(context);
       setState(() {
         _loaderController.hide();
+        content = false;
       });
+    } finally {
+      print('variable: $content');
+      _loaderController.hide();
     }
   }
 
@@ -256,17 +267,59 @@ class _AddressesScreenState extends State<AddressesScreen> {
     return initials.length > 2 ? initials.substring(0, 2) : initials;
   }
 
+  void _mostrarAddressSheet(BuildContext context, Address address) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return ActionSheet(
+          title: '¿Qué deseas hacer con esta dirección de envío?',
+          actions: [
+            ActionItem(
+              icon: Icons.edit,
+              iconColor: colors['brown']!,
+              label: 'Editar',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditadressScreen(
+                      address: address.id ?? '',
+                    ),
+                  ),
+                );
+              },
+            ),
+            ActionItem(
+              icon: Icons.delete,
+              iconColor: colors['brown']!,
+              label: 'Eliminar',
+              onTap: () {
+                Navigator.pop(context);
+                alertConfirm(address.id ?? '');
+              },
+            ),
+            if (!address.defaultAddress)
+              ActionItem(
+                icon: Icons.check,
+                iconColor: colors['pink']!,
+                label: 'Hacer predeterminada',
+                onTap: () {
+                  Navigator.pop(context);
+                  alertConfirmDefault(address.id ?? '');
+                },
+              ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pushReplacementNamed(context, '/navigation');
-          },
-        ),
+        automaticallyImplyLeading: true,
         title: Text('Direcciones'),
         backgroundColor: Colors.white,
         elevation: 0,
@@ -310,7 +363,7 @@ class _AddressesScreenState extends State<AddressesScreen> {
                 style: TextStyle(
                   fontFamily: 'Poppins',
                   fontSize: 16,
-                  color: Color.fromRGBO(130, 48, 56, 1),
+                  color: colors['wine'],
                 ),
               ),
             ),
@@ -320,34 +373,75 @@ class _AddressesScreenState extends State<AddressesScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  for (var address in addresses)
-                    Column(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            border: address.defaultAddress
-                                ? Border.all(
-                                    color:
-                                        const Color.fromRGBO(242, 148, 165, 1),
-                                    width: 2.0)
-                                : null,
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    if (address.defaultAddress)
-                                      Container(
-                                        padding: EdgeInsets.all(4.0),
+                  if (!content)
+                    Center(
+                      child: Text(
+                        'No hay direcciones de envío registradas',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 16,
+                          color: Colors.black,
+                        ),
+                      ),
+                    )
+                  else
+                    for (var address in addresses)
+                      GestureDetector(
+                        onTap: () => _mostrarAddressSheet(context, address),
+                        child: Column(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                border: address.defaultAddress
+                                    ? Border.all(
+                                        color: const Color.fromRGBO(
+                                            242, 148, 165, 1),
+                                        width: 2.0)
+                                    : null,
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          '${address.number} ${address.street}',
+                                          style: TextStyle(
+                                            fontFamily: 'Poppins',
+                                            fontSize: 16,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        Text(
+                                          '${address.zipCode} ${address.city} ${address.state}',
+                                          style: TextStyle(
+                                            fontFamily: 'Poppins',
+                                            fontSize: 16,
+                                            color: Colors.blueGrey,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  if (address.defaultAddress)
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(right: 10.0),
+                                      child: Container(
+                                        padding: const EdgeInsets.all(4.0),
                                         decoration: BoxDecoration(
-                                            color: Color.fromRGBO(
-                                                242, 148, 165, 1),
-                                            borderRadius:
-                                                BorderRadius.circular(4.0)),
-                                        child: Text(
+                                          color: const Color.fromRGBO(
+                                              242, 148, 165, 1),
+                                          borderRadius:
+                                              BorderRadius.circular(4.0),
+                                        ),
+                                        child: const Text(
                                           'Default',
                                           style: TextStyle(
                                             fontFamily: 'Poppins',
@@ -356,74 +450,14 @@ class _AddressesScreenState extends State<AddressesScreen> {
                                           ),
                                         ),
                                       ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      '${address.number} ${address.street}',
-                                      style: TextStyle(
-                                        fontFamily: 'Poppins',
-                                        fontSize: 16,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w600,
-                                      ),
                                     ),
-                                    Text(
-                                      '${address.zipCode} ${address.city} ${address.state}',
-                                      style: TextStyle(
-                                        fontFamily: 'Poppins',
-                                        fontSize: 16,
-                                        color: Colors.blueGrey,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                ],
                               ),
-                              PopupMenuButton<String>(
-                                onSelected: (value) {
-                                  if (value == 'edit') {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => EditadressScreen(
-                                          address: address.id ?? '',
-                                        ),
-                                      ),
-                                    );
-                                  } else if (value == 'delete') {
-                                    setState(() {
-                                      alertConfirm(address.id ?? '');
-                                    });
-                                  } else if (value == 'default') {
-                                    setState(() {
-                                      alertConfirmDefault(address.id ?? '');
-                                    });
-                                  }
-                                },
-                                itemBuilder: (BuildContext context) {
-                                  return [
-                                    PopupMenuItem(
-                                      value: 'edit',
-                                      child: Text('Editar'),
-                                    ),
-                                    PopupMenuItem(
-                                      value: 'delete',
-                                      child: Text('Eliminar'),
-                                    ),
-                                    if (!address.defaultAddress)
-                                      PopupMenuItem(
-                                        value: 'default',
-                                        child: Text('Hacer predeterminada'),
-                                      ),
-                                  ];
-                                },
-                                icon:
-                                    Icon(Icons.more_horiz, color: Colors.grey),
-                              ),
-                            ],
-                          ),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
                         ),
-                        const SizedBox(height: 12),
-                      ],
-                    ),
+                      ),
                   const SizedBox(height: 30),
                   SizedBox(
                     width: double.infinity,
@@ -433,16 +467,16 @@ class _AddressesScreenState extends State<AddressesScreen> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
-                        backgroundColor: Colors.white,
+                        backgroundColor: colors['violet'],
                       ),
                       onPressed: () {
                         Navigator.pushNamed(context, '/addAddress');
                       },
-                      child: const Text(
+                      child: Text(
                         'Agregar dirección',
                         style: TextStyle(
                           fontSize: 16,
-                          color: Color.fromRGBO(130, 48, 56, 1),
+                          color: Colors.white,
                           fontFamily: 'Poppins',
                         ),
                       ),

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/modules/home/home_screen.dart';
+import 'package:huicrochet_mobile/modules/payment-methods/use_cases/get_payment.dart';
 import 'package:huicrochet_mobile/modules/product/datasource/product_remote_data_source.dart';
 import 'package:huicrochet_mobile/modules/product/repositories/product_repository.dart';
 import 'package:huicrochet_mobile/modules/product/screens/products_screen.dart';
@@ -10,7 +11,8 @@ import 'package:huicrochet_mobile/modules/profile/profile_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class Navigation extends StatefulWidget {
-  const Navigation({super.key});
+  const Navigation({super.key, required this.getPaymentMethod});
+  final GetPayment getPaymentMethod;
 
   @override
   State<Navigation> createState() => _NavigationState();
@@ -20,7 +22,8 @@ class _NavigationState extends State<Navigation> {
   int _selectedIndex = 0;
 
   // Dio client for network requests
-  final dioClient = Dio(BaseOptions(baseUrl: 'http://192.168.107.138:8080/api-crochet'));
+  final dioClient =
+      Dio(BaseOptions(baseUrl: 'http://192.168.107.138:8080/api-crochet'));
 
   // Use case for fetching products, initialized in initState
   late final FetchProductsData getProductsUseCase;
@@ -29,8 +32,10 @@ class _NavigationState extends State<Navigation> {
   void initState() {
     super.initState();
     // Initialize data source and repository, then assign the use case
-    final productRemoteDataSource = ProductRemoteDataSourceImpl(dioClient: dioClient);
-    final productRepository = ProductRepositoryImpl(remoteDataSource: productRemoteDataSource);
+    final productRemoteDataSource =
+        ProductRemoteDataSourceImpl(dioClient: dioClient);
+    final productRepository =
+        ProductRepositoryImpl(remoteDataSource: productRemoteDataSource);
     getProductsUseCase = FetchProductsData(repository: productRepository);
   }
 
@@ -43,11 +48,11 @@ class _NavigationState extends State<Navigation> {
 
   @override
   Widget build(BuildContext context) {
-    // Screens for each tab with getProductsUseCase passed to ProductsScreen
     final List<Widget> _widgetOptions = <Widget>[
       const HomeScreen(),
-     const ProductsScreen(),
-      const ShoppingcartScreen(),
+      const ProductsScreen(),
+      ShoppingcartScreen(getPaymentMethod: widget.getPaymentMethod),
+      ProfileScreen(),
       const ProfileScreen()
     ];
 
@@ -55,7 +60,7 @@ class _NavigationState extends State<Navigation> {
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
-          canvasColor: Colors.white, 
+          canvasColor: Colors.white,
         ),
         child: BottomNavigationBar(
           items: <BottomNavigationBarItem>[

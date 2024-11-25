@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:huicrochet_mobile/config/global_variables.dart';
 
 class GeneralButton extends StatelessWidget {
   final String text;
@@ -20,7 +21,7 @@ class GeneralButton extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8.0),
           ),
-          backgroundColor: const Color.fromRGBO(242, 148, 165, 1),
+          backgroundColor: colors['violet'],
         ),
         onPressed: onPressed,
         child: Text(
