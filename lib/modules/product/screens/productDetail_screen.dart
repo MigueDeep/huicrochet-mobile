@@ -6,6 +6,8 @@ import 'package:huicrochet_mobile/config/global_variables.dart';
 import 'package:huicrochet_mobile/modules/product/providers/product_details_provider.dart';
 import 'package:huicrochet_mobile/widgets/general/loader.dart';
 import 'package:huicrochet_mobile/widgets/product/product_detail_loading.dart';
+import 'package:huicrochet_mobile/widgets/product/product_reviews.dart';
+import 'package:huicrochet_mobile/widgets/product/product_stars_average.dart';
 import 'package:huicrochet_mobile/widgets/product/select_colors.dart';
 import 'package:huicrochet_mobile/widgets/product/user_comment.dart';
 import 'package:provider/provider.dart';
@@ -133,6 +135,12 @@ class _ProductDetailState extends State<ProductDetail> {
 
   @override
   Widget build(BuildContext context) {
+    final args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, String>?;
+    final productId = args?['productId'] ?? '';
+    Provider.of<ProductDetailsProvider>(context, listen: false)
+        .fetchProductDetails(context, id: productId);
+
     return Consumer<ProductDetailsProvider>(
       builder: (context, provider, child) {
         if (provider.isLoading) {
@@ -220,20 +228,7 @@ class _ProductDetailState extends State<ProductDetail> {
                               color: Colors.black,
                             ),
                           ),
-                          Row(children: [
-                            Text(
-                              '4.5',
-                              style: const TextStyle(
-                                fontFamily: 'Poppins',
-                                fontSize: 16,
-                                color: Colors.grey,
-                              ),
-                            ),
-                            Icon(
-                              Icons.star_half,
-                              color: Colors.yellow,
-                            ),
-                          ]),
+                          StarAverage(productId: productId),
                         ],
                       ),
                       const SizedBox(height: 10),
@@ -266,12 +261,19 @@ class _ProductDetailState extends State<ProductDetail> {
                                   Icons.category,
                                   color: Colors.black,
                                 ),
-                                Text(
-                                  productData['categoryNames'][0],
-                                  style: const TextStyle(
-                                    fontFamily: 'Poppins',
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    productData['categoryNames']
+                                        .toSet()
+                                        .join(', '),
+                                    style: const TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -418,36 +420,7 @@ class _ProductDetailState extends State<ProductDetail> {
                       const SizedBox(
                         height: 20,
                       ),
-                      Container(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Comentarios (3)',
-                              style: TextStyle(
-                                fontFamily: 'Poppins',
-                                fontSize: 16,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            CommentWidget(
-                              username: 'Usuario123',
-                              date: '20 de octubre, 2024',
-                              description:
-                                  '¡Me encanta este producto! Es de excelente calidad.',
-                              rating: 4.5,
-                            ),
-                            CommentWidget(
-                              username: 'MariaLopez',
-                              date: '19 de octubre, 2024',
-                              description:
-                                  'Muy bueno, pero podría mejorar en algunos aspectos.',
-                              rating: 3.0,
-                            ),
-                          ],
-                        ),
-                      )
+                      ProductReviews(productId: productId)
                     ],
                   )),
             ),
