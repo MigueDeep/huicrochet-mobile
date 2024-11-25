@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 class CreditCard extends StatelessWidget {
   final String logoImage;
   final String cardType;
@@ -7,7 +8,7 @@ class CreditCard extends StatelessWidget {
   final String expiryDate;
   final Color startColor;
   final Color endColor;
-  final bool isSelected; 
+  final bool isSelected;
 
   const CreditCard({
     super.key,
@@ -37,9 +38,9 @@ class CreditCard extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
         border: isSelected
-            ? Border.all(color: const Color.fromRGBO(242, 148, 165, 1), width: 5) 
+            ? Border.all(
+                color: const Color.fromRGBO(242, 148, 165, 1), width: 4)
             : null,
-      
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

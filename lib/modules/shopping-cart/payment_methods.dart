@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:huicrochet_mobile/config/global_variables.dart';
 import 'package:huicrochet_mobile/modules/entities/cart.dart';
 import 'package:huicrochet_mobile/modules/payment-methods/models/payment_method_model.dart';
 import 'package:huicrochet_mobile/modules/payment-methods/use_cases/get_payment.dart';
@@ -33,6 +34,7 @@ class _PaymentMethodsState extends State<PaymentMethods> {
   late Future<List<PaymentCardModel>> _paymentMethodsFuture = Future.value([]);
   final LoaderController _loaderController = LoaderController();
   String? idPayment;
+  late String fullName;
 
   Future<void> _fetchPaymentMethods() async {
     try {
@@ -40,6 +42,7 @@ class _PaymentMethodsState extends State<PaymentMethods> {
       _asingSelectedCard(null);
       final prefs = await SharedPreferences.getInstance();
       final userId = prefs.getString('userId') ?? '';
+      fullName = prefs.getString('fullName') ?? '';
       final paymentCards = await widget.getPaymentMethod.call(userId);
       setState(() {
         _paymentMethodsFuture = Future.value(paymentCards
@@ -137,18 +140,16 @@ class _PaymentMethodsState extends State<PaymentMethods> {
                               child: CreditCard(
                                 logoImage: 'assets/mlogo.png',
                                 cardType: card.cardType ?? 'Crédito',
-                                ownerName: card.cardNumber.isNotEmpty
-                                    ? '**** **** **** ${card.last4Numbers}'
-                                    : 'No disponible',
+                                ownerName: fullName ?? 'Usuario',
                                 cardNumber:
                                     card.cardNumber ?? '1234567812345678',
                                 expiryDate:
                                     "${card.expirationDate.month.toString().padLeft(2, '0')}/${card.expirationDate.year.toString().substring(2, 4)}",
                                 startColor: card.cardType == 'debit'
-                                    ? const Color.fromARGB(255, 95, 95, 95)
+                                    ? colors['wine']!
                                     : const Color.fromARGB(255, 0, 27, 97),
                                 endColor: card.cardType == 'debit'
-                                    ? const Color.fromARGB(255, 186, 186, 186)
+                                    ? Color.fromRGBO(233, 159, 166, 0.555)
                                     : const Color.fromARGB(255, 168, 193, 255),
                                 isSelected: selectedCardIndex == index,
                               ),
