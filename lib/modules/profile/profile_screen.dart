@@ -210,7 +210,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     fontSize: 16,
                     color: colors['wine'])),
             onTap: () {
-              Navigator.pushNamed(context, '/info');
+              Navigator.pushReplacementNamed(context, '/info');
             },
           ),
           const Divider(),
