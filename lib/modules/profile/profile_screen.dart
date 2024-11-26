@@ -1,6 +1,13 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:huicrochet_mobile/config/dio_client.dart';
+import 'package:huicrochet_mobile/config/error_state.dart';
 import 'package:huicrochet_mobile/config/global_variables.dart';
 import 'package:huicrochet_mobile/widgets/general/general_button.dart';
+import 'package:huicrochet_mobile/widgets/general/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -13,12 +20,14 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   String? fullName;
   String? userImg;
+  File? image_profile;
 
   Future<void> getProfile() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final imagePath = prefs.getString('userImg');
     final imageName = imagePath?.split('/').last;
-    final profileImage = 'http://${ip}:8080/$imageName';
+    final profileImage = 'http://$ip:8080/$imageName';
+
     setState(() {
       fullName = prefs.getString('fullName');
       userImg = profileImage;
@@ -91,43 +100,83 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: Column(
         children: [
           const SizedBox(height: 32),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(50),
-            child: userImg != null
-                ? Image.network(
-                    userImg!,
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      String initials =
-                          fullName != null ? getInitials(fullName!) : '??';
-                      return CircleAvatar(
-                        backgroundColor: colors['wine'],
-                        child: Text(
-                          initials,
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      );
-                    },
-                  )
-                : Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: colors['wine'],
-                      borderRadius: BorderRadius.circular(40),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(40),
-                      child: Image.asset(
-                        'assets/logo.png', // Imagen por defecto
-                        width: 40,
-                        height: 40,
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(50),
+                child: userImg != null
+                    ? Image.network(
+                        userImg!,
+                        width: 100,
+                        height: 100,
                         fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          String initials =
+                              fullName != null ? getInitials(fullName!) : '??';
+                          return CircleAvatar(
+                            backgroundColor: colors['wine'],
+                            child: Text(
+                              initials,
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          );
+                        },
+                      )
+                    : Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          color: colors['wine'],
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(50),
+                          child: Image.asset(
+                            'assets/logo.png', 
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                       ),
+              ),
+              Positioned(
+                bottom: 5.0,
+                right: 5.0,
+                child: Container(
+                  width: 30,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    color: colors['violet'],
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 4,
+                        offset: Offset(2, 2),
+                      ),
+                    ],
+                  ),
+                  child: IconButton(
+                    icon: Icon(Icons.edit),
+                    iconSize: 20.0,
+                    color: Colors.white,
+                    onPressed: () async {
+                      final image = await getImage();
+                      setState(() {
+                        image_profile = File(image!.path);
+                        _updateProfilePicture(context, image_profile, getProfile);
+                      });
+                    },
+                    padding: EdgeInsets.zero,
+                    constraints: BoxConstraints(
+                      minWidth: 25,
+                      minHeight: 25,
                     ),
                   ),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 10),
           Text(
@@ -209,5 +258,86 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ],
       ),
     );
+  }
+}
+
+Future<void> _updateProfilePicture(
+  BuildContext context,
+  File? profileImage,
+  Function onSuccess
+) async {
+  final dio = DioClient(context).dio;
+
+  try {
+    if (profileImage != null) {
+      String extension = profileImage.path.split('.').last.toLowerCase();
+      if (!['jpg', 'jpeg', 'png'].contains(extension)) {
+        throw Exception(
+            'El formato de la imagen no es válido. Solo se permiten jpg, jpeg y png.');
+      }
+    }
+
+    String filename =
+        profileImage != null ? profileImage.path.split('/').last : '';
+
+    String mimeType = 'image/jpeg';
+    FormData formData = FormData.fromMap({
+      if (profileImage != null)
+        'profileImage': await MultipartFile.fromFile(
+          profileImage.path,
+          filename: filename,
+          contentType: DioMediaType.parse(mimeType),
+        ),
+    });
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getString('userId');
+
+    if (userId == null) {
+      throw Exception('No se encontró el ID del usuario.');
+    }
+
+    final response = await dio.put(
+      '/user/updateProfileImage/$userId',
+      data: formData,
+    );
+
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.toString());
+      final String updatedImageUrl = jsonData['data']['image']['imageUri'] as String;
+      final imagePath = updatedImageUrl.split('/').last;
+      final uriNetwork = 'http://$ip:8080/$imagePath';
+      prefs.setString('userImg', uriNetwork);
+      onSuccess();
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Imagen de perfil actualizada"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                 Navigator.of(context).pop(true);
+                },
+                child: Text("Aceptar"),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      throw Exception('Error al actualizar la imagen de perfil.');
+    }
+  } catch (e) {
+    final errorState = Provider.of<ErrorState>(context, listen: false);
+    if (e is DioException) {
+      String errorMessage = e.response?.data['message'] ?? 'Error de conexión';
+      errorState.setError(errorMessage);
+    } else {
+      errorState.setError('Error inesperado: ${e.toString()}');
+    }
+
+    errorState.showErrorDialog(context);
   }
 }
