@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:huicrochet_mobile/config/global_variables.dart';
 import 'package:huicrochet_mobile/widgets/custom_progress_line.dart';
+import 'package:huicrochet_mobile/widgets/product/add_product_review.dart';
 
 class OrderDetailsScreen extends StatefulWidget {
   const OrderDetailsScreen({super.key});
@@ -12,6 +14,7 @@ class OrderDetailsScreen extends StatefulWidget {
 class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -111,6 +114,33 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                           ],
                         ),
                       ),
+                      Center(
+                          child: Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: GestureDetector(
+                          child: Icon(
+                            Icons.comment,
+                            color: colors['wine'],
+                          ),
+                          onTap: () async {
+                            // Abre el modal para agregar comentario
+                            final result = await showDialog(
+                              context: context,
+                              builder: (context) => AddProductReview(
+                                idItem:
+                                    "12345", // Reemplaza con el id del item dinámico
+                                idUsuario:
+                                    "user678", // Reemplaza con el id del usuario dinámico
+                              ),
+                            );
+
+                            if (result != null) {
+                              // Procesa el resultado del modal si se envió algo
+                              print("Resultado: $result");
+                            }
+                          },
+                        ),
+                      ))
                     ],
                   ),
                   const SizedBox(height: 16),
@@ -152,6 +182,33 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                           ],
                         ),
                       ),
+                      Center(
+                          child: Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: GestureDetector(
+                          child: Icon(
+                            Icons.comment,
+                            color: colors['wine'],
+                          ),
+                          onTap: () async {
+                            // Abre el modal para agregar comentario
+                            final result = await showDialog(
+                              context: context,
+                              builder: (context) => AddProductReview(
+                                idItem:
+                                    "12345", // Reemplaza con el id del item dinámico
+                                idUsuario:
+                                    "user678", // Reemplaza con el id del usuario dinámico
+                              ),
+                            );
+
+                            if (result != null) {
+                              // Procesa el resultado del modal si se envió algo
+                              print("Resultado: $result");
+                            }
+                          },
+                        ),
+                      ))
                     ],
                   ),
                   const SizedBox(height: 32),
