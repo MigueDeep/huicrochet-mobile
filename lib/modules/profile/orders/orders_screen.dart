@@ -81,6 +81,21 @@ class _OrdersScreenState extends State<OrdersScreen> {
     }
   }
 
+  String translateOrderState(String orderState) {
+    switch (orderState) {
+      case 'PENDING':
+        return 'Pendiente';
+      case 'PROCESSED':
+        return 'En Proceso';
+      case 'SHIPPED':
+        return 'Enviado';
+      case 'DELIVERED':
+        return 'Entregado';
+      default:
+        return 'Desconocido';
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -244,10 +259,16 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                     ),
                                   ),
                                   Text(
-                                    'Fecha estimada: ${order.estimatedDeliverDate != null ? DateFormat('dd/MM/yyyy').format(
-                                        DateTime.fromMillisecondsSinceEpoch(
-                                            order.estimatedDeliverDate!),
-                                      ) : 'En espera'}',
+                                    order.orderState == 'DELIVERED'
+                                        ? 'Entregado el: ${order.estimatedDeliverDate != null ? DateFormat('dd/MM/yyyy').format(
+                                            DateTime.fromMillisecondsSinceEpoch(
+                                              order.estimatedDeliverDate!,
+                                            ),
+                                          ) : 'En espera'}'
+                                        : 'Fecha estimada: ${order.estimatedDeliverDate != null ? DateFormat('dd/MM/yyyy').format(
+                                            DateTime.fromMillisecondsSinceEpoch(
+                                                order.estimatedDeliverDate!),
+                                          ) : 'En espera'}',
                                     style: TextStyle(
                                       fontFamily: 'Poppins',
                                       fontSize: 14,
@@ -258,7 +279,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                               ),
                             ),
                             Text(
-                              order.orderState,
+                              translateOrderState(order.orderState),
                               style: TextStyle(
                                 fontFamily: 'Poppins',
                                 fontSize: 14,
