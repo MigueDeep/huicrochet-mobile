@@ -17,8 +17,8 @@ import 'package:huicrochet_mobile/modules/payment-methods/use_cases/delete_payme
 import 'package:huicrochet_mobile/modules/profile/address/addAdress_screen.dart';
 import 'package:huicrochet_mobile/modules/profile/address/adresses_screen.dart';
 import 'package:huicrochet_mobile/modules/profile/info_screen.dart';
-import 'package:huicrochet_mobile/modules/profile/orderDetails_screen.dart';
-import 'package:huicrochet_mobile/modules/profile/orders_screen.dart';
+import 'package:huicrochet_mobile/modules/profile/orders/orderDetails_screen.dart';
+import 'package:huicrochet_mobile/modules/profile/orders/orders_screen.dart';
 import 'package:huicrochet_mobile/modules/profile/profile_screen.dart';
 import 'package:huicrochet_mobile/modules/auth/screens/recoverPass1_screen.dart';
 import 'package:huicrochet_mobile/modules/auth/screens/register_screen.dart';
@@ -83,7 +83,6 @@ class MyApp extends StatelessWidget {
           '/addAddress': (context) => const AddadressScreen(),
           '/shopping-cart': (context) =>
               ShoppingcartScreen(getPaymentMethod: getIt<GetPayment>()),
-          '/orderDetails': (context) => const OrderDetailsScreen(),
           '/new-products': (context) => NewProductsScreen(),
           '/add-payment-method': (context) =>
               AddPaymentMethod(createPayment: getIt<CreatePayment>()),

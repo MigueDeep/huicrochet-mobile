@@ -20,6 +20,15 @@ class Image {
     );
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'id': _id,
+      'name': _name,
+      'type': _type,
+      'imageUri': _imageUri,
+    };
+  }
+
   static List<Image> fromJsonList(List<dynamic> jsonList) {
     return jsonList.map((image) => Image.fromJson(image)).toList();
   }

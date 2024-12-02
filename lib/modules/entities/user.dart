@@ -24,4 +24,28 @@ class User {
   bool? get status => _status;
   bool? get blocked => _blocked;
   String? get image => _image;
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      json['id'],
+      json['fullName'],
+      json['email'],
+      DateTime.parse(json['birthday']),
+      json['status'],
+      json['blocked'],
+      json['image'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': _id,
+      'fullName': _fullName,
+      'email': _email,
+      'birthday': _birthday.toIso8601String(),
+      'status': _status,
+      'blocked': _blocked,
+      'image': _image,
+    };
+  }
 }

@@ -16,7 +16,16 @@ class Color {
       json['id'],
       json['colorName'],
       json['colorCod'],
-      json['status'],
+      json['status'] ?? false,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': _id,
+      'colorName': _colorName,
+      'colorCod': _colorCod,
+      'status': _status,
+    };
   }
 }

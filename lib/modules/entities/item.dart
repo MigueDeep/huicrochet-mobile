@@ -31,6 +31,17 @@ class Item {
     );
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'id': _id,
+      'product': _product.toJson(),
+      'color': _color.toJson(),
+      'stock': _stock,
+      'state': _state,
+      'images': _images.map((image) => image.toJson()).toList(),
+    };
+  }
+
   @override
   String toString() {
     return 'Item{id: $_id, product: $_product, color: $_color, stock: $_stock, state: $_state, images: $_images}';
