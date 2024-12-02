@@ -15,11 +15,22 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool _isFirstVisit = true;
+  String searchQuery = '';
+  List<Map<String, dynamic>> filteredNewProducts = [];
 
   @override
   void initState() {
     super.initState();
     _checkFirstVisit();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final newProductsProvider =
+          Provider.of<NewProductsProvider>(context, listen: false);
+      newProductsProvider.fetchNewProducts(context).then((_) {
+        setState(() {
+          filteredNewProducts = newProductsProvider.newProducts;
+        });
+      });
+    });
   }
 
   Future<void> _checkFirstVisit() async {
@@ -33,6 +44,19 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void _filterNewProducts(String query) {
+    final newProductsProvider =
+        Provider.of<NewProductsProvider>(context, listen: false);
+
+    setState(() {
+      searchQuery = query;
+      filteredNewProducts = newProductsProvider.newProducts.where((product) {
+        final productName = product['name']?.toLowerCase() ?? '';
+        return productName.contains(query.toLowerCase());
+      }).toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final newProductsProvider = Provider.of<NewProductsProvider>(context);
@@ -42,7 +66,9 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: CustomAppBar(
+        onSearchTextChanged: _filterNewProducts,
+      ),
       backgroundColor: Colors.white,
       body: RefreshIndicator(
         backgroundColor: Colors.white,
@@ -50,6 +76,10 @@ class _HomeScreenState extends State<HomeScreen> {
         onRefresh: () async {
           await newProductsProvider.fetchNewProducts(context,
               forceRefresh: true);
+          setState(() {
+            filteredNewProducts = newProductsProvider.newProducts;
+            _filterNewProducts(searchQuery);
+          });
         },
         child: SingleChildScrollView(
           child: Center(
@@ -107,8 +137,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 SizedBox(height: 20),
-
-                // Sección de nuevos productos
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: SizedBox(
@@ -139,7 +167,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 SizedBox(height: 10),
-
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 0.9,
                   child: newProductsProvider.isLoading
@@ -147,20 +174,17 @@ class _HomeScreenState extends State<HomeScreen> {
                           scrollDirection: Axis.horizontal,
                           child: Row(
                             children: List.generate(
-                              6, 
+                              6,
                               (index) => Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child:
-                                    loadingProductCard()
-                              ),
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: loadingProductCard()),
                             ),
                           ),
                         )
                       : SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Row(
-                            children:
-                                newProductsProvider.newProducts.map((product) {
+                            children: filteredNewProducts.map((product) {
                               return Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: productCard(
@@ -175,17 +199,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                 ),
-
                 SizedBox(height: 10),
-
-                // Sección de más vendidos
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.9,
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.pushNamed(context, '/best-sellers');
+                        Navigator.pushNamed(context, '/new-products');
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -209,27 +230,37 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 SizedBox(height: 10),
-
-                // Carrusel horizontal para más vendidos
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 0.9,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: newProductsProvider.newProducts.map((product) {
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: productCard(
-                            product['name'] as String,
-                            product['imageUri'] as String,
-                            product['price'].toString(),
-                            product['productId'].toString(),
-                            context,
+                  child: newProductsProvider.isLoading
+                      ? SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: List.generate(
+                              6,
+                              (index) => Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: loadingProductCard()),
+                            ),
                           ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
+                        )
+                      : SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: filteredNewProducts.map((product) {
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: productCard(
+                                  product['name'] as String,
+                                  product['imageUri'] as String,
+                                  product['price'].toString(),
+                                  product['productId'].toString(),
+                                  context,
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
                 ),
               ],
             ),

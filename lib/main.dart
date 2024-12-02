@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:huicrochet_mobile/config/service/notification_service.dart';
+import 'package:huicrochet_mobile/config/service/websocket_service.dart';
 import 'package:huicrochet_mobile/modules/product/providers/categories_provider.dart';
 import 'package:huicrochet_mobile/modules/product/providers/new_products_provider.dart';
 import 'package:huicrochet_mobile/modules/product/providers/produc_provider.dart';
@@ -30,10 +32,22 @@ import 'package:huicrochet_mobile/modules/payment-methods/screens/add_payment_me
 import 'package:huicrochet_mobile/modules/payment-methods/screens/my_payment_methods.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Inicializar NotificationService
+  final notificationService = NotificationService();
+  notificationService.initializeNotification();
+
+  // Inicializar WebSocket
+  final webSocketService = WebSocketService(notificationService: notificationService);
+  webSocketService.connect();
+
+  // Configurar Service Locator
   setupServiceLocator();
 
   runApp(const MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
