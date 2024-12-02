@@ -21,6 +21,16 @@ class Cart {
       CartItem.fromJsonList(json['cartItems'] as List<dynamic>),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'bought': bought,
+      'total': total,
+      'cartItems': cartItems.map((item) => item.toJson()).toList(),
+    };
+  }
+
   @override
   String toString() {
     return 'Cart{id: $_id, bought: $_bought, total: $_total, cartItems: $_cartItems}';

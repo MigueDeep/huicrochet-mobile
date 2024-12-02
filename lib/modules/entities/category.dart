@@ -13,8 +13,15 @@ class Category {
     return Category(
       json['id'],
       json['name'],
-      json['state'],
+      json['state'] ?? false,
     );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      'id': _id,
+      'name': _name,
+      'state': _state,
+    };
   }
 
   static List<Category> fromJsonList(List<dynamic> jsonList) {

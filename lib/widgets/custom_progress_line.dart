@@ -2,31 +2,44 @@ import 'package:flutter/material.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 
 class CustomProgressLine extends StatelessWidget {
-  const CustomProgressLine({super.key});
+  final String orderState;
+  const CustomProgressLine({super.key, required this.orderState});
 
   @override
   Widget build(BuildContext context) {
+    final states = ['PENDING', 'PROCESSED', 'SHIPPED', 'DELIVERED'];
+
+    final currentIndex = states.indexOf(orderState);
+
     return Center(
       child: ConstrainedBox(
         constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 2.5,
+          maxWidth: MediaQuery.of(context).size.width * 1,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _buildTimelineTile(
               context,
-              icon: Icons.inventory,
-              label: 'Preparando',
-              isActive: true,
+              icon: Icons.shopping_cart,
+              label: 'Pendiente',
+              isActive: currentIndex >= 0,
               isFirst: true,
+              isLast: false,
+            ),
+            _buildTimelineTile(
+              context,
+              icon: Icons.inventory,
+              label: 'Procesado',
+              isActive: currentIndex >= 1,
+              isFirst: false,
               isLast: false,
             ),
             _buildTimelineTile(
               context,
               icon: Icons.airplanemode_active,
               label: 'Enviado',
-              isActive: true,
+              isActive: currentIndex >= 2,
               isFirst: false,
               isLast: false,
             ),
@@ -34,7 +47,7 @@ class CustomProgressLine extends StatelessWidget {
               context,
               icon: Icons.assignment_turned_in,
               label: 'Entregado',
-              isActive: true,
+              isActive: currentIndex >= 3,
               isFirst: false,
               isLast: true,
             ),
@@ -58,22 +71,25 @@ class CustomProgressLine extends StatelessWidget {
         isFirst: isFirst,
         isLast: isLast,
         beforeLineStyle: LineStyle(
-          color: isActive ? Color.fromRGBO(242, 148, 165, 1) : Colors.grey,
+          color:
+              isActive ? const Color.fromRGBO(242, 148, 165, 1) : Colors.grey,
           thickness: 2,
         ),
         afterLineStyle: LineStyle(
-          color: isActive ? Color.fromRGBO(242, 148, 165, 1) : Colors.grey,
+          color:
+              isActive ? const Color.fromRGBO(242, 148, 165, 1) : Colors.grey,
           thickness: 2,
         ),
         indicatorStyle: IndicatorStyle(
           width: 40,
           height: 40,
           padding: const EdgeInsets.all(2),
-          color: isActive ? Color.fromRGBO(242, 148, 165, 1) : Colors.grey,
+          color:
+              isActive ? const Color.fromRGBO(242, 148, 165, 1) : Colors.grey,
           iconStyle: IconStyle(
             iconData: icon,
             color: Colors.white,
-            fontSize: 30,
+            fontSize: 25,
           ),
         ),
         endChild: Container(
@@ -83,8 +99,9 @@ class CustomProgressLine extends StatelessWidget {
             style: TextStyle(
               fontSize: 14,
               fontFamily: 'Poppins',
-              fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-              color: isActive ? Color.fromRGBO(242, 148, 165, 1) : Colors.grey,
+              color: isActive
+                  ? const Color.fromRGBO(242, 148, 165, 1)
+                  : Colors.grey,
             ),
             textAlign: TextAlign.center,
           ),

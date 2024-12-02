@@ -41,4 +41,36 @@ class Address {
 
   bool get status => _status;
   User get user => _user;
+
+  factory Address.fromJson(Map<String, dynamic> json) {
+    return Address(
+      json['id'],
+      json['state'],
+      json['city'],
+      json['zipCode'],
+      json['district'],
+      json['street'],
+      json['number'],
+      json['phoneNumber'],
+      json['default'] ?? false,
+      json['status'] ?? false,
+      User.fromJson(json['user']),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': _id,
+      'state': _state,
+      'city': _city,
+      'zipCode': _zipCode,
+      'district': _district,
+      'street': _street,
+      'number': _number,
+      'phoneNumber': _phoneNumber,
+      'default': _default,
+      'status': _status,
+      'user': _user.toJson(),
+    };
+  }
 }

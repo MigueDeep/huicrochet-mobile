@@ -279,6 +279,7 @@ class _AddressesScreenState extends State<AddressesScreen> {
               iconColor: colors['brown']!,
               label: 'Editar',
               onTap: () {
+                Navigator.pop(context);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
