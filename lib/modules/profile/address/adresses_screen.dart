@@ -321,7 +321,10 @@ class _AddressesScreenState extends State<AddressesScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         automaticallyImplyLeading: true,
-        title: Text('Direcciones'),
+        title: const Text(
+          'Direcciones de envío',
+          style: TextStyle(color: Colors.black, fontFamily: 'Poppins'),
+        ),
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: IconThemeData(color: Colors.black),

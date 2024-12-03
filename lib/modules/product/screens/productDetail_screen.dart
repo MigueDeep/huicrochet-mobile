@@ -8,8 +8,8 @@ import 'package:huicrochet_mobile/widgets/general/loader.dart';
 import 'package:huicrochet_mobile/widgets/product/product_detail_loading.dart';
 import 'package:huicrochet_mobile/widgets/product/product_reviews.dart';
 import 'package:huicrochet_mobile/widgets/product/product_stars_average.dart';
+import 'package:huicrochet_mobile/widgets/product/see_more_products.dart';
 import 'package:huicrochet_mobile/widgets/product/select_colors.dart';
-import 'package:huicrochet_mobile/widgets/product/user_comment.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -420,7 +420,14 @@ class _ProductDetailState extends State<ProductDetail> {
                       const SizedBox(
                         height: 20,
                       ),
-                      ProductReviews(productId: productId)
+                      ProductReviews(productId: productId),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      SeeMoreProducts(),
+                      const SizedBox(
+                        height: 20,
+                      ),
                     ],
                   )),
             ),

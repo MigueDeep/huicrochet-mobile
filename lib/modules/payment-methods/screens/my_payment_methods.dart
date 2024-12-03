@@ -186,11 +186,9 @@ class _MyPaymentMethodsState extends State<MyPaymentMethods> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text(
+        title: const Text(
           'Métodos de pago',
-          style: TextStyle(fontSize: 24),
-          softWrap: true,
-          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.black, fontFamily: 'Poppins'),
         ),
       ),
       body: SingleChildScrollView(
