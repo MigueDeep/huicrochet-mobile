@@ -31,6 +31,11 @@ class ProductsProvider with ChangeNotifier {
           final name = product['product']['productName'] as String;
           final productId = product['product']['id'] as String;
           final price = product['product']['price'].toString();
+          final categories =
+              (product['product']['categories'] as List<dynamic>?) ?? [];
+          final categoryNames = categories.map((category) {
+            return category['name'] as String;
+          }).toList();
 
           final images = product['images'] as List<dynamic>;
           String imageUri = 'assets/logo.png';
@@ -50,6 +55,7 @@ class ProductsProvider with ChangeNotifier {
             'price': price,
             'imageUri': uriNetwork,
             'productId': productId,
+            'categoryNames': categoryNames,
           };
         }).toList();
 

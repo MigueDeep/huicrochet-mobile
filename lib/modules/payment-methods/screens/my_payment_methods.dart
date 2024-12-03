@@ -144,6 +144,7 @@ class _MyPaymentMethodsState extends State<MyPaymentMethods> {
               iconColor: colors['brown']!,
               label: 'Editar tarjeta',
               onTap: () {
+                Navigator.pop(context);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -161,6 +162,7 @@ class _MyPaymentMethodsState extends State<MyPaymentMethods> {
               iconColor: colors['brown']!,
               label: 'Eliminar tarjeta',
               onTap: () {
+                Navigator.pop(context);
                 if (selectedCardIndex != null) {
                   _showDeleteConfirmationDialog(idPayment!);
                 } else {

@@ -23,6 +23,14 @@ class CartItem {
     );
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'id': _id,
+      'item': _item.toJson(),
+      'quantity': _quantity,
+    };
+  }
+
   static List<CartItem> fromJsonList(List<dynamic> jsonList) {
     return jsonList.map((json) => CartItem.fromJson(json)).toList();
   }

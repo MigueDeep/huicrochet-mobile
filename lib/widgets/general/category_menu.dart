@@ -4,7 +4,7 @@ class CategoryMenu extends StatefulWidget {
   final List<String> categories;
   final Function(String) onCategorySelected;
 
-  CategoryMenu({required this.categories, required this.onCategorySelected});
+  CategoryMenu({required this.categories, required this.onCategorySelected, required String selectedCategory});
 
   @override
   _CategoryMenuState createState() => _CategoryMenuState();

@@ -10,14 +10,24 @@ class NewProductsScreen extends StatefulWidget {
   @override
   _NewProductsScreenState createState() => _NewProductsScreenState();
 }
-
 class _NewProductsScreenState extends State<NewProductsScreen> {
   bool _isFirstVisit = true;
+  String searchQuery = '';
+  List<Map<String, dynamic>> filteredNewProducts = [];
 
   @override
   void initState() {
     super.initState();
     _checkFirstVisit();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final newProductsProvider =
+          Provider.of<NewProductsProvider>(context, listen: false);
+      newProductsProvider.fetchNewProducts(context).then((_) {
+        setState(() {
+          filteredNewProducts = newProductsProvider.newProducts;
+        });
+      });
+    });
   }
 
   Future<void> _checkFirstVisit() async {
@@ -31,17 +41,28 @@ class _NewProductsScreenState extends State<NewProductsScreen> {
     }
   }
 
+  void _filterNewProducts(String query) {
+    final newProductsProvider =
+        Provider.of<NewProductsProvider>(context, listen: false);
+
+    setState(() {
+      searchQuery = query;
+      filteredNewProducts = newProductsProvider.newProducts.where((product) {
+        final productName = product['name']?.toLowerCase() ?? '';
+        return productName.contains(query.toLowerCase());
+      }).toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final newProductsProvider = Provider.of<NewProductsProvider>(context); 
-
-    if (_isFirstVisit) {
-      newProductsProvider.fetchNewProducts(context); 
-    }
+    final newProductsProvider = Provider.of<NewProductsProvider>(context);
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(),
+      appBar: CustomAppBar(
+        onSearchTextChanged: _filterNewProducts,
+      ),
       body: Stack(
         children: [
           Padding(
@@ -61,31 +82,38 @@ class _NewProductsScreenState extends State<NewProductsScreen> {
               backgroundColor: Colors.white,
               color: const Color.fromRGBO(242, 148, 165, 1),
               onRefresh: () async {
-                await newProductsProvider.fetchNewProducts(context, forceRefresh: true); 
+                await newProductsProvider.fetchNewProducts(context,
+                    forceRefresh: true);
+                setState(() {
+                  filteredNewProducts = newProductsProvider.newProducts;
+                  _filterNewProducts(searchQuery);
+                });
               },
               child: newProductsProvider.isLoading
                   ? GridView.builder(
-                        itemCount: 6,
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          childAspectRatio: 0.8,
-                        ),
-                        itemBuilder: (context, index) {
-                          return Center(
-                            child: loadingProductCard(), 
-                          );
-                        },
-                      )
+                      itemCount: 6,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 0.8,
+                      ),
+                      itemBuilder: (context, index) {
+                        return Center(
+                          child: loadingProductCard(),
+                        );
+                      },
+                    )
                   : Padding(
                       padding: const EdgeInsets.only(left: 20, top: 10),
                       child: GridView.builder(
-                        itemCount: newProductsProvider.newProducts.length,
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        itemCount: filteredNewProducts.length,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           childAspectRatio: 0.8,
                         ),
                         itemBuilder: (context, index) {
-                          final product = newProductsProvider.newProducts[index];
+                          final product = filteredNewProducts[index];
                           return productCard(
                             product['name'] as String,
                             product['imageUri'] as String,

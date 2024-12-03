@@ -13,9 +13,11 @@ class ProductsScreen extends StatefulWidget {
   @override
   State<ProductsScreen> createState() => _ProductsScreenState();
 }
-
 class _ProductsScreenState extends State<ProductsScreen> {
   bool _isFirstVisit = true;
+  List<Map<String, dynamic>> filteredProducts = [];
+  String selectedCategoryReload = 'Todas';
+  String searchQuery = '';
 
   @override
   void initState() {
@@ -24,7 +26,53 @@ class _ProductsScreenState extends State<ProductsScreen> {
       Provider.of<CategoriesProvider>(context, listen: false)
           .fetchCategories(context);
       Provider.of<ProductsProvider>(context, listen: false)
-          .fetchProducts(context);
+          .fetchProducts(context)
+          .then((_) {
+        setState(() {
+          filteredProducts =
+              Provider.of<ProductsProvider>(context, listen: false).products;
+        });
+      });
+    });
+  }
+
+  void _filterProductsByCategory(String categoryName) {
+    final productsProvider =
+        Provider.of<ProductsProvider>(context, listen: false);
+
+    setState(() {
+      selectedCategoryReload = categoryName;
+      filteredProducts = productsProvider.products.where((product) {
+        final List<dynamic> productCategories =
+            product['categoryNames'] ?? [];
+        final matchesCategory = categoryName == 'Todas' ||
+            productCategories.contains(categoryName);
+        final matchesSearchQuery = product['name']
+            .toString()
+            .toLowerCase()
+            .contains(searchQuery.toLowerCase());
+        return matchesCategory && matchesSearchQuery;
+      }).toList();
+    });
+  }
+
+  void _filterProductsBySearch(String query) {
+    final productsProvider =
+        Provider.of<ProductsProvider>(context, listen: false);
+
+    setState(() {
+      searchQuery = query;
+      filteredProducts = productsProvider.products.where((product) {
+        final List<dynamic> productCategories =
+            product['categoryNames'] ?? [];
+        final matchesCategory = selectedCategoryReload == 'Todas' ||
+            productCategories.contains(selectedCategoryReload);
+        final matchesSearchQuery = product['name']
+            .toString()
+            .toLowerCase()
+            .contains(query.toLowerCase());
+        return matchesCategory && matchesSearchQuery;
+      }).toList();
     });
   }
 
@@ -35,7 +83,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(),
+      appBar: CustomAppBar(
+        onSearchTextChanged: _filterProductsBySearch,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -48,14 +98,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
                   CategoryMenu(
                     categories: categoriesProvider.categories,
                     onCategorySelected: (selectedCategory) {
-                      if (selectedCategory == 'Todas') {
-                        setState(() {
-                          productsProvider.fetchProducts(context);
-                        });
-                      } else {
-                        final categoryId = selectedCategory;
-                      }
+                      _filterProductsByCategory(selectedCategory);
                     },
+                    selectedCategory: selectedCategoryReload,
                   ),
                 ],
               ),
@@ -68,6 +113,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
                 onRefresh: () async {
                   await productsProvider.fetchProducts(context, forceRefresh: true);
                   await categoriesProvider.fetchCategories(context, forceRefresh: true);
+                  setState(() {
+                    _filterProductsByCategory(selectedCategoryReload);
+                  });
                 },
                 child: productsProvider.isLoading
                     ? GridView.builder(
@@ -83,13 +131,13 @@ class _ProductsScreenState extends State<ProductsScreen> {
                         },
                       )
                     : GridView.builder(
-                        itemCount: productsProvider.products.length,
+                        itemCount: filteredProducts.length,
                         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           childAspectRatio: 0.8,
                         ),
                         itemBuilder: (context, index) {
-                          final product = productsProvider.products[index];
+                          final product = filteredProducts[index];
                           return Center(
                             child: productCard(
                               product['name'] as String,
