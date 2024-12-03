@@ -96,7 +96,10 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: const Text('Detalles de la Orden'),
+        title: const Text(
+          'Detalles de la orden',
+          style: TextStyle(color: Colors.black, fontFamily: 'Poppins'),
+        ),
         automaticallyImplyLeading: true,
       ),
       body: data == null || data.isEmpty
@@ -119,13 +122,37 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                         translateOrderState(data['orderState']),
                         style: TextStyle(
                           fontSize: 18,
-                          color: Colors.blueGrey,
+                          color: colors['wine'],
                         ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 15),
+                Padding(
+                  padding: const EdgeInsets.only(left: 16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        data['orderState'] == 'DELIVERED'
+                            ? 'Entregado el: '
+                            : 'Entrega aproximada el: ',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 16,
+                        ),
+                      ),
+                      Text(
+                        data['estimatedDeliverDate'] ?? 'Desconocida',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: colors['wine'],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
                 ConstrainedBox(
                   constraints: BoxConstraints(
                     maxHeight: 80,
@@ -215,9 +242,9 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                         const SizedBox(height: 8),
                                         Text(
                                           '\$${price.toStringAsFixed(2)}',
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontSize: 14,
-                                            color: Colors.grey,
+                                            color: colors['wine'],
                                             fontFamily: 'Poppins',
                                           ),
                                         ),
@@ -328,6 +355,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                         'Fecha del Pedido: ${data['orderDate']}',
                         style: const TextStyle(fontFamily: 'Poppins'),
                       ),
+                      const SizedBox(height: 16),
                     ],
                   ),
                 ),

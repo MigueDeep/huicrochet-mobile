@@ -142,7 +142,10 @@ class _OrdersScreenState extends State<OrdersScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         automaticallyImplyLeading: true,
-        title: Text('Órdenes'),
+        title: const Text(
+          'Ordenes',
+          style: TextStyle(color: Colors.black, fontFamily: 'Poppins'),
+        ),
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: IconThemeData(color: Colors.black),
@@ -161,7 +164,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                 errorBuilder: (context, error, stackTrace) {
                   String initials = name != null ? getInitials(name!) : '??';
                   return CircleAvatar(
-                    backgroundColor: const Color.fromRGBO(242, 148, 165, 1),
+                    backgroundColor: colors['pink'],
                     child:
                         Text(initials, style: TextStyle(color: Colors.white)),
                   );
@@ -181,7 +184,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
             SizedBox(height: 20),
             ListTile(
               leading: Text(
-                'Órdenes',
+                'Ordenes',
                 style: TextStyle(
                   fontFamily: 'Poppins',
                   fontSize: 16,
@@ -198,7 +201,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                   if (emptyOrders) {
                     return Center(
                       child: Text(
-                        'No hay órdenes que mostrar',
+                        'No hay ordenes que mostrar',
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontSize: 16,
@@ -283,7 +286,16 @@ class _OrdersScreenState extends State<OrdersScreen> {
                               style: TextStyle(
                                 fontFamily: 'Poppins',
                                 fontSize: 14,
-                                color: Colors.green,
+                                color: order.orderState == 'PENDING'
+                                    ? Color.fromRGBO(99, 162, 255, 1)
+                                    : order.orderState == 'PROCESSED'
+                                        ? Color.fromRGBO(255, 193, 116, 1)
+                                        : order.orderState == 'SHIPPED'
+                                            ? Color.fromARGB(255, 200, 142, 255)
+                                            : order.orderState == 'DELIVERED'
+                                                ? Color.fromRGBO(51, 125, 71, 1)
+                                                : Color.fromRGBO(
+                                                    99, 162, 255, 1),
                               ),
                             ),
                           ],

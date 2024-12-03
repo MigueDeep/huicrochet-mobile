@@ -269,7 +269,10 @@ class _EditadressScreenState extends State<EditadressScreen> {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text('Editar dirección'),
+          title: const Text(
+            'Editar dirección de envío',
+            style: TextStyle(color: Colors.black, fontFamily: 'Poppins'),
+          ),
           backgroundColor: Colors.white,
           elevation: 0,
           iconTheme: IconThemeData(color: Colors.black),

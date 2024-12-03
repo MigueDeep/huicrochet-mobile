@@ -70,6 +70,9 @@ class _AddPaymentMethodState extends State<AddPaymentMethod> {
     if (value.length != 16) {
       return 'El número de tarjeta debe tener 16 dígitos';
     }
+    if (int.tryParse(value) == null) {
+      return 'Ingrese un número válido';
+    }
     return null;
   }
 
@@ -163,8 +166,10 @@ class _AddPaymentMethodState extends State<AddPaymentMethod> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Agregar Método de Pago',
-            style: TextStyle(color: Colors.black)),
+        title: const Text(
+          'Agregar método de pago',
+          style: TextStyle(color: Colors.black, fontFamily: 'Poppins'),
+        ),
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),

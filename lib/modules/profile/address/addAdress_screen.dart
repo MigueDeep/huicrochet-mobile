@@ -183,7 +183,10 @@ class _AddadressScreenState extends State<AddadressScreen> {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text('Agregar dirección'),
+          title: const Text(
+            'Agregar dirección de envío',
+            style: TextStyle(color: Colors.black, fontFamily: 'Poppins'),
+          ),
           backgroundColor: Colors.white,
           elevation: 0,
           iconTheme: IconThemeData(color: Colors.black),

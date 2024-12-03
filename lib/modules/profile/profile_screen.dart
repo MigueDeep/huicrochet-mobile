@@ -92,10 +92,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Perfil'),
         backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              'Perfil',
+              style: TextStyle(color: Colors.black, fontFamily: 'Poppins'),
+            ),
+          ],
+        ),
       ),
       body: Column(
         children: [
@@ -132,7 +138,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(50),
                           child: Image.asset(
-                            'assets/logo.png', 
+                            'assets/logo.png',
                             width: 100,
                             height: 100,
                             fit: BoxFit.cover,
@@ -165,7 +171,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       final image = await getImage();
                       setState(() {
                         image_profile = File(image!.path);
-                        _updateProfilePicture(context, image_profile, getProfile);
+                        _updateProfilePicture(
+                            context, image_profile, getProfile);
                       });
                     },
                     padding: EdgeInsets.zero,
@@ -262,10 +269,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 }
 
 Future<void> _updateProfilePicture(
-  BuildContext context,
-  File? profileImage,
-  Function onSuccess
-) async {
+    BuildContext context, File? profileImage, Function onSuccess) async {
   final dio = DioClient(context).dio;
 
   try {
@@ -304,7 +308,8 @@ Future<void> _updateProfilePicture(
 
     if (response.statusCode == 200) {
       final jsonData = jsonDecode(response.toString());
-      final String updatedImageUrl = jsonData['data']['image']['imageUri'] as String;
+      final String updatedImageUrl =
+          jsonData['data']['image']['imageUri'] as String;
       final imagePath = updatedImageUrl.split('/').last;
       final uriNetwork = 'http://$ip:8080/$imagePath';
       prefs.setString('userImg', uriNetwork);
@@ -318,7 +323,7 @@ Future<void> _updateProfilePicture(
             actions: [
               TextButton(
                 onPressed: () {
-                 Navigator.of(context).pop(true);
+                  Navigator.of(context).pop(true);
                 },
                 child: Text("Aceptar"),
               ),
