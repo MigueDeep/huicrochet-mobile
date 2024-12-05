@@ -8,7 +8,9 @@ import 'package:huicrochet_mobile/config/error_state.dart';
 import 'package:huicrochet_mobile/config/global_variables.dart';
 import 'package:huicrochet_mobile/widgets/custom_progress_line.dart';
 import 'package:huicrochet_mobile/widgets/general/loader.dart';
+import 'package:huicrochet_mobile/widgets/product/add_product_review.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OrderDetailsScreen extends StatefulWidget {
   final String id;
@@ -29,6 +31,12 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
       _loaderController.show(context);
       getOrder();
     });
+  }
+
+  Future getUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String userId = prefs.getString('userId') ?? '';
+    return userId;
   }
 
   Future<void> getOrder() async {
@@ -89,278 +97,284 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
         return 'Desconocido';
     }
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+@override
+Widget build(BuildContext context) {
+  String orderState = translateOrderState(data['orderState'] ?? 'UNKNOWN');
+  return Scaffold(
+    backgroundColor: Colors.white,
+    appBar: AppBar(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: const Text(
-          'Detalles de la orden',
-          style: TextStyle(color: Colors.black, fontFamily: 'Poppins'),
-        ),
-        automaticallyImplyLeading: true,
+      title: const Text(
+        'Detalles de la orden',
+        style: TextStyle(color: Colors.black, fontFamily: 'Poppins'),
       ),
-      body: data == null || data.isEmpty
-          ? const Center(child: Text('No se encontraron datos'))
-          : Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Estado del Pedido',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 18,
-                        ),
-                      ),
-                      Text(
-                        translateOrderState(data['orderState']),
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: colors['wine'],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        data['orderState'] == 'DELIVERED'
-                            ? 'Entregado el: '
-                            : 'Entrega aproximada el: ',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 16,
-                        ),
-                      ),
-                      Text(
-                        data['estimatedDeliverDate'] ?? 'Desconocida',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: colors['wine'],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-                ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxHeight: 80,
-                  ),
-                  child: CustomProgressLine(orderState: data['orderState']),
-                ),
-                const Divider(height: 32, thickness: 1),
-                // Sección de productos
-                Expanded(
-                  child: SingleChildScrollView(
+      automaticallyImplyLeading: true,
+    ),
+    body: data.isEmpty
+        ? const Center(child: Text('No se encontraron datos'))
+        : SingleChildScrollView(  // Envuelve todo el contenido en un SingleChildScrollView
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Información del estado de la orden
+                  Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          'Productos',
+                        Text(
+                          'Estado del Pedido',
                           style: TextStyle(
-                            fontSize: 16,
                             fontFamily: 'Poppins',
+                            fontSize: 18,
                           ),
                         ),
-                        const SizedBox(height: 16),
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: data['orderDetails']['products'].length,
-                          itemBuilder: (context, index) {
-                            final product =
-                                data['orderDetails']['products'][index];
-                            var productName =
-                                product['item']['product']['productName'];
-                            final color = product['item']['color']['colorName'];
-                            final price = product['item']['product']['price'];
-                            final quantity = product['quantity'];
-
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 16.0),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: flutter_ui.Image.network(
-                                      product['item']['images'] != null &&
-                                              product['item']['images']
-                                                  .isNotEmpty
-                                          ? 'http://${ip}:8080/${product['item']['images'][0]['imageUri'].split('/').last}'
-                                          : 'not found',
-                                      width: 80,
-                                      height: 80,
-                                      fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        return flutter_ui.Image.asset(
-                                          'assets/product1.png',
-                                          width: 80,
-                                          height: 80,
-                                          fit: BoxFit.cover,
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                  const SizedBox(width: 16),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          productName,
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontFamily: 'Poppins',
-                                          ),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        const SizedBox(height: 8),
-                                        Text(
-                                          '$color x$quantity',
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.grey,
-                                            fontFamily: 'Poppins',
-                                          ),
-                                        ),
-                                        const SizedBox(height: 8),
-                                        Text(
-                                          '\$${price.toStringAsFixed(2)}',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: colors['wine'],
-                                            fontFamily: 'Poppins',
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
+                        Text(
+                          translateOrderState(data['orderState']),
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: colors['wine'],
+                          ),
                         ),
                       ],
                     ),
                   ),
-                ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16.0),
+                    child: Row(
+                      children: [
+                        Text(
+                          data['orderState'] == 'DELIVERED'
+                              ? 'Entregado el: '
+                              : 'Entrega aproximada el: ',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 16,
+                          ),
+                        ),
+                        Text(
+                          data['estimatedDeliverDate'] ?? 'Desconocida',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: colors['wine'],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: 80,
+                    ),
+                    child: CustomProgressLine(orderState: data['orderState']),
+                  ),
+                  const Divider(height: 32, thickness: 1),
+                  // Sección de productos
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Productos',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontFamily: 'Poppins',
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: data['orderDetails']['products'].length,
+                    itemBuilder: (context, index) {
+                      final product = data['orderDetails']['products'][index];
+                      var productName = product['item']['product']['productName'];
+                      final color = product['item']['color']['colorName'];
+                      final price = product['item']['product']['price'];
+                      final quantity = product['quantity'];
+                      final idProduct = product['item']['product']['id'];
 
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Divider(height: 32, thickness: 1),
-                      Row(
-                        children: [
-                          Icon(Icons.person, color: Colors.grey),
-                          SizedBox(width: 8),
-                          Text(
-                            '${data['orderDetails']['user']['fullName']} '
-                            '${data['orderDetails']['shippingAddress']['phoneNumber']}',
-                            style:
-                                TextStyle(fontSize: 14, fontFamily: 'Poppins'),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          Icon(Icons.location_on, color: Colors.grey),
-                          SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              '${data['orderDetails']['shippingAddress']['street']} '
-                              '${data['orderDetails']['shippingAddress']['number']} '
-                              '${data['orderDetails']['shippingAddress']['city']}',
-                              style: TextStyle(
-                                  fontSize: 14, fontFamily: 'Poppins'),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const Divider(height: 32, thickness: 1),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Total:',
-                            style:
-                                TextStyle(fontSize: 16, fontFamily: 'Poppins'),
-                          ),
-                          Text(
-                            '\$${data['totalPrice']}',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const Divider(height: 32, thickness: 1),
-                      const Text(
-                        'Otra Información',
-                        style: TextStyle(fontSize: 16, fontFamily: 'Poppins'),
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Número de Pedido',
-                            style: TextStyle(fontFamily: 'Poppins'),
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                data['id'].substring(0, 8),
-                                style: TextStyle(fontFamily: 'Poppins'),
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  Clipboard.setData(ClipboardData(
-                                      text: data['id'].substring(0, 8)));
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content:
-                                            Text('Copiado al portapapeles')),
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: flutter_ui.Image.network(
+                                product['item']['images'] != null &&
+                                        product['item']['images'].isNotEmpty
+                                    ? 'http://$ip:8080/${product['item']['images'][0]['imageUri'].split('/').last}'
+                                    : 'not found',
+                                width: 80,
+                                height: 80,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return flutter_ui.Image.asset(
+                                    'assets/product1.png',
+                                    width: 80,
+                                    height: 80,
+                                    fit: BoxFit.cover,
                                   );
                                 },
-                                icon: const Icon(Icons.copy),
                               ),
-                            ],
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    productName,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontFamily: 'Poppins',
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    '$color x$quantity',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey,
+                                      fontFamily: 'Poppins',
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    '\$${price.toStringAsFixed(2)}',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: colors['wine'],
+                                      fontFamily: 'Poppins',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 10),
+                              child: orderState == 'Entregado'
+                                  ? GestureDetector(
+                                      child: Icon(
+                                        Icons.comment,
+                                        color: colors['wine'], 
+                                      ),
+                                      onTap: () async {
+                                        final userId = await getUserId();
+                                        final result = await showDialog(
+                                          context: context,
+                                          builder: (context) => AddProductReview(
+                                            idItem: idProduct,
+                                            idUsuario: userId,
+                                          ),
+                                        );
+                                        if (result != null) {
+                                          print("Resultado: $result");
+                                        }
+                                      },
+                                    )
+                                  : const SizedBox(),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                  const Divider(height: 32, thickness: 1),
+                  // Información adicional del pedido
+                  Row(
+                    children: [
+                      Icon(Icons.person, color: Colors.grey),
+                      SizedBox(width: 8),
+                      Text(
+                        '${data['orderDetails']['user']['fullName']} '
+                        '${data['orderDetails']['shippingAddress']['phoneNumber']}',
+                        style: TextStyle(fontSize: 14, fontFamily: 'Poppins'),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Icon(Icons.location_on, color: Colors.grey),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          '${data['orderDetails']['shippingAddress']['street']} '
+                          '${data['orderDetails']['shippingAddress']['number']} '
+                          '${data['orderDetails']['shippingAddress']['city']}',
+                          style: TextStyle(
+                              fontSize: 14, fontFamily: 'Poppins'),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Divider(height: 32, thickness: 1),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Total:',
+                        style: TextStyle(fontSize: 16, fontFamily: 'Poppins'),
+                      ),
+                      Text(
+                        '\$${data['totalPrice']}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Divider(height: 32, thickness: 1),
+                  const Text(
+                    'Otra Información',
+                    style: TextStyle(fontSize: 16, fontFamily: 'Poppins'),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Número de Pedido',
+                        style: TextStyle(fontFamily: 'Poppins'),
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            data['id'].substring(0, 8),
+                            style: TextStyle(fontFamily: 'Poppins'),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              Clipboard.setData(ClipboardData(
+                                  text: data['id'].substring(0, 8)));
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Copiado al portapapeles')),
+                              );
+                            },
+                            icon: const Icon(Icons.copy),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Fecha del Pedido: ${data['orderDate']}',
-                        style: const TextStyle(fontFamily: 'Poppins'),
-                      ),
-                      const SizedBox(height: 16),
                     ],
                   ),
-                ),
-              ],
+                  const SizedBox(height: 8),
+                  Text(
+                    'Fecha del Pedido: ${data['orderDate']}',
+                    style: const TextStyle(fontFamily: 'Poppins'),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              ),
             ),
-    );
-  }
+          ),
+  );
+}
 }

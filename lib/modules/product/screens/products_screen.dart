@@ -13,6 +13,7 @@ class ProductsScreen extends StatefulWidget {
   @override
   State<ProductsScreen> createState() => _ProductsScreenState();
 }
+
 class _ProductsScreenState extends State<ProductsScreen> {
   bool _isFirstVisit = true;
   List<Map<String, dynamic>> filteredProducts = [];
@@ -43,10 +44,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
     setState(() {
       selectedCategoryReload = categoryName;
       filteredProducts = productsProvider.products.where((product) {
-        final List<dynamic> productCategories =
-            product['categoryNames'] ?? [];
-        final matchesCategory = categoryName == 'Todas' ||
-            productCategories.contains(categoryName);
+        final List<dynamic> productCategories = product['categoryNames'] ?? [];
+        final matchesCategory =
+            categoryName == 'Todas' || productCategories.contains(categoryName);
         final matchesSearchQuery = product['name']
             .toString()
             .toLowerCase()
@@ -63,8 +63,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
     setState(() {
       searchQuery = query;
       filteredProducts = productsProvider.products.where((product) {
-        final List<dynamic> productCategories =
-            product['categoryNames'] ?? [];
+        final List<dynamic> productCategories = product['categoryNames'] ?? [];
         final matchesCategory = selectedCategoryReload == 'Todas' ||
             productCategories.contains(selectedCategoryReload);
         final matchesSearchQuery = product['name']
@@ -111,8 +110,10 @@ class _ProductsScreenState extends State<ProductsScreen> {
                 backgroundColor: Colors.white,
                 color: const Color.fromRGBO(242, 148, 165, 1),
                 onRefresh: () async {
-                  await productsProvider.fetchProducts(context, forceRefresh: true);
-                  await categoriesProvider.fetchCategories(context, forceRefresh: true);
+                  await productsProvider.fetchProducts(context,
+                      forceRefresh: true);
+                  await categoriesProvider.fetchCategories(context,
+                      forceRefresh: true);
                   setState(() {
                     _filterProductsByCategory(selectedCategoryReload);
                   });
@@ -120,7 +121,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
                 child: productsProvider.isLoading
                     ? GridView.builder(
                         itemCount: 6,
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           childAspectRatio: 0.8,
                         ),
@@ -130,25 +132,48 @@ class _ProductsScreenState extends State<ProductsScreen> {
                           );
                         },
                       )
-                    : GridView.builder(
-                        itemCount: filteredProducts.length,
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          childAspectRatio: 0.8,
-                        ),
-                        itemBuilder: (context, index) {
-                          final product = filteredProducts[index];
-                          return Center(
-                            child: productCard(
-                              product['name'] as String,
-                              product['imageUri'] as String,
-                              product['price'].toString(),
-                              product['productId'].toString(),
-                              context,
+                    : filteredProducts.isEmpty
+                        ? Center(
+                          child: Column(
+                            children: [
+                              const SizedBox(height: 50),
+                              Image.asset(
+                                'assets/notAllowedProducts.png',
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                              ),
+                              Text(
+                                'Productos no encontrados',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                  fontFamily: 'Poppins',
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                        : GridView.builder(
+                            itemCount: filteredProducts.length,
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: 0.8,
                             ),
-                          );
-                        },
-                      ),
+                            itemBuilder: (context, index) {
+                              final product = filteredProducts[index];
+                              return Center(
+                                child: productCard(
+                                  product['name'] as String,
+                                  product['imageUri'] as String,
+                                  product['price'].toString(),
+                                  product['productId'].toString(),
+                                  context,
+                                ),
+                              );
+                            },
+                          ),
               ),
             ),
           ],
