@@ -8,6 +8,7 @@ import 'package:huicrochet_mobile/config/global_variables.dart';
 import 'package:huicrochet_mobile/modules/entities/address.dart';
 import 'package:huicrochet_mobile/modules/entities/cart.dart';
 import 'package:huicrochet_mobile/modules/payment-methods/models/payment_method_model.dart';
+import 'package:huicrochet_mobile/modules/stripe/stripe-network.dart';
 import 'package:huicrochet_mobile/widgets/general/general_button.dart';
 import 'package:huicrochet_mobile/widgets/general/loader.dart';
 import 'package:huicrochet_mobile/widgets/payment/purchase_progress_bar.dart';
@@ -222,7 +223,8 @@ class _PurchasedetailsScreenState extends State<PurchasedetailsScreen> {
                 GeneralButton(
                   text: 'Confirmar y pagar',
                   onPressed: () {
-                    createOrder();
+                    //createOrder();
+                    stripeNetwork(context, userId);
                   },
                 ),
                 const SizedBox(height: 5),
