@@ -1,12 +1,18 @@
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/config/global_variables.dart';
 import 'package:stomp_dart_client/stomp_dart_client.dart';
 import 'notification_service.dart';
-
 class WebSocketService {
   late StompClient _stompClient;
   final NotificationService notificationService;
+  final Function? onPaymentSuccess; // Callback para manejar "Pago exitoso".
 
-  WebSocketService({required this.notificationService});
+  WebSocketService({
+    required this.notificationService,
+    this.onPaymentSuccess,
+  });
 
   void connect() {
     _stompClient = StompClient(
@@ -29,10 +35,22 @@ class WebSocketService {
       callback: (frame) {
         final message = frame.body ?? "Sin mensaje recibido.";
         notificationService.showNotification(
-          title: '¡Tu orden!',
+          title: 'Huicrochet',
           body: message,
         );
         print("Notificación recibida: $message");
+
+        try {
+          final Map<String, dynamic> data = jsonDecode(message);
+
+          if (data['message'] == "Pago exitoso") {
+            if (onPaymentSuccess != null) {
+              onPaymentSuccess!();
+            }
+          }
+        } catch (e) {
+          print("Error al procesar la notificación: $e");
+        }
       },
     );
   }

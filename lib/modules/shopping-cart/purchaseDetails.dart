@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/config/dio_client.dart';
 import 'package:huicrochet_mobile/config/error_state.dart';
 import 'package:huicrochet_mobile/config/global_variables.dart';
+import 'package:huicrochet_mobile/config/service/notification_service.dart';
+import 'package:huicrochet_mobile/config/service/websocket_service.dart';
 import 'package:huicrochet_mobile/modules/entities/address.dart';
 import 'package:huicrochet_mobile/modules/entities/cart.dart';
 import 'package:huicrochet_mobile/modules/payment-methods/models/payment_method_model.dart';
@@ -33,6 +35,7 @@ class PurchasedetailsScreen extends StatefulWidget {
 
 class _PurchasedetailsScreenState extends State<PurchasedetailsScreen> {
   final LoaderController _loaderController = LoaderController();
+  late WebSocketService _webSocketService;
   String fullName = '';
   String userId = '';
 
@@ -40,6 +43,13 @@ class _PurchasedetailsScreenState extends State<PurchasedetailsScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    _webSocketService = WebSocketService(
+      notificationService: NotificationService(),
+      onPaymentSuccess: createOrder, // Callback para crear la orden.
+    );
+
+    _webSocketService.connect();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loaderController.show(context);
       _fetchData();

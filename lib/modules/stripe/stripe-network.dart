@@ -55,12 +55,7 @@ Future<void> stripeNetwork(BuildContext context, String userId) async {
                 ),
               );
 
-              if (urlLaunchResult) {
-                // Navegar directamente a la pantalla de navegación
-                Navigator.pushReplacementNamed(context, '/navigation');
-              } else {
-                _showErrorDialog(context, 'No se pudo abrir el enlace de pago');
-              }
+            
             } catch (e) {
               print('Error al abrir URL: $e');
               _showErrorDialog(context, 'Error al abrir el enlace de pago');
