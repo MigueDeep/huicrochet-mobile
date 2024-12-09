@@ -358,7 +358,7 @@ class _EditadressScreenState extends State<EditadressScreen> {
                                         borderRadius:
                                             BorderRadius.circular(8.0),
                                       ),
-                                      prefixIcon: Icon(Icons.location_city),
+                                      prefixIcon: Icon(Icons.location_on),
                                     ),
                                     validator: _validateZipCode,
                                     onTap: () {
@@ -383,7 +383,7 @@ class _EditadressScreenState extends State<EditadressScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
-                            prefixIcon: Icon(Icons.location_city),
+                            prefixIcon: Icon(Icons.location_on),
                           ),
                           validator: _validateCity,
                           onTap: () {
@@ -403,7 +403,7 @@ class _EditadressScreenState extends State<EditadressScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
-                            prefixIcon: Icon(Icons.location_city),
+                            prefixIcon: Icon(Icons.location_on),
                           ),
                           validator: _validateDistrict,
                           onTap: () {
@@ -423,7 +423,7 @@ class _EditadressScreenState extends State<EditadressScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
-                            prefixIcon: Icon(Icons.location_city),
+                            prefixIcon: Icon(Icons.location_on),
                           ),
                           validator: _validateState,
                           onTap: () {

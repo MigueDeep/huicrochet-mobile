@@ -275,7 +275,7 @@ class _AddadressScreenState extends State<AddadressScreen> {
                                             BorderRadius.circular(8.0),
                                       ),
                                       hintText: '12345',
-                                      prefixIcon: Icon(Icons.location_city),
+                                      prefixIcon: Icon(Icons.location_on),
                                     ),
                                     validator: _validateZipCode,
                                     onTap: () {
@@ -301,7 +301,7 @@ class _AddadressScreenState extends State<AddadressScreen> {
                               borderRadius: BorderRadius.circular(8.0),
                             ),
                             hintText: 'Londres',
-                            prefixIcon: Icon(Icons.location_city),
+                            prefixIcon: Icon(Icons.location_on),
                           ),
                           validator: _validateCity,
                           onTap: () {
@@ -322,7 +322,7 @@ class _AddadressScreenState extends State<AddadressScreen> {
                               borderRadius: BorderRadius.circular(8.0),
                             ),
                             hintText: 'Privet',
-                            prefixIcon: Icon(Icons.location_city),
+                            prefixIcon: Icon(Icons.location_on),
                           ),
                           validator: _validateDistrict,
                           onTap: () {
@@ -343,7 +343,7 @@ class _AddadressScreenState extends State<AddadressScreen> {
                               borderRadius: BorderRadius.circular(8.0),
                             ),
                             hintText: 'Little Whinging',
-                            prefixIcon: Icon(Icons.location_city),
+                            prefixIcon: Icon(Icons.location_on),
                           ),
                           validator: _validateState,
                           onTap: () {
