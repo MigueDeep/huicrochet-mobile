@@ -39,7 +39,7 @@ class CreditCard extends StatelessWidget {
         ),
         border: isSelected
             ? Border.all(
-                color: const Color.fromRGBO(242, 148, 165, 1), width: 4)
+                color: const Color.fromRGBO(130, 48, 56, 1), width: 4)
             : null,
       ),
       child: Column(
