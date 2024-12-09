@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/config/global_variables.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stomp_dart_client/stomp_dart_client.dart';
 import 'notification_service.dart';
 class WebSocketService {
@@ -28,32 +29,38 @@ class WebSocketService {
     _stompClient.activate();
   }
 
-  void _onConnect(StompFrame frame) {
-    print("Conectado al servidor WebSocket");
-    _stompClient.subscribe(
-      destination: '/topic/notification',
-      callback: (frame) {
-        final message = frame.body ?? "Sin mensaje recibido.";
-        notificationService.showNotification(
-          title: 'Huicrochet',
-          body: message,
-        );
-        print("Notificación recibida: $message");
+void _onConnect(StompFrame frame) {
+  print("Conectado al servidor WebSocket");
+  _stompClient.subscribe(
+    destination: '/topic/notification',
+    callback: (frame) async {
+      final message = frame.body ?? "Sin mensaje recibido.";
+      notificationService.showNotification(
+        title: 'Huicrochet',
+        body: message,
+      );
+      print("Notificación recibida: $message");
 
-        try {
-          final Map<String, dynamic> data = jsonDecode(message);
+      try {
+        final Map<String, dynamic> data = jsonDecode(message);
 
-          if (data['message'] == "Pago exitoso") {
-            if (onPaymentSuccess != null) {
-              onPaymentSuccess!();
-            }
+        if (data['message'] == "Pago exitoso") {
+          final receiptUrl = data['receipt_url'];
+          if (receiptUrl != null) {
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            await prefs.setString('receiptUrl', receiptUrl);
           }
-        } catch (e) {
-          print("Error al procesar la notificación: $e");
+          if (onPaymentSuccess != null) {
+            onPaymentSuccess!();
+          }
         }
-      },
-    );
-  }
+      } catch (e) {
+        print("Error al procesar la notificación: $e");
+      }
+    },
+  );
+}
+
 
   void disconnect() {
     _stompClient.deactivate();

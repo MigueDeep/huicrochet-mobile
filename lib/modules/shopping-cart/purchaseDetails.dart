@@ -78,17 +78,20 @@ class _PurchasedetailsScreenState extends State<PurchasedetailsScreen> {
     final dio = DioClient(context).dio;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     try {
+      final receiptUrl = prefs.getString('receiptUrl');
       final response = await dio.post(
         '/order',
         data: {
           'shoppingCartId': prefs.getString('shoppingCartId'),
           'shippingAddressId': widget.address.id,
           'paymentMethodId': widget.payment.id,
+          if (receiptUrl != null) 'recepitUrl': receiptUrl,
         },
       );
 
-      {}
       if (response.statusCode == 200 || response.statusCode == 201) {
+        await prefs.remove('receiptUrl');
+
         _loaderController.hide();
         showDialog(
           context: context,
@@ -96,19 +99,20 @@ class _PurchasedetailsScreenState extends State<PurchasedetailsScreen> {
             return AlertDialog(
               title: Text('Orden creada con éxito'),
               content: Text(
-                  'Puedes ver el estado de tu pedido en la sessión de ordenes  :)'),
+                  'Puedes ver el estado de tu pedido en la sección de órdenes :)'),
               actions: <Widget>[
                 TextButton(
-                    style:
-                        TextButton.styleFrom(backgroundColor: colors['violet']),
-                    onPressed: () {
-                      getNewShoppingCart();
-                      Navigator.pushReplacementNamed(context, '/navigation');
-                    },
-                    child: Text(
-                      "Aceptar",
-                      style: TextStyle(color: Colors.white),
-                    )),
+                  style:
+                      TextButton.styleFrom(backgroundColor: colors['violet']),
+                  onPressed: () {
+                    getNewShoppingCart();
+                    Navigator.pushReplacementNamed(context, '/navigation');
+                  },
+                  child: Text(
+                    "Aceptar",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
               ],
             );
           },
@@ -233,7 +237,6 @@ class _PurchasedetailsScreenState extends State<PurchasedetailsScreen> {
                 GeneralButton(
                   text: 'Confirmar y pagar',
                   onPressed: () {
-                    //createOrder();
                     stripeNetwork(context, userId);
                   },
                 ),
