@@ -269,7 +269,10 @@ class _EditadressScreenState extends State<EditadressScreen> {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text('Editar dirección'),
+          title: const Text(
+            'Editar dirección de envío',
+            style: TextStyle(color: Colors.black, fontFamily: 'Poppins'),
+          ),
           backgroundColor: Colors.white,
           elevation: 0,
           iconTheme: IconThemeData(color: Colors.black),
@@ -355,7 +358,7 @@ class _EditadressScreenState extends State<EditadressScreen> {
                                         borderRadius:
                                             BorderRadius.circular(8.0),
                                       ),
-                                      prefixIcon: Icon(Icons.location_city),
+                                      prefixIcon: Icon(Icons.location_on),
                                     ),
                                     validator: _validateZipCode,
                                     onTap: () {
@@ -380,7 +383,7 @@ class _EditadressScreenState extends State<EditadressScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
-                            prefixIcon: Icon(Icons.location_city),
+                            prefixIcon: Icon(Icons.location_on),
                           ),
                           validator: _validateCity,
                           onTap: () {
@@ -400,7 +403,7 @@ class _EditadressScreenState extends State<EditadressScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
-                            prefixIcon: Icon(Icons.location_city),
+                            prefixIcon: Icon(Icons.location_on),
                           ),
                           validator: _validateDistrict,
                           onTap: () {
@@ -420,7 +423,7 @@ class _EditadressScreenState extends State<EditadressScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
-                            prefixIcon: Icon(Icons.location_city),
+                            prefixIcon: Icon(Icons.location_on),
                           ),
                           validator: _validateState,
                           onTap: () {

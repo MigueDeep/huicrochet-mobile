@@ -10,6 +10,7 @@ import 'package:huicrochet_mobile/modules/shopping-cart/mailing_address_cart.dar
 import 'package:huicrochet_mobile/widgets/general/loader.dart';
 import 'package:huicrochet_mobile/widgets/product/product_added_to_cart.dart';
 import 'package:huicrochet_mobile/widgets/general/general_button.dart';
+import 'package:huicrochet_mobile/widgets/product/see_more_products.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -213,6 +214,7 @@ class _ShoppingcartScreenState extends State<ShoppingcartScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -272,6 +274,28 @@ class _ShoppingcartScreenState extends State<ShoppingcartScreen> {
                           subColor: Color(int.parse(
                               "0xff${cartItem.item.color.colorCod.substring(1)}")),
                           onIncrement: () {
+                            //validar si hay stock
+                            if (cartItem.quantity >= cartItem.item.stock) {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text('Stock insuficiente'),
+                                    content: Text(
+                                        'No hay suficiente stock para este producto'),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        child: Text('Aceptar'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                              return;
+                            }
                             setState(() {
                               cartItem.quantity++;
                               Future.delayed(const Duration(milliseconds: 3000),
@@ -302,6 +326,8 @@ class _ShoppingcartScreenState extends State<ShoppingcartScreen> {
                         );
                       },
                     ),
+                  const SizedBox(height: 20),
+                  SeeMoreProducts()
                 ],
               ),
             ),

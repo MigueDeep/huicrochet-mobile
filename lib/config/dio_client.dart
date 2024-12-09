@@ -11,7 +11,7 @@ class DioClient {
   DioClient(BuildContext context)
       : _dio = Dio(
           BaseOptions(
-            baseUrl: 'http://${ip}:8080/api-crochet',
+            baseUrl: 'http://$ip:8080/api-crochet',
             connectTimeout: const Duration(seconds: 10),
             receiveTimeout: const Duration(seconds: 10),
             headers: {

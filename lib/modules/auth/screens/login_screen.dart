@@ -113,140 +113,142 @@ class _LoginScreenState extends State<LoginScreen> {
       },
     );
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Center(
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'HUICROCHET',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: colors['wine'],
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: Colors.white,
+    body: SafeArea(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Center(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: 80),
+                  Text(
+                    'HUICROCHET',
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: colors['wine'],
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                ),
-                const SizedBox(height: 24),
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(
+                  const SizedBox(height: 24),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
                         color: const Color.fromRGBO(135, 135, 135, 1),
-                        width: 1.0),
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  padding: const EdgeInsets.all(24.0),
-                  child: Column(
-                    children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          '¡Bienvenido!',
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontSize: 16,
-                            color: colors['wine'],
-                          ),
-                        ),
+                        width: 1.0,
                       ),
-                      const SizedBox(height: 16),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Iniciar sesión',
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: colors['wine'],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Calidad en cada puntada, arte en cada detalle.',
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontSize: 14,
-                            color: colors['wine'],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 32),
-                      TextFormField(
-                        controller: _emailController,
-                        decoration: InputDecoration(
-                          labelText: 'Correo',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                        ),
-                        validator: _validateEmail,
-                        onTap: () {
-                          setState(() {
-                            _emailTouched = true;
-                          });
-                        },
-                      ),
-                      const SizedBox(height: 32),
-                      TextFormField(
-                        controller: _passwordController,
-                        obscureText: _isObscured,
-                        decoration: InputDecoration(
-                          labelText: 'Contraseña',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              color: colors['wine'],
-                              _isObscured
-                                  ? Icons.visibility_off
-                                  : Icons.visibility,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _isObscured = !_isObscured;
-                              });
-                            },
-                          ),
-                        ),
-                        validator: _validatePassword,
-                        onTap: () {
-                          setState(() {
-                            _passwordTouched = true;
-                          });
-                        },
-                      ),
-                      const SizedBox(height: 8),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/recoverpass1');
-                          },
-                          child: const Text(
-                            '¿Olvidaste la contraseña?',
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '¡Bienvenido!',
                             style: TextStyle(
-                                color: Colors.grey, fontFamily: 'Poppins'),
+                              fontFamily: 'Poppins',
+                              fontSize: 16,
+                              color: colors['wine'],
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 16),
-                      GeneralButton(
+                        const SizedBox(height: 16),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Iniciar sesión',
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: colors['wine'],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Calidad en cada puntada, arte en cada detalle.',
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 14,
+                              color: colors['wine'],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 32),
+                        TextFormField(
+                          controller: _emailController,
+                          decoration: InputDecoration(
+                            labelText: 'Correo',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                          ),
+                          validator: _validateEmail,
+                          onTap: () {
+                            setState(() {
+                              _emailTouched = true;
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 32),
+                        TextFormField(
+                          controller: _passwordController,
+                          obscureText: _isObscured,
+                          decoration: InputDecoration(
+                            labelText: 'Contraseña',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _isObscured
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                                color: colors['wine'],
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _isObscured = !_isObscured;
+                                });
+                              },
+                            ),
+                          ),
+                          validator: _validatePassword,
+                          onTap: () {
+                            setState(() {
+                              _passwordTouched = true;
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 8),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/recoverpass1');
+                            },
+                            child: const Text(
+                              '¿Olvidaste la contraseña?',
+                              style: TextStyle(
+                                  color: Colors.grey, fontFamily: 'Poppins'),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        GeneralButton(
                           text: 'Iniciar sesión',
                           onPressed: () async {
                             _loaderController.show(context);
@@ -256,43 +258,46 @@ class _LoginScreenState extends State<LoginScreen> {
                             });
 
                             if (_formKey.currentState!.validate()) {
-                              await _login(_emailController,
-                                  _passwordController, context);
+                              await _login(
+                                  _emailController, _passwordController, context);
                               _loaderController.hide();
                             } else {
-                              // Oculta el loader si la validación falla
                               _loaderController.hide();
                             }
-                          }),
-                      const SizedBox(height: 16),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            "¿Aún no tienes cuenta? ",
-                            style: TextStyle(fontFamily: 'Poppins'),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.pushNamed(context, '/register');
-                            },
-                            child: const Text(
-                              'Registrarse',
-                              style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.bold),
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "¿Aún no tienes cuenta? ",
+                              style: TextStyle(fontFamily: 'Poppins'),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(context, '/register');
+                              },
+                              child: const Text(
+                                'Registrarse',
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

@@ -294,7 +294,7 @@ class _PurchasedetailsScreenState extends State<PurchasedetailsScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 25),
               ],
             ),
           ),
