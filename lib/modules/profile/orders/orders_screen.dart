@@ -101,7 +101,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loaderController.show(context);
-      getProfile();
+      checkLoginStatus();
     });
   }
 
@@ -134,6 +134,40 @@ class _OrdersScreenState extends State<OrdersScreen> {
       userImg = profileImage;
     });
     getOrders();
+  }
+
+  Future<void> checkLoginStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.getString('token') == null) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('No tienes sesión iniciada'),
+            content: const Text('¿Quieres iniciar sesión?'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Cancelar'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.pushReplacementNamed(context, '/navigation');
+                },
+              ),
+              TextButton(
+                child: const Text('Iniciar sesión'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.pushReplacementNamed(context, '/login');
+                },
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      _loaderController.show(context);
+      getProfile();
+    }
   }
 
   @override

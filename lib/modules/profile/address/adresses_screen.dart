@@ -6,8 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/config/dio_client.dart';
 import 'package:huicrochet_mobile/config/error_state.dart';
 import 'package:huicrochet_mobile/config/global_variables.dart';
+import 'package:huicrochet_mobile/config/service_locator.dart';
 import 'package:huicrochet_mobile/modules/entities/address.dart';
 import 'package:huicrochet_mobile/modules/entities/user.dart';
+import 'package:huicrochet_mobile/modules/navigation/navigation.dart';
+import 'package:huicrochet_mobile/modules/payment-methods/use_cases/get_payment.dart';
 import 'package:huicrochet_mobile/modules/profile/address/editAddress_screen.dart';
 import 'package:huicrochet_mobile/widgets/general/action_sheet.dart';
 import 'package:huicrochet_mobile/widgets/general/loader.dart';
@@ -328,6 +331,20 @@ class _AddressesScreenState extends State<AddressesScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: IconThemeData(color: Colors.black),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          onPressed: () {
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                builder: (context) => Navigation(
+                  getPaymentMethod: getIt<GetPayment>(),
+                  initialIndex: 3,
+                ),
+              ),
+              (route) => false,
+            );
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(

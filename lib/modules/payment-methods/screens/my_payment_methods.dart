@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/config/global_variables.dart';
 import 'package:huicrochet_mobile/config/service_locator.dart';
+import 'package:huicrochet_mobile/modules/navigation/navigation.dart';
 import 'package:huicrochet_mobile/modules/payment-methods/models/payment_method_model.dart';
 import 'package:huicrochet_mobile/modules/payment-methods/screens/edit_payment_method.dart';
 import 'package:huicrochet_mobile/modules/payment-methods/use_cases/delete_payment.dart';
@@ -8,7 +9,6 @@ import 'package:huicrochet_mobile/modules/payment-methods/use_cases/get_payment.
 import 'package:huicrochet_mobile/modules/payment-methods/use_cases/get_payment_byId.dart';
 import 'package:huicrochet_mobile/modules/payment-methods/use_cases/update_payment.dart';
 import 'package:huicrochet_mobile/widgets/general/action_sheet.dart';
-import 'package:huicrochet_mobile/widgets/general/general_button.dart';
 import 'package:huicrochet_mobile/widgets/general/loader.dart';
 import 'package:huicrochet_mobile/widgets/payment/credit_card.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -189,6 +189,20 @@ class _MyPaymentMethodsState extends State<MyPaymentMethods> {
         title: const Text(
           'Métodos de pago',
           style: TextStyle(color: Colors.black, fontFamily: 'Poppins'),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          onPressed: () {
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                builder: (context) => Navigation(
+                  getPaymentMethod: getIt<GetPayment>(),
+                  initialIndex: 3,
+                ),
+              ),
+              (route) => false,
+            );
+          },
         ),
       ),
       body: SingleChildScrollView(

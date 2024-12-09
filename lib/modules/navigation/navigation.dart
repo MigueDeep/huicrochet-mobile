@@ -1,45 +1,30 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/modules/home/home_screen.dart';
 import 'package:huicrochet_mobile/modules/payment-methods/use_cases/get_payment.dart';
-import 'package:huicrochet_mobile/modules/product/datasource/product_remote_data_source.dart';
-import 'package:huicrochet_mobile/modules/product/repositories/product_repository.dart';
 import 'package:huicrochet_mobile/modules/product/screens/products_screen.dart';
-import 'package:huicrochet_mobile/modules/product/use_cases/fetch_products_data.dart';
 import 'package:huicrochet_mobile/modules/shopping-cart/shoppingCart_screen.dart';
 import 'package:huicrochet_mobile/modules/profile/profile_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class Navigation extends StatefulWidget {
-  const Navigation({super.key, required this.getPaymentMethod});
+  const Navigation(
+      {super.key, required this.getPaymentMethod, this.initialIndex = 0});
   final GetPayment getPaymentMethod;
+  final int initialIndex;
 
   @override
   State<Navigation> createState() => _NavigationState();
 }
 
 class _NavigationState extends State<Navigation> {
-  int _selectedIndex = 0;
-
-  // Dio client for network requests
-  final dioClient =
-      Dio(BaseOptions(baseUrl: 'http://192.168.107.138:8080/api-crochet'));
-
-  // Use case for fetching products, initialized in initState
-  late final FetchProductsData getProductsUseCase;
+  late int _selectedIndex;
 
   @override
   void initState() {
     super.initState();
-    // Initialize data source and repository, then assign the use case
-    final productRemoteDataSource =
-        ProductRemoteDataSourceImpl(dioClient: dioClient);
-    final productRepository =
-        ProductRepositoryImpl(remoteDataSource: productRemoteDataSource);
-    getProductsUseCase = FetchProductsData(repository: productRepository);
+    _selectedIndex = widget.initialIndex;
   }
 
-  // Method to update selected tab index
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -53,7 +38,6 @@ class _NavigationState extends State<Navigation> {
       const ProductsScreen(),
       ShoppingcartScreen(getPaymentMethod: widget.getPaymentMethod),
       ProfileScreen(),
-      const ProfileScreen()
     ];
 
     return Scaffold(
