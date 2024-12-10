@@ -105,8 +105,7 @@ class _ProductDetailState extends State<ProductDetail> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: const Text('Producto agregado al carrito'),
-            backgroundColor:
-                getColor('violet'), 
+            backgroundColor: Colors.blue,
           ),
         );
         await Future.delayed(const Duration(seconds: 2));
