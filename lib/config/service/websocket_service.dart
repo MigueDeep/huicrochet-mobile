@@ -30,29 +30,39 @@ class WebSocketService {
   }
 
 void _onConnect(StompFrame frame) {
-  print("Conectado al servidor WebSocket");
   _stompClient.subscribe(
     destination: '/topic/notification',
     callback: (frame) async {
-      final message = frame.body ?? "Sin mensaje recibido.";
-      notificationService.showNotification(
-        title: 'Huicrochet',
-        body: message,
-      );
-      print("Notificación recibida: $message");
+      final rawMessage = frame.body ?? "Sin mensaje recibido.";
 
       try {
-        final Map<String, dynamic> data = jsonDecode(message);
+        final Map<String, dynamic> data = jsonDecode(rawMessage);
 
-        if (data['message'] == "Pago exitoso") {
-          final receiptUrl = data['receipt_url'];
-          if (receiptUrl != null) {
-            SharedPreferences prefs = await SharedPreferences.getInstance();
-            await prefs.setString('receiptUrl', receiptUrl);
+        String? extractedMessage;
+        if (data.containsKey('message')) {
+          extractedMessage = data['message']; 
+          
+          if (data['message'] == "Pago exitoso") {
+            final receiptUrl = data['receipt_url'];
+            if (receiptUrl != null) {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              await prefs.setString('receiptUrl', receiptUrl);
+            }
+            if (onPaymentSuccess != null) {
+              onPaymentSuccess!();
+            }
           }
-          if (onPaymentSuccess != null) {
-            onPaymentSuccess!();
-          }
+        } else if (data.containsKey('status')) {
+          extractedMessage = data['status']; 
+        }
+
+        if (extractedMessage != null) {
+          notificationService.showNotification(
+            title: 'Huicrochet',
+            body: extractedMessage,
+          );
+        } else {
+          print("Mensaje no reconocido en la notificación.");
         }
       } catch (e) {
         print("Error al procesar la notificación: $e");
@@ -60,6 +70,7 @@ void _onConnect(StompFrame frame) {
     },
   );
 }
+
 
 
   void disconnect() {
