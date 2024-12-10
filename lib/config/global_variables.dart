@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-String ip = '3.90.54.120';
+String ip = '34.203.104.87';
 
 Color getColor(String key) {
   return colors[key] ?? Colors.transparent;
