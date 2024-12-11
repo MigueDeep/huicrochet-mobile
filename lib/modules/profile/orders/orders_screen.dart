@@ -24,7 +24,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
   String? userImg;
   final LoaderController _loaderController = LoaderController();
 
-  bool emptyOrders = false;
+  bool emptyOrders = true;
   List<Order> ordersList = [];
 
   Future<void> getOrders() async {
@@ -46,8 +46,10 @@ class _OrdersScreenState extends State<OrdersScreen> {
         final data = jsonData['data'];
         setState(() {
           if (data == null || data.isEmpty) {
-            emptyOrders = true;
-            ordersList = [];
+            setState(() {
+              emptyOrders = true;
+              ordersList = [];
+            });
           } else {
             try {
               ordersList = List<Order>.from(
@@ -229,117 +231,136 @@ class _OrdersScreenState extends State<OrdersScreen> {
             Divider(),
             Container(
               padding: const EdgeInsets.all(24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: ordersList.map((order) {
-                  if (emptyOrders) {
-                    return Center(
-                      child: Text(
-                        'No hay ordenes que mostrar',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 16,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    );
-                  }
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => OrderDetailsScreen(
-                            id: order.id,
+              child: emptyOrders
+                  ? Center(
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 50),
+                          Image.asset(
+                            'assets/empty.png',
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.cover,
                           ),
-                        ),
-                      );
-                    },
-                    child: Column(
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(8.0),
-                              child: Image.network(
-                                order.shoppingCart.cartItems.isNotEmpty
-                                    ? 'http://${ip}:8080/${order.shoppingCart.cartItems[0].item.images.isNotEmpty ? order.shoppingCart.cartItems[0].item.images[0].imageUri.split('/').last : 'placeholder.png'}'
-                                    : 'assets/product1.png',
-                                width: 50,
-                                height: 50,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Image.asset(
-                                    'assets/product1.png',
-                                    width: 50,
-                                    height: 50,
-                                    fit: BoxFit.cover,
-                                  );
-                                },
-                              ),
+                          const SizedBox(height: 10),
+                          Text(
+                            'No hay órdenes que mostrar',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black,
+                              fontFamily: 'Poppins',
                             ),
-                            SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
+                          ),
+                        ],
+                      ),
+                    )
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: ordersList.map((order) {
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => OrderDetailsScreen(
+                                  id: order.id,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    order.shoppingCart.cartItems.isNotEmpty
-                                        ? order.shoppingCart.cartItems[0].item
-                                            .product.productName
-                                        : 'Producto',
-                                    style: TextStyle(
-                                      fontFamily: 'Poppins',
-                                      fontSize: 16,
-                                      color: Colors.black,
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    child: Image.network(
+                                      order.shoppingCart.cartItems.isNotEmpty
+                                          ? 'http://${ip}:8080/${order.shoppingCart.cartItems[0].item.images.isNotEmpty ? order.shoppingCart.cartItems[0].item.images[0].imageUri.split('/').last : 'placeholder.png'}'
+                                          : 'assets/product1.png',
+                                      width: 50,
+                                      height: 50,
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return Image.asset(
+                                          'assets/product1.png',
+                                          width: 50,
+                                          height: 50,
+                                          fit: BoxFit.cover,
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(width: 16),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          order.shoppingCart.cartItems
+                                                  .isNotEmpty
+                                              ? order.shoppingCart.cartItems[0]
+                                                  .item.product.productName
+                                              : 'Producto',
+                                          style: TextStyle(
+                                            fontFamily: 'Poppins',
+                                            fontSize: 16,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                        Text(
+                                          order.orderState == 'DELIVERED'
+                                              ? 'Entregado el: ${order.estimatedDeliverDate != null ? DateFormat('dd/MM/yyyy').format(
+                                                  DateTime
+                                                      .fromMillisecondsSinceEpoch(
+                                                    order.estimatedDeliverDate!,
+                                                  ),
+                                                ) : 'En espera'}'
+                                              : 'Fecha estimada: ${order.estimatedDeliverDate != null ? DateFormat('dd/MM/yyyy').format(
+                                                  DateTime.fromMillisecondsSinceEpoch(
+                                                      order
+                                                          .estimatedDeliverDate!),
+                                                ) : 'En espera'}',
+                                          style: TextStyle(
+                                            fontFamily: 'Poppins',
+                                            fontSize: 14,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                   Text(
-                                    order.orderState == 'DELIVERED'
-                                        ? 'Entregado el: ${order.estimatedDeliverDate != null ? DateFormat('dd/MM/yyyy').format(
-                                            DateTime.fromMillisecondsSinceEpoch(
-                                              order.estimatedDeliverDate!,
-                                            ),
-                                          ) : 'En espera'}'
-                                        : 'Fecha estimada: ${order.estimatedDeliverDate != null ? DateFormat('dd/MM/yyyy').format(
-                                            DateTime.fromMillisecondsSinceEpoch(
-                                                order.estimatedDeliverDate!),
-                                          ) : 'En espera'}',
+                                    translateOrderState(order.orderState),
                                     style: TextStyle(
                                       fontFamily: 'Poppins',
                                       fontSize: 14,
-                                      color: Colors.grey,
+                                      color: order.orderState == 'PENDING'
+                                          ? Color.fromRGBO(99, 162, 255, 1)
+                                          : order.orderState == 'PROCESSED'
+                                              ? Color.fromRGBO(255, 193, 116, 1)
+                                              : order.orderState == 'SHIPPED'
+                                                  ? Color.fromARGB(
+                                                      255, 200, 142, 255)
+                                                  : order.orderState ==
+                                                          'DELIVERED'
+                                                      ? Color.fromRGBO(
+                                                          51, 125, 71, 1)
+                                                      : Color.fromRGBO(
+                                                          99, 162, 255, 1),
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
-                            Text(
-                              translateOrderState(order.orderState),
-                              style: TextStyle(
-                                fontFamily: 'Poppins',
-                                fontSize: 14,
-                                color: order.orderState == 'PENDING'
-                                    ? Color.fromRGBO(99, 162, 255, 1)
-                                    : order.orderState == 'PROCESSED'
-                                        ? Color.fromRGBO(255, 193, 116, 1)
-                                        : order.orderState == 'SHIPPED'
-                                            ? Color.fromARGB(255, 200, 142, 255)
-                                            : order.orderState == 'DELIVERED'
-                                                ? Color.fromRGBO(51, 125, 71, 1)
-                                                : Color.fromRGBO(
-                                                    99, 162, 255, 1),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 24),
-                      ],
+                              const SizedBox(height: 24),
+                            ],
+                          ),
+                        );
+                      }).toList(),
                     ),
-                  );
-                }).toList(),
-              ),
             )
           ],
         ),
