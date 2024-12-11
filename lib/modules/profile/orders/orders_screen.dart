@@ -5,7 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/config/dio_client.dart';
 import 'package:huicrochet_mobile/config/error_state.dart';
 import 'package:huicrochet_mobile/config/global_variables.dart';
+import 'package:huicrochet_mobile/config/service_locator.dart';
 import 'package:huicrochet_mobile/modules/entities/order.dart';
+import 'package:huicrochet_mobile/modules/navigation/navigation.dart';
+import 'package:huicrochet_mobile/modules/payment-methods/use_cases/get_payment.dart';
 import 'package:huicrochet_mobile/modules/profile/orders/orderDetails_screen.dart';
 import 'package:huicrochet_mobile/widgets/general/loader.dart';
 import 'package:intl/intl.dart';
@@ -178,6 +181,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         automaticallyImplyLeading: true,
+        centerTitle: true,
         title: const Text(
           'Ordenes',
           style: TextStyle(color: Colors.black, fontFamily: 'Poppins'),
@@ -185,6 +189,20 @@ class _OrdersScreenState extends State<OrdersScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: IconThemeData(color: Colors.black),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          onPressed: () {
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                builder: (context) => Navigation(
+                  getPaymentMethod: getIt<GetPayment>(),
+                  initialIndex: 3,
+                ),
+              ),
+              (route) => false,
+            );
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -339,9 +357,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                       fontFamily: 'Poppins',
                                       fontSize: 14,
                                       color: order.orderState == 'PENDING'
-                                          ? Color.fromRGBO(99, 162, 255, 1)
+                                          ? Color.fromRGBO(255, 193, 116, 1)
                                           : order.orderState == 'PROCESSED'
-                                              ? Color.fromRGBO(255, 193, 116, 1)
+                                              ? Color.fromRGBO(99, 162, 255, 1)
                                               : order.orderState == 'SHIPPED'
                                                   ? Color.fromARGB(
                                                       255, 200, 142, 255)
@@ -350,7 +368,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                                       ? Color.fromRGBO(
                                                           51, 125, 71, 1)
                                                       : Color.fromRGBO(
-                                                          99, 162, 255, 1),
+                                                          255, 193, 116, 1),
                                     ),
                                   ),
                                 ],

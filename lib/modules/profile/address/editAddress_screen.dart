@@ -393,7 +393,7 @@ class _EditadressScreenState extends State<EditadressScreen> {
                           },
                         ),
                         const SizedBox(height: 16),
-                        Text('Distrito:',
+                        Text('Colonia:',
                             style: TextStyle(
                                 fontFamily: 'Poppins', color: colors['wine'])),
                         const SizedBox(height: 8),
