@@ -88,6 +88,9 @@ class _AddPaymentMethodState extends State<AddPaymentMethod> {
         int.parse(value) > 12) {
       return 'Ingrese un mes válido (1-12)';
     }
+    if (value.length != 2) {
+      return 'El mes de vencimiento debe tener 2 dígitos';
+    }
     return null;
   }
 
