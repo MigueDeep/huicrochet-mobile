@@ -8,6 +8,7 @@ import 'package:huicrochet_mobile/modules/entities/cart.dart';
 import 'package:huicrochet_mobile/modules/entities/user.dart';
 import 'package:huicrochet_mobile/modules/payment-methods/use_cases/get_payment.dart';
 import 'package:huicrochet_mobile/modules/shopping-cart/payment_methods.dart';
+import 'package:huicrochet_mobile/modules/shopping-cart/purchaseDetails.dart';
 import 'package:huicrochet_mobile/widgets/general/loader.dart';
 import 'package:huicrochet_mobile/widgets/payment/purchase_progress_bar.dart';
 import 'package:huicrochet_mobile/widgets/payment/select_address_card.dart';
@@ -214,7 +215,7 @@ class _MailingAddressCartState extends State<MailingAddressCart> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
+                    /* MaterialPageRoute(
                       builder: (context) => PaymentMethods(
                         shoppingCart: widget.shoppingCart,
                         address: _selectedIndex >= 0
@@ -222,6 +223,15 @@ class _MailingAddressCartState extends State<MailingAddressCart> {
                             : addresses.firstWhere(
                                 (address) => address.defaultAddress),
                         getPaymentMethod: widget.getPaymentMethod,
+                      ),
+                    ), */
+                    MaterialPageRoute(
+                      builder: (context) => PurchasedetailsScreen(
+                        shoppingCart: widget.shoppingCart,
+                        address: _selectedIndex >= 0
+                            ? addresses[_selectedIndex]
+                            : addresses.firstWhere(
+                                (address) => address.defaultAddress),
                       ),
                     ),
                   );

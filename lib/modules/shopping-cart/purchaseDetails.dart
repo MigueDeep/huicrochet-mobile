@@ -21,13 +21,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 class PurchasedetailsScreen extends StatefulWidget {
   final Cart shoppingCart;
   final Address address;
-  final PaymentCardModel payment;
 
-  const PurchasedetailsScreen(
-      {super.key,
-      required this.shoppingCart,
-      required this.address,
-      required this.payment});
+  const PurchasedetailsScreen({
+    super.key,
+    required this.shoppingCart,
+    required this.address,
+  });
 
   @override
   _PurchasedetailsScreenState createState() => _PurchasedetailsScreenState();
@@ -84,7 +83,7 @@ class _PurchasedetailsScreenState extends State<PurchasedetailsScreen> {
         data: {
           'shoppingCartId': prefs.getString('shoppingCartId'),
           'shippingAddressId': widget.address.id,
-          'paymentMethodId': widget.payment.id,
+          'paymentMethodId': 'idHardcodeado',
           if (receiptUrl != null) 'recepitUrl': receiptUrl,
         },
       );
@@ -284,7 +283,7 @@ class _PurchasedetailsScreenState extends State<PurchasedetailsScreen> {
                     SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'Método de pago: Mastercard con terminación ${widget.payment.last4Numbers}',
+                        'Método de pago: Mastercard con terminación 4242',
                         style: TextStyle(fontSize: 14, fontFamily: 'Poppins'),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
