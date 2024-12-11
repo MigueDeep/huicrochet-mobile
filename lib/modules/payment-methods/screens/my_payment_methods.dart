@@ -220,7 +220,27 @@ class _MyPaymentMethodsState extends State<MyPaymentMethods> {
                 }
                 if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return Center(
-                      child: Text('No se han encontrado métodos de pago'));
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 50),
+                        Image.asset(
+                          'assets/empty.png',
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          'No hay metodos de pago registrados',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black,
+                            fontFamily: 'Poppins',
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
                 }
                 final paymentCards = snapshot.data!;
 
@@ -259,10 +279,11 @@ class _MyPaymentMethodsState extends State<MyPaymentMethods> {
                 );
               },
             ),
-            const Divider(
+            /* const Divider(
               thickness: 1,
               color: Color.fromARGB(63, 142, 119, 119),
-            ),
+            ), */
+            const SizedBox(height: 30),
             Padding(
               padding: const EdgeInsets.only(
                   top: 10, bottom: 30, right: 20, left: 20),
