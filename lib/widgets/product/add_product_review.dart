@@ -53,13 +53,22 @@ class _AddProductReviewState extends State<AddProductReview> {
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            "Ya has comentado este producto",
-            style: TextStyle(
-              color: Colors.white,
-            ),
+          content: Row(
+            children: [
+              Icon(
+                Icons.warning, 
+                color: Colors.white, 
+              ),
+              SizedBox(width: 8), 
+              Text(
+                "Ya has comentado este producto",
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ],
           ),
-          backgroundColor: colors['violet'],
+          backgroundColor: colors['wine'],
         ),
       );
     }

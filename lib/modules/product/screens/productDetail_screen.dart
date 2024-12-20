@@ -103,8 +103,8 @@ class _ProductDetailState extends State<ProductDetail> {
         });
         _loaderController.hide();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Producto agregado al carrito'),
+          SnackBar(
+            content: const Text('Producto agregado al carrito'),
             backgroundColor: Colors.blue,
           ),
         );

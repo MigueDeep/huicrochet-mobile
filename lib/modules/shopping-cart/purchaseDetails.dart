@@ -5,9 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/config/dio_client.dart';
 import 'package:huicrochet_mobile/config/error_state.dart';
 import 'package:huicrochet_mobile/config/global_variables.dart';
+import 'package:huicrochet_mobile/config/service/notification_service.dart';
+import 'package:huicrochet_mobile/config/service/websocket_service.dart';
 import 'package:huicrochet_mobile/modules/entities/address.dart';
 import 'package:huicrochet_mobile/modules/entities/cart.dart';
 import 'package:huicrochet_mobile/modules/payment-methods/models/payment_method_model.dart';
+import 'package:huicrochet_mobile/modules/stripe/stripe-network.dart';
 import 'package:huicrochet_mobile/widgets/general/general_button.dart';
 import 'package:huicrochet_mobile/widgets/general/loader.dart';
 import 'package:huicrochet_mobile/widgets/payment/purchase_progress_bar.dart';
@@ -18,13 +21,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 class PurchasedetailsScreen extends StatefulWidget {
   final Cart shoppingCart;
   final Address address;
-  final PaymentCardModel payment;
 
-  const PurchasedetailsScreen(
-      {super.key,
-      required this.shoppingCart,
-      required this.address,
-      required this.payment});
+  const PurchasedetailsScreen({
+    super.key,
+    required this.shoppingCart,
+    required this.address,
+  });
 
   @override
   _PurchasedetailsScreenState createState() => _PurchasedetailsScreenState();
@@ -32,6 +34,7 @@ class PurchasedetailsScreen extends StatefulWidget {
 
 class _PurchasedetailsScreenState extends State<PurchasedetailsScreen> {
   final LoaderController _loaderController = LoaderController();
+  late WebSocketService _webSocketService;
   String fullName = '';
   String userId = '';
 
@@ -39,6 +42,13 @@ class _PurchasedetailsScreenState extends State<PurchasedetailsScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    _webSocketService = WebSocketService(
+      notificationService: NotificationService(),
+      onPaymentSuccess: createOrder, // Callback para crear la orden.
+    );
+
+    _webSocketService.connect();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loaderController.show(context);
       _fetchData();
@@ -67,17 +77,20 @@ class _PurchasedetailsScreenState extends State<PurchasedetailsScreen> {
     final dio = DioClient(context).dio;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     try {
+      final receiptUrl = prefs.getString('receiptUrl');
       final response = await dio.post(
         '/order',
         data: {
           'shoppingCartId': prefs.getString('shoppingCartId'),
           'shippingAddressId': widget.address.id,
-          'paymentMethodId': widget.payment.id,
+          'paymentMethodId': 'idHardcodeado',
+          if (receiptUrl != null) 'recepitUrl': receiptUrl,
         },
       );
 
-      {}
       if (response.statusCode == 200 || response.statusCode == 201) {
+        await prefs.remove('receiptUrl');
+
         _loaderController.hide();
         showDialog(
           context: context,
@@ -85,19 +98,20 @@ class _PurchasedetailsScreenState extends State<PurchasedetailsScreen> {
             return AlertDialog(
               title: Text('Orden creada con éxito'),
               content: Text(
-                  'Puedes ver el estado de tu pedido en la sessión de ordenes  :)'),
+                  'Puedes ver el estado de tu pedido en la sección de órdenes :)'),
               actions: <Widget>[
                 TextButton(
-                    style:
-                        TextButton.styleFrom(backgroundColor: colors['violet']),
-                    onPressed: () {
-                      getNewShoppingCart();
-                      Navigator.pushReplacementNamed(context, '/navigation');
-                    },
-                    child: Text(
-                      "Aceptar",
-                      style: TextStyle(color: Colors.white),
-                    )),
+                  style:
+                      TextButton.styleFrom(backgroundColor: colors['violet']),
+                  onPressed: () {
+                    getNewShoppingCart();
+                    Navigator.pushReplacementNamed(context, '/navigation');
+                  },
+                  child: Text(
+                    "Aceptar",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
               ],
             );
           },
@@ -222,7 +236,7 @@ class _PurchasedetailsScreenState extends State<PurchasedetailsScreen> {
                 GeneralButton(
                   text: 'Confirmar y pagar',
                   onPressed: () {
-                    createOrder();
+                    stripeNetwork(context, userId);
                   },
                 ),
                 const SizedBox(height: 5),
@@ -269,7 +283,7 @@ class _PurchasedetailsScreenState extends State<PurchasedetailsScreen> {
                     SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'Método de pago: Mastercard con terminación ${widget.payment.last4Numbers}',
+                        'Método de pago: Mastercard con terminación 4242',
                         style: TextStyle(fontSize: 14, fontFamily: 'Poppins'),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,

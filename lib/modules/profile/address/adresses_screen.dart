@@ -324,6 +324,7 @@ class _AddressesScreenState extends State<AddressesScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         automaticallyImplyLeading: true,
+        centerTitle: true,
         title: const Text(
           'Direcciones de envío',
           style: TextStyle(color: Colors.black, fontFamily: 'Poppins'),
@@ -396,13 +397,25 @@ class _AddressesScreenState extends State<AddressesScreen> {
                 children: [
                   if (!content)
                     Center(
-                      child: Text(
-                        'No hay direcciones de envío registradas',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 16,
-                          color: Colors.black,
-                        ),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 50),
+                          Image.asset(
+                            'assets/empty.png',
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.cover,
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            'No hay direcciones de envío registradas',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black,
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
+                        ],
                       ),
                     )
                   else

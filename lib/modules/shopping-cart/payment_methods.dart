@@ -225,7 +225,7 @@ class _PaymentMethodsState extends State<PaymentMethods> {
                             builder: (context) => PurchasedetailsScreen(
                               shoppingCart: widget.shoppingCart,
                               address: widget.address,
-                              payment: payment,
+                              //payment: payment,
                             ),
                           ),
                         );

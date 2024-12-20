@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-String ip = '192.168.106.3';
+String ip = '34.203.104.87';
 
+Color getColor(String key) {
+  return colors[key] ?? Colors.transparent;
+}
 const Map<String, Color> colors = {
   'pink': Color.fromRGBO(242, 148, 165, 1),
   'violet': Color.fromARGB(255, 207, 82, 151),

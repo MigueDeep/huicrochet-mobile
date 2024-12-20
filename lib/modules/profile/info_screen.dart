@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:huicrochet_mobile/config/dio_client.dart';
 import 'package:huicrochet_mobile/config/error_state.dart';
 import 'package:huicrochet_mobile/config/global_variables.dart';
+import 'package:huicrochet_mobile/config/service_locator.dart';
+import 'package:huicrochet_mobile/modules/navigation/navigation.dart';
+import 'package:huicrochet_mobile/modules/payment-methods/use_cases/get_payment.dart';
 import 'package:huicrochet_mobile/widgets/general/image_picker.dart';
 import 'package:huicrochet_mobile/widgets/general/loader.dart';
 import 'package:intl/intl.dart';
@@ -255,17 +258,29 @@ class _InfoScreenState extends State<InfoScreen> {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back), 
-            color: Colors.black, 
-            onPressed: () {
-               Navigator.pushReplacementNamed(context, '/navigation');
-            },
+          automaticallyImplyLeading: true,
+          centerTitle: true,
+          title: const Text(
+            'Información personal',
+            style: TextStyle(color: Colors.black, fontFamily: 'Poppins'),
           ),
-          title: Text('Información personal'),
           backgroundColor: Colors.white,
           elevation: 0,
           iconTheme: IconThemeData(color: Colors.black),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+            onPressed: () {
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (context) => Navigation(
+                    getPaymentMethod: getIt<GetPayment>(),
+                    initialIndex: 3,
+                  ),
+                ),
+                (route) => false,
+              );
+            },
+          ),
         ),
         body: SingleChildScrollView(
           child: Form(
